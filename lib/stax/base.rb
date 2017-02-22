@@ -1,7 +1,4 @@
-require 'thor'
-
 module Stax
-
   class Base < Thor
     def self.load_staxfile
       file = File.join(Dir.pwd, 'Staxfile')

@@ -1,3 +1,4 @@
+require 'thor'
 require 'awful'
 require 'awful/cloudformation'
 require 'stax/base'
