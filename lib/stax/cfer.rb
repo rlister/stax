@@ -21,8 +21,7 @@ module Stax
           follow:     true,
           number:     1,
         }
-        p opts.merge(args)
-        # Cfer.converge!(stack_name, opts.merge(args))
+        Cfer.converge!(stack_name, opts.merge(args))
       end
 
       ## generate JSON for stack without sending to cloudformation
