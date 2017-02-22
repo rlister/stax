@@ -1,6 +1,7 @@
 require 'thor'
 require 'awful'
 require 'awful/cloudformation'
+require 'stax/staxfile'
 require 'stax/base'
 require 'stax/cli'
 require 'stax/stack'
