@@ -21,6 +21,28 @@ module Stax
       puts exists?.to_s
     end
 
+    desc 'create', 'create stack'
+    def create
+      fail_task("Stack #{stack_name} already exists") if exists?
+      debug("Creating stack #{stack_name}")
+      cfer_converge
+      # lock
+    end
+
+    desc 'update', 'update stack'
+    def update
+      fail_task("Stack #{stack_name} does not exist") unless exists?
+      debug("Updating stack #{stack_name}")
+      # unlock
+      cfer_converge
+      # lock
+    end
+
+    desc 'generate', 'generate JSON for stack template'
+    def generate
+      cfer_generate
+    end
+
     desc 'resources', 'show resources for stack'
     method_option :type,  aliases: '-t', type: :string, default: nil, desc: 'filter by resource type'
     method_option :match, aliases: '-m', type: :string, default: nil, desc: 'filter by resource regex'
