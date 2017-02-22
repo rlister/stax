@@ -9,7 +9,6 @@ module Stax
 
     desc 'ls', 'list stacks for this branch'
     def ls(regex = nil)
-      # regex = cfn_safe(options[:branch]) + '(-|$)'
       cf(:ls, [regex || stack_prefix].compact, long: true)
     end
   end
