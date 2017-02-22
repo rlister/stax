@@ -45,6 +45,17 @@ module Stax
       def stack_prefix
         @@_stack_prefix
       end
+
+      def stringify_keys(thing)
+        if thing.is_a?(Hash)
+          Hash[ thing.map { |k,v| [ k.to_s, stringify_keys(v) ] } ]
+        elsif thing.respond_to?(:map)
+          thing.map { |v| stringify_keys(v) }
+        else
+          thing
+        end
+      end
+
     end
   end
 end
