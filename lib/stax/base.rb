@@ -1,5 +1,7 @@
 module Stax
   class Base < Thor
+    @@_stack_prefix = `git symbolic-ref --short HEAD`.chomp + '-'
+
     def self.load_staxfile
       file = File.join(Dir.pwd, 'Staxfile')
       Stax::Base.class_eval(File.binread(file)) if File.exist?(file)
@@ -15,6 +17,10 @@ module Stax
       ## create thor subcommand
       Cli.desc(name, "control #{name} stack")
       Cli.subcommand(name, klass)
+    end
+
+    def self.set_prefix(prefix)
+      @@_stack_prefix = prefix
     end
 
     no_commands do
@@ -37,7 +43,7 @@ module Stax
       end
 
       def stack_prefix
-        'ops-'
+        @@_stack_prefix
       end
     end
   end
