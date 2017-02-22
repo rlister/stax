@@ -2,8 +2,5 @@
 require 'bundler/setup'
 require 'stax'
 
-module Stax
-  add_stack(:botsy)
-end
-
+Stax::Base.load_staxfile
 Stax::Cli.start(ARGV)
