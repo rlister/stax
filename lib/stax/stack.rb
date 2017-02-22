@@ -35,6 +35,16 @@ module Stax
       puts e.message
     end
 
+    desc 'template', 'get template of existing stack from cloudformation'
+    def template
+      cf(:template, [stack_name])
+    end
+
+    desc 'parameters', 'show parameters for stack'
+    def parameters
+      cf(:parameters, [stack_name])
+    end
+
     desc 'outputs', 'show stack output'
     def outputs
       cf(:outputs, [stack_name])
