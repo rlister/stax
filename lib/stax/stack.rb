@@ -2,6 +2,9 @@ module Stax
   class Stack < Base
     include Awful::Short
 
+    class_option :resources, type: :array,   default: nil,   desc: 'resources IDs to allow updates'
+    class_option :all,       type: :boolean, default: false, desc: 'DANGER: allow updates to all resources'
+
     no_commands do
       def class_name
         @_class_name ||= self.class.to_s.split('::').last
@@ -26,21 +29,58 @@ module Stax
       fail_task("Stack #{stack_name} already exists") if exists?
       debug("Creating stack #{stack_name}")
       cfer_converge
-      # lock
+      lock
     end
 
     desc 'update', 'update stack'
     def update
       fail_task("Stack #{stack_name} does not exist") unless exists?
       debug("Updating stack #{stack_name}")
-      # unlock
+      unlock
       cfer_converge
-      # lock
+      lock
     end
 
     desc 'generate', 'generate JSON for stack template'
     def generate
       cfer_generate
+    end
+
+    desc 'policy', 'show stack update policy'
+    def policy
+      cf(:policy, [stack_name])
+    end
+
+    desc 'lock', 'set a global Deny policy on stack'
+    def lock
+      fail_task("Stack #{stack_name} does not exist") unless exists?
+      debug("Denying all updates for stack #{stack_name}")
+      statement = {
+        Statement: [
+          Effect:    'Deny',
+          Action:    'Update:*',
+          Principal: '*',
+          Resource:  '*'
+        ]
+      }
+      cf(:policy, [stack_name], json: JSON.pretty_generate(statement))
+    end
+
+    desc 'unlock', 'set stack policy to allow limited resource ids to update'
+    def unlock
+      fail_task("Stack #{stack_name} does not exist") unless exists?
+      resources = options[:resources] || %w(lc* asg*) # sane defaults
+      resources = ['*'] if options[:all]
+      debug("Allowing updates to #{stack_name} for resources: #{resources.join(' ')}")
+      statement = {
+        Statement: [
+          Effect:    'Allow',
+          Action:    'Update:*',
+          Principal: '*',
+          Resource:  resources.map { |resource| "LogicalResourceId/#{resource}" }
+        ]
+      }
+      cf(:policy, [stack_name], json: JSON.pretty_generate(statement))
     end
 
     desc 'resources', 'show resources for stack'
