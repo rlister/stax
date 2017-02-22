@@ -1,0 +1,5 @@
+require 'awful'
+require 'awful/cloudformation'
+require 'stax/base'
+require 'stax/cli'
+require 'stax/stack'

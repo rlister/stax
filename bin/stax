@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+require 'bundler/setup'
+require 'stax'
+
+module Stax
+  add_stack(:botsy)
+end
+
+Stax::Cli.start(ARGV)
