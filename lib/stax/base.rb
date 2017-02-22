@@ -1,6 +1,10 @@
 module Stax
   class Base < Thor
     no_commands do
+      def stack_prefix
+        @_stack_prefix ||= `git symbolic-ref --short HEAD`.chomp + '-'
+      end
+
       def debug(message)
         say "[DEBUG] #{message}", :blue
       end
@@ -17,10 +21,6 @@ module Stax
       ## make string safe to use in naming CFN stuff
       def cfn_safe(string)
         string.gsub(/[\W_]/, '-')
-      end
-
-      def stack_prefix
-        @@_stack_prefix
       end
 
       def stringify_keys(thing)
