@@ -111,5 +111,12 @@ module Stax
     def outputs
       cf(:outputs, [stack_name])
     end
+
+    desc 'status', 'show status of ASGs and ELBs'
+    def status
+      try :asg_status
+      try :elb_status
+    end
+
   end
 end

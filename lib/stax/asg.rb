@@ -20,6 +20,13 @@ module Stax
           def auto_scaling_instances
             asg(:instances, auto_scaling_groups.map(&:physical_resource_id), describe: true, quiet: true)
           end
+
+          def asg_status
+            auto_scaling_groups.each do |asg|
+              debug("ASG status for #{asg.physical_resource_id}")
+              asg(:instances, [asg.physical_resource_id], long: true)
+            end
+          end
         end
 
         desc 'scale', 'scale number of instances in ASGs for stack'

@@ -12,7 +12,7 @@ module Stax
 
           def elb_status
             load_balancers.each do |elb|
-              debug("ELB status for #{elb.logical_resource_id}")
+              debug("ELB status for #{elb.physical_resource_id}")
               elb(:instances, [elb.physical_resource_id], long: true)
             end
           end
