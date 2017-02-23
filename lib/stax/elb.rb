@@ -18,9 +18,9 @@ module Stax
           end
         end
 
-        desc 'elb', 'show DNS name for stack ELBs'
+        desc 'elbs', 'show DNS name for stack ELBs'
         def elbs
-          debug("Getting ELBs for stack #{stack_name}")
+          debug("ELBs for stack #{stack_name}")
           load_balancers.each do |elb|
             debug("DNS name for #{elb.logical_resource_id}")
             elb(:dns, [elb.physical_resource_id])
