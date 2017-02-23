@@ -116,6 +116,7 @@ module Stax
     def status
       try :asg_status
       try :elb_status
+      try :alb_status
     end
 
   end
