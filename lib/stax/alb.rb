@@ -24,12 +24,6 @@ module Stax
           end
         end
 
-        desc 'albs', 'show ALBs for stack'
-        def albs
-          debug("ELBs for stack #{stack_name}")
-          p app_load_balancers
-        end
-
       end
     end
   end
