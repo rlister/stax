@@ -57,6 +57,11 @@ module Stax
       lock
     end
 
+    desc 'delete', 'delete stack'
+    def delete
+      cf(:delete, [stack_name])
+    end
+
     desc 'generate', 'generate JSON for stack template'
     def generate
       cfer_generate
