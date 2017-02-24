@@ -43,6 +43,20 @@ module Stax
         end
       end
 
+      ## psycho version of thor yes?() that demands a y or n answer
+      def y_or_n?(statement, color = nil)
+        loop do
+          case ask(statement, color, :add_to_history => false).downcase
+          when 'y'
+            return true
+          when 'n'
+            return false
+          else
+            puts "please respond 'y' or 'n'"
+          end
+        end
+      end
+
     end
   end
 end
