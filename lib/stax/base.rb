@@ -19,6 +19,16 @@ module Stax
         string.gsub(/[\W_]/, '-')
       end
 
+      def prepend(prefix, id)
+        p = prefix.to_s
+        id.start_with?(p) ? id : p + id
+      end
+
+      def append(suffix, id)
+        s = suffix.to_s
+        id.end_with?(s) ? id : id + s
+      end
+
       def stack_prefix
         @_stack_prefix ||= cfn_safe(options[:branch] + '-')
       end
