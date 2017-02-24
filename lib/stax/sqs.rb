@@ -10,6 +10,10 @@ module Stax
             @_sqs_queues ||= cf(:resources, [stack_name], type: 'AWS::SQS::Queue', quiet: true)
           end
 
+          def sqs_queue_urls
+            @_sqs_queue_urls ||= sqs_queues.map(&:physical_resource_id)
+          end
+
           ## return url of queue with given logical id
           def sqs_queue_url(id)
             cf(:id, [stack_name, id], quiet: true)
@@ -19,7 +23,7 @@ module Stax
         desc 'queues', 'list stack queues'
         def queues
           debug("SQS queues for stack #{stack_name}")
-          cf(:resources, [stack_name], type: 'AWS::SQS::Queue', long: true)
+          sqs(:ls, sqs_queue_urls, long: true)
         end
 
       end
