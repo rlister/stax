@@ -22,6 +22,14 @@ module Stax
         stack_parameters.fetch(key.to_s, nil)
       end
 
+      def stack_outputs
+        @_stack_outputs ||= cf(:outputs, [stack_name], quiet: true)
+      end
+
+      def stack_output(key)
+        stack_outputs.fetch(key.to_s, nil)
+      end
+
       def exists?
         cf(:exists, [stack_name], quiet: true)
       end
