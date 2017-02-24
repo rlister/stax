@@ -14,6 +14,14 @@ module Stax
         @_stack_name ||= cfn_safe(stack_prefix + class_name.downcase)
       end
 
+      def stack_parameters
+        @_stack_parameters ||= cf(:parameters, [stack_name], quiet: true)
+      end
+
+      def stack_parameter(key)
+        stack_parameters.fetch(key.to_s, nil)
+      end
+
       def exists?
         cf(:exists, [stack_name], quiet: true)
       end
