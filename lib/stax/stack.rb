@@ -33,6 +33,15 @@ module Stax
       def exists?
         cf(:exists, [stack_name], quiet: true)
       end
+
+      def wait_for_delete(seconds = 5)
+        return unless exists?
+        debug("Waiting for #{stack_name} to delete")
+        loop do
+          sleep(seconds)
+          break unless exists?
+        end
+      end
     end
 
     desc 'exists', 'test if stack exists'
