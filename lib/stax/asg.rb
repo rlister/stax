@@ -27,6 +27,28 @@ module Stax
               asg(:instances, [asg.physical_resource_id], long: true)
             end
           end
+
+          def asg_enter_standby(asg, *instances)
+            debug("Taking #{instances.join(',')} out of ELB for #{asg}")
+            instances.each do |instance| # one at a time so we can rescue each one
+              begin
+                asg(:enter_standby, [asg, instance])
+              rescue Aws::AutoScaling::Errors::ValidationError => e
+                warn(e.message)
+              end
+            end
+          end
+
+          def asg_exit_standby(asg, *instances)
+            debug("Putting #{instances.join(',')} back into ELB")
+            instances.each do |instance| # one at a time so we can rescue each one
+              begin
+                asg(:exit_standby, [asg, instance])
+              rescue Aws::AutoScaling::Errors::ValidationError => e
+                warn(e.message)
+              end
+            end
+          end
         end
 
         desc 'scale', 'scale number of instances in ASGs for stack'
@@ -48,7 +70,17 @@ module Stax
           asg(:old_instances, asgs, terminate: options[:terminate])
         end
 
+        desc 'standby', 'enter (or exit) standby for ASGs'
+        method_option :exit,   aliases: '-x', type: :boolean, default: false, desc: 'exit standby instead of enter'
+        def standby
+          auto_scaling_instances.each_with_object(Hash.new {|h,k| h[k]=[]}) do |i, h|
+            h[i.auto_scaling_group_name] << i.instance_id
+          end.each do |asg, ins|
+            options[:exit] ? asg_exit_standby(asg, *ins) : asg_enter_standby(asg, *ins)
+          end
+        end
       end
+
     end
   end
 end
