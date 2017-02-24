@@ -19,6 +19,10 @@ module Stax
         string.gsub(/[\W_]/, '-')
       end
 
+      def stack_prefix
+        @_stack_prefix ||= cfn_safe(options[:branch] + '-')
+      end
+
       def stringify_keys(thing)
         if thing.is_a?(Hash)
           Hash[ thing.map { |k,v| [ k.to_s, stringify_keys(v) ] } ]

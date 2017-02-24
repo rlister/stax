@@ -54,7 +54,7 @@ module Stax
   end
 
   class Cli < Base
-    class_option :branch, type: :string, default: Git.branch, desc: 'Git branch to use'
+    class_option :branch, type: :string, default: Git.branch, desc: 'git branch to use'
 
     desc 'git', 'git tasks'
     subcommand 'git', Git
