@@ -10,7 +10,7 @@ module Stax
 
       ## location of cfer template file
       def cfer_template
-        File.join('cf', "#{stack_name}.rb")
+        File.join('cf', "#{class_name}.rb")
       end
 
       ## create/update the stack
