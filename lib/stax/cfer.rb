@@ -29,6 +29,12 @@ module Stax
         opts = {parameters: stringify_keys(cfer_parameters)}
         Cfer.generate!(cfer_template, opts)
       end
+
+      def cfer_tail
+        Cfer.tail!(stack_name, follow: true, number: 1)
+      rescue Aws::CloudFormation::Errors::ValidationError => e
+        puts e.message
+      end
     end
 
   end

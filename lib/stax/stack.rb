@@ -62,6 +62,11 @@ module Stax
       cfer_generate
     end
 
+    desc 'tail', 'tail stack events'
+    def tail
+      cfer_tail
+    end
+
     desc 'policy', 'show stack update policy'
     def policy
       cf(:policy, [stack_name])
