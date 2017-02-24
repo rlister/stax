@@ -18,7 +18,7 @@ module Stax
                 s3(:clean, [bucket])
                 sleep(3)
                 debug("Deleting S3 bucket #{bucket}")
-                if s3(:empty?, [bucket])
+                if s3(:empty?, [bucket], quiet: true)
                   s3(:remove_bucket, [bucket])
                 else
                   warn("#{bucket} not empty: maybe re-run cleanup")
