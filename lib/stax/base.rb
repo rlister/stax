@@ -1,10 +1,6 @@
 module Stax
   class Base < Thor
     no_commands do
-      def stack_prefix
-        @_stack_prefix ||= `git symbolic-ref --short HEAD`.chomp + '-'
-      end
-
       def debug(message)
         say "[DEBUG] #{message}", :blue
       end
