@@ -30,6 +30,10 @@ module Stax
         stack_outputs.fetch(key.to_s, nil)
       end
 
+      def stack_status
+        cf(:status, [stack_name], quiet: true)
+      end
+
       def exists?
         cf(:exists, [stack_name], quiet: true)
       end
