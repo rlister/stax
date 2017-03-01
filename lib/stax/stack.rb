@@ -53,6 +53,7 @@ module Stax
     def create
       fail_task("Stack #{stack_name} already exists") if exists?
       debug("Creating stack #{stack_name}")
+      try(:key_pair_store)
       cfer_converge
       lock
     end
@@ -69,6 +70,7 @@ module Stax
     desc 'delete', 'delete stack'
     def delete
       cf(:delete, [stack_name])
+      try(:key_pair_delete)
     end
 
     desc 'generate', 'generate JSON for stack template'
