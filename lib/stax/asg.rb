@@ -21,6 +21,13 @@ module Stax
             asg(:instances, auto_scaling_groups.map(&:physical_resource_id), describe: true, quiet: true)
           end
 
+          ## get instance details from ec2
+          def auto_scaling_describe_instances
+            asgs = auto_scaling_groups.map(&:physical_resource_id)
+            fail_task("No matching autoscaling groups") if asgs.empty?
+            asg(:ips, auto_scaling_groups.map(&:physical_resource_id), quiet: true)
+          end
+
           def asg_status
             auto_scaling_groups.each do |asg|
               debug("ASG status for #{asg.physical_resource_id}")
@@ -46,6 +53,18 @@ module Stax
                 asg(:exit_standby, [asg, instance])
               rescue Aws::AutoScaling::Errors::ValidationError => e
                 warn(e.message)
+              end
+            end
+          end
+
+          ## ssh to num instances from our asgs
+          def auto_scaling_ssh(num, cmd, opts = {})
+            opts = opts.reject{ |_,v| v.nil? }.map{ |k,v| "-o #{k}=#{v}" }.join(' ')
+            auto_scaling_describe_instances.tap do |instances|
+              instances = instances.last(num) if num
+              instances.each do |i|
+                debug("SSH to #{i.instance_id} #{i.public_ip_address}")
+                system "ssh #{opts} #{i.public_ip_address} #{cmd}"
               end
             end
           end
@@ -79,8 +98,19 @@ module Stax
             options[:exit] ? asg_exit_standby(asg, *ins) : asg_enter_standby(asg, *ins)
           end
         end
-      end
 
+        desc 'ssh [CMD]', 'ssh to ASG instances'
+        method_option :number, aliases: '-n', type: :numeric, default: nil, desc: 'number of instances to ssh'
+        def ssh(*cmd)
+          keyfile = try(:key_pair_get)
+          try(:let_me_in_allow)
+          auto_scaling_ssh(options[:number], cmd.join(' '), IdentityFile: keyfile.try(:path))
+        ensure
+          keyfile.try(:unlink)
+          try(:let_me_in_revoke)
+        end
+
+      end
     end
   end
 end
