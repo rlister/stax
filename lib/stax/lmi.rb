@@ -1,5 +1,5 @@
 module Stax
-  module Ssh
+  module Lmi
     def self.included(thor)     # magic to make mixins work in Thor
       thor.class_eval do        # ... so magical
 
@@ -19,18 +19,18 @@ module Stax
           end
         end
 
-        desc 'ssh [CMD]', 'be a total failure and ssh to instance(s)'
-        method_option :all,       aliases: '-a', type: :boolean, default: false, desc: 'ssh to all instances in ASG'
-        method_option :instances, aliases: '-i', type: :array,   default: nil,   desc: 'list of partial instance IDs to filter'
-        def ssh(*cmds)
-          let_me_in_allow
-          auto_scaling_groups.each do |asg|
-            debug("SSH to instances for #{asg.physical_resource_id}")
-            asg(:ssh, [asg.physical_resource_id, *cmds], all: options[:all], instances: options[:instances])
-          end
-        ensure
-          let_me_in_revoke
-        end
+        # desc 'ssh [CMD]', 'be a total failure and ssh to instance(s)'
+        # method_option :all,       aliases: '-a', type: :boolean, default: false, desc: 'ssh to all instances in ASG'
+        # method_option :instances, aliases: '-i', type: :array,   default: nil,   desc: 'list of partial instance IDs to filter'
+        # def ssh(*cmds)
+        #   let_me_in_allow
+        #   auto_scaling_groups.each do |asg|
+        #     debug("SSH to instances for #{asg.physical_resource_id}")
+        #     asg(:ssh, [asg.physical_resource_id, *cmds], all: options[:all], instances: options[:instances])
+        #   end
+        # ensure
+        #   let_me_in_revoke
+        # end
 
       end
     end
