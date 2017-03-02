@@ -68,6 +68,14 @@ module Stax
               end
             end
           end
+
+          def ssh_options
+            {
+              User: 'core',
+              StrictHostKeyChecking: 'no',
+              UserKnownHostsFile: '/dev/null'
+            }
+          end
         end
 
         desc 'scale', 'scale number of instances in ASGs for stack'
@@ -100,14 +108,16 @@ module Stax
         end
 
         desc 'ssh [CMD]', 'ssh to ASG instances'
-        method_option :number, aliases: '-n', type: :numeric, default: nil, desc: 'number of instances to ssh'
+        method_option :number,  aliases: '-n', type: :numeric, default: nil,   desc: 'number of instances to ssh'
+        method_option :verbose, aliases: '-v', type: :boolean, default: false, desc: 'verbose ssh client logging'
         def ssh(*cmd)
-          keyfile = try(:key_pair_get)
-          try(:let_me_in_allow)
-          auto_scaling_ssh(options[:number], cmd.join(' '), IdentityFile: keyfile.try(:path))
+          keyfile = try(:key_pair_get) # get private key from param store
+          try(:let_me_in_allow)        # open security group
+          opts = ssh_options.merge(IdentityFile: keyfile.try(:path), LogLevel: (options[:verbose] ? 'DEBUG' : nil))
+          auto_scaling_ssh(options[:number], cmd.join(' '), opts)
         ensure
-          keyfile.try(:unlink)
-          try(:let_me_in_revoke)
+          keyfile.try(:unlink)         # remove private key
+          try(:let_me_in_revoke)       # close security group
         end
 
       end
