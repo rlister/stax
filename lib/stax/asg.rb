@@ -89,7 +89,7 @@ module Stax
         end
 
         desc 'old', 'list or terminate old instances from ASGs'
-        method_option :terminate, aliases: '-t', default: false, desc: 'terminate old instances'
+        method_option :terminate, aliases: '-t', type: :boolean, default: false, desc: 'terminate old instances'
         def old
           verb = options[:terminate] ? 'Terminating' : 'Listing'
           debug("#{verb} out-of-date instances in autoscaling groups")
