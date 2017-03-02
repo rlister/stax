@@ -27,6 +27,6 @@ Gem::Specification.new do |spec|
   # spec.add_dependency('aws-sdk', '>= 2.7.9')
   spec.add_dependency('awful', '>= 0.0.168')
   spec.add_dependency('thor', '<= 0.19.1')
-  spec.add_dependency('cfer')
+  spec.add_dependency('cfer', '0.5.0')
   spec.add_dependency('octokit')
 end
