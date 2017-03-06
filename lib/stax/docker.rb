@@ -30,7 +30,7 @@ module Stax
     desc 'push', 'push docker image to registry'
     def push
       debug("Docker push #{repository}")
-      puts "docker push #{repository}"
+      system "docker push #{repository}"
     end
   end
 
