@@ -51,6 +51,8 @@ module Stax
           def key_pair_delete
             keypair(:delete, [key_pair_name])
             param(:delete, [key_pair_store_name])
+          rescue Aws::SSM::Errors::ParameterNotFound
+            warn("Parameter #{key_pair_store_name} does not exist")
           end
         end
 
