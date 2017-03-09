@@ -79,7 +79,7 @@ module Stax
         end
 
         desc 'scale', 'scale number of instances in ASGs for stack'
-        method_option :desired, aliases: '-d', type: :numeric, default: 4,   desc: 'Desired instance count for each ASG'
+        method_option :desired, aliases: '-d', type: :numeric, default: 4, desc: 'Desired instance count for each ASG'
         def scale
           auto_scaling_groups.each do |asg|
             id = asg.physical_resource_id
