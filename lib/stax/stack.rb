@@ -48,6 +48,11 @@ module Stax
       end
     end
 
+    desc 'name', 'return stack name'
+    def name
+      puts stack_name
+    end
+
     desc 'exists', 'test if stack exists'
     def exists
       puts exists?.to_s
