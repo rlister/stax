@@ -34,7 +34,7 @@ module Stax
           ## create a key and store it in parameter store
           def key_pair_store
             key = key_pair_create or return
-            param(:put, [key_pair_store_name], value: key, type: 'SecureString', key_id: try(:key_id), overwrite: true)
+            param(:put, [key_pair_store_name], value: key, type: 'SecureString', key_id: try(:kms_id), overwrite: true)
           end
 
           ## get private key from store and write to a tempfile for ssh to find; return file object
