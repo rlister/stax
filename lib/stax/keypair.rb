@@ -14,7 +14,7 @@ module Stax
 
           ## parameter store name to store private key
           def key_pair_store_name
-            "#{stack_name}.key_pair"
+            "#{key_pair_name}.key_pair"
           end
 
           def key_pair_describe
