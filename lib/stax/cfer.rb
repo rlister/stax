@@ -13,6 +13,11 @@ module Stax
         File.join('cf', "#{class_name}.rb")
       end
 
+      ## override with S3 bucket for upload of large templates as needed
+      def cfer_s3_path
+        nil
+      end
+
       ## create/update the stack
       def cfer_converge(args = {})
         opts = {
@@ -20,6 +25,7 @@ module Stax
           template:   cfer_template,
           follow:     true,
           number:     1,
+          s3_path:    cfer_s3_path,
         }
         Cfer.converge!(stack_name, opts.merge(args))
       end
