@@ -15,11 +15,11 @@ module Stax
               debug("Cleaning up #{bucket}")
               begin
                 debug("Removing all objects in bucket #{bucket}")
-                s3(:clean, [bucket])
+                s3(:clean, [bucket], yes: true)
                 sleep(3)
                 debug("Deleting S3 bucket #{bucket}")
                 if s3(:empty?, [bucket], quiet: true)
-                  s3(:remove_bucket, [bucket])
+                  s3(:remove_bucket, [bucket], yes: true)
                 else
                   warn("#{bucket} not empty: maybe re-run cleanup")
                 end
