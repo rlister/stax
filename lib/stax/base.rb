@@ -29,8 +29,12 @@ module Stax
         id.end_with?(s) ? id : id + s
       end
 
+      def branch_name
+        @_branch_name ||= cfn_safe(options[:branch])
+      end
+
       def stack_prefix
-        @_stack_prefix ||= cfn_safe(options[:branch] + '-')
+        @_stack_prefix ||= cfn_safe(branch_name + '-')
       end
 
       def stringify_keys(thing)
