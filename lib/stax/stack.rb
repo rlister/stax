@@ -34,6 +34,10 @@ module Stax
         cf(:status, [stack_name], quiet: true)
       end
 
+      def stack_notification_arns
+        cf(:dump, [stack_name], quiet: true)
+      end
+
       def exists?
         cf(:exists, [stack_name], quiet: true)
       end
