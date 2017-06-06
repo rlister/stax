@@ -35,7 +35,7 @@ module Stax
       end
 
       def stack_notification_arns
-        cf(:dump, [stack_name], quiet: true)
+        cf(:dump, [stack_name], quiet: true)&.notification_arns
       end
 
       def exists?
