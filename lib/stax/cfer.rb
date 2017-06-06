@@ -18,6 +18,11 @@ module Stax
         nil
       end
 
+      ## override with SNS ARNs as needed
+      def cfer_notification_arns
+        []
+      end
+
       ## create/update the stack
       def cfer_converge(args = {})
         opts = {
@@ -26,6 +31,7 @@ module Stax
           follow:     true,
           number:     1,
           s3_path:    cfer_s3_path,
+          notification_arns: cfer_notification_arns,
         }
         Cfer.converge!(stack_name, opts.merge(args))
       end
