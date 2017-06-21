@@ -2,6 +2,7 @@ require 'cfer'
 
 module Stax
   class Stack < Base
+    class_option :use_previous_value, aliases: '-u', type: :array, default: [], desc: 'params to use previous value'
 
     no_commands do
       def cfer_parameters
@@ -26,7 +27,7 @@ module Stax
       ## create/update the stack
       def cfer_converge(args = {})
         opts = {
-          parameters: stringify_keys(cfer_parameters),
+          parameters: stringify_keys(cfer_parameters).except(*options[:use_previous_value]),
           template:   cfer_template,
           follow:     true,
           number:     1,
