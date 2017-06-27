@@ -150,9 +150,11 @@ module Stax
       cf(:template, [stack_name])
     end
 
-    desc 'parameters', 'show parameters for stack'
-    def parameters
-      cf(:parameters, [stack_name])
+    desc 'parameters [KEYS]', 'show parameters for stack'
+    def parameters(*keys)
+      params = stack_parameters
+      params.slice!(*keys) unless keys.empty?
+      print_table params.sort
     end
 
     desc 'outputs', 'show stack output'
