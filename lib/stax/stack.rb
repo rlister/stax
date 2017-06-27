@@ -139,8 +139,9 @@ module Stax
     end
 
     desc 'events', 'show all events for stack'
+    method_option :number, aliases: '-n', type: :numeric, default: nil, desc: 'return n most recent events'
     def events
-      cf(:events, [stack_name])
+      cf(:events, [stack_name], number: options[:number])
     rescue Aws::CloudFormation::Errors::ValidationError => e
       puts e.message
     end
