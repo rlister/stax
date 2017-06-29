@@ -1,4 +1,5 @@
 require 'octokit'
+require 'git_clone_url'
 
 module Stax
   class Git < Base

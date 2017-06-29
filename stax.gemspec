@@ -29,4 +29,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency('thor')
   spec.add_dependency('cfer')
   spec.add_dependency('octokit')
+  spec.add_dependency('git_clone_url')
 end
