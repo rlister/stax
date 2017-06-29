@@ -4,19 +4,19 @@ module Stax
   class Git < Base
     no_commands do
       def self.branch
-        @branch ||= `git symbolic-ref --short HEAD`.chomp
+        @_branch ||= `git symbolic-ref --short HEAD`.chomp
       end
 
       def self.sha
-        @sha ||= `git rev-parse HEAD`.chomp
+        @_sha ||= `git rev-parse HEAD`.chomp
       end
 
       def self.origin_sha
-        @origin_sha ||= `git rev-parse origin/#{branch}`.chomp
+        @_origin_sha ||= `git rev-parse origin/#{branch}`.chomp
       end
 
       def self.toplevel
-        @toplevel ||= `git rev-parse --show-toplevel`.chomp
+        @_toplevel ||= `git rev-parse --show-toplevel`.chomp
       end
 
       def self.uncommitted_changes?
@@ -29,11 +29,11 @@ module Stax
 
       def self.octokit
         abort('Please set GITHUB_TOKEN') unless ENV['GITHUB_TOKEN']
-        @octokit ||= Octokit::Client.new(access_token: ENV['GITHUB_TOKEN'])
+        @_octokit ||= Octokit::Client.new(access_token: ENV['GITHUB_TOKEN'])
       end
 
       def self.tags
-        @tags ||= octokit.tags('woodmont/spreeworks')
+        @_tags ||= octokit.tags(repo)
       end
 
       ## tag the sha and push to github
