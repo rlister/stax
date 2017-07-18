@@ -26,6 +26,21 @@ module Stax
           sqs(:ls, sqs_queue_urls, long: true)
         end
 
+        desc 'purge', 'purge SQS queues'
+        def purge
+          sqs_queues.each do |queue|
+            name = queue.physical_resource_id.split('/').last
+            next unless yes?("Really purge queue #{name}?", :yellow)
+
+            debug("Purging queue #{name}")
+            begin
+              sqs(:purge, [queue.physical_resource_id])
+            rescue Aws::SQS::Errors::PurgeQueueInProgress => e
+              warn(e.message)
+            end
+          end
+        end
+
       end
     end
   end
