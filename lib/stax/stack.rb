@@ -50,6 +50,46 @@ module Stax
           break unless exists?
         end
       end
+
+      ## policy to lock the stack to all updates
+      def stack_policy
+        {
+          Statement: [
+            Effect:    'Deny',
+            Action:    'Update:*',
+            Principal: '*',
+            Resource:  '*'
+          ]
+        }
+      end
+
+      ## temporary policy during updates
+      def stack_policy_during_update
+        {
+          Statement: [
+            Effect:    'Allow',
+            Action:    'Update:*',
+            Principal: '*',
+            Resource:  stack_update_resources
+          ]
+        }
+      end
+
+      ## resources to unlock during update
+      def stack_update_resources
+        if options[:all]
+          ['*']
+        else
+          options[:resources] || stack_update_default_resources
+        end.map do |r|
+          "LogicalResourceId/#{r}"
+        end
+      end
+
+      ## default value for --resources
+      def stack_update_default_resources
+        %w(lc* asg*)
+      end
     end
 
     desc 'name', 'return stack name'
@@ -66,17 +106,14 @@ module Stax
     def create
       fail_task("Stack #{stack_name} already exists") if exists?
       debug("Creating stack #{stack_name}")
-      cfer_converge
-      lock
+      cfer_converge(stack_policy: stack_policy)
     end
 
     desc 'update', 'update stack'
     def update
       fail_task("Stack #{stack_name} does not exist") unless exists?
       debug("Updating stack #{stack_name}")
-      unlock
-      cfer_converge
-      lock
+      cfer_converge(stack_policy_during_update: stack_policy_during_update)
     end
 
     desc 'delete', 'delete stack'
@@ -101,34 +138,14 @@ module Stax
 
     desc 'lock', 'set a global Deny policy on stack'
     def lock
-      fail_task("Stack #{stack_name} does not exist") unless exists?
       debug("Denying all updates for stack #{stack_name}")
-      statement = {
-        Statement: [
-          Effect:    'Deny',
-          Action:    'Update:*',
-          Principal: '*',
-          Resource:  '*'
-        ]
-      }
-      cf(:policy, [stack_name], json: JSON.pretty_generate(statement))
+      cf(:policy, [stack_name], json: JSON.pretty_generate(stack_policy))
     end
 
     desc 'unlock', 'set stack policy to allow limited resource ids to update'
     def unlock
-      fail_task("Stack #{stack_name} does not exist") unless exists?
-      resources = options[:resources] || %w(lc* asg*) # sane defaults
-      resources = ['*'] if options[:all]
-      debug("Allowing updates to #{stack_name} for resources: #{resources.join(' ')}")
-      statement = {
-        Statement: [
-          Effect:    'Allow',
-          Action:    'Update:*',
-          Principal: '*',
-          Resource:  resources.map { |resource| "LogicalResourceId/#{resource}" }
-        ]
-      }
-      cf(:policy, [stack_name], json: JSON.pretty_generate(statement))
+      debug("Allowing updates to #{stack_name}")
+      cf(:policy, [stack_name], json: JSON.pretty_generate(stack_policy_during_update))
     end
 
     desc 'resources', 'show resources for stack'
