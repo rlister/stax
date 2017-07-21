@@ -57,24 +57,20 @@ module Stax
             end
           end
 
-          ## ssh to num instances from our asgs
-          def auto_scaling_ssh(num, cmd, opts = {})
-            opts = opts.reject{ |_,v| v.nil? }.map{ |k,v| "-o #{k}=#{v}" }.join(' ')
-            auto_scaling_describe_instances.tap do |instances|
-              instances = instances.last(num) if num
-              instances.each do |i|
-                debug("SSH to #{i.instance_id} #{i.public_ip_address}")
-                system "ssh #{opts} #{i.public_ip_address} #{cmd}"
-              end
-            end
-          end
-
+          ## defaults, override in subclass
           def ssh_options
             {
               User: 'core',
               StrictHostKeyChecking: 'no',
               UserKnownHostsFile: '/dev/null'
             }
+          end
+
+          ## return num instances, filter by ids if non-nil
+          def ssh_instances(num, ids)
+            instances = auto_scaling_describe_instances
+            instances.select!{ |i| ids.include?(i.instance_id) } if ids
+            num ? instances.last(num) : instances
           end
         end
 
@@ -115,13 +111,24 @@ module Stax
         end
 
         desc 'ssh [CMD]', 'ssh to ASG instances'
-        method_option :number,  aliases: '-n', type: :numeric, default: nil,   desc: 'number of instances to ssh'
-        method_option :verbose, aliases: '-v', type: :boolean, default: false, desc: 'verbose ssh client logging'
+        method_option :number,    aliases: '-n', type: :numeric, default: nil,   desc: 'number of instances to ssh'
+        method_option :verbose,   aliases: '-v', type: :boolean, default: false, desc: 'verbose ssh client logging'
+        method_option :instances, aliases: '-i', type: :array,   default: nil,   desc: 'match on these instance IDs'
         def ssh(*cmd)
           keyfile = try(:key_pair_get) # get private key from param store
           try(:let_me_in_allow)        # open security group
-          opts = ssh_options.merge(IdentityFile: keyfile.try(:path), LogLevel: (options[:verbose] ? 'DEBUG' : nil))
-          auto_scaling_ssh(options[:number], cmd.join(' '), opts)
+
+          ## build ssh -o options
+          opts = ssh_options.merge(
+            IdentityFile: keyfile.try(:path),
+            LogLevel:     (options[:verbose] ? 'DEBUG' : nil)
+          ).reject{ |_,v| v.nil? }.map{ |k,v| "-o #{k}=#{v}" }.join(' ')
+
+          ## loop instances
+          ssh_instances(options[:number], options[:instances]).each do |i|
+            debug("SSH to #{i.instance_id} #{i.public_ip_address}")
+            system "ssh #{opts} #{i.public_ip_address} #{cmd.join(' ')}"
+          end
         ensure
           keyfile.try(:unlink)         # remove private key
           try(:let_me_in_revoke)       # close security group
