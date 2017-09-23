@@ -1,6 +1,7 @@
 module Stax
   class Stack < Base
     include Awful::Short
+    include Aws
 
     class_option :resources, type: :array,   default: nil,   desc: 'resources IDs to allow updates'
     class_option :all,       type: :boolean, default: false, desc: 'DANGER: allow updates to all resources'
@@ -92,10 +93,10 @@ module Stax
       end
     end
 
-    desc 'name', 'return stack name'
-    def name
-      puts stack_name
-    end
+    # desc 'name', 'return stack name'
+    # def name
+    #   puts stack_name
+    # end
 
     desc 'exists', 'test if stack exists'
     def exists
@@ -116,21 +117,6 @@ module Stax
       cfer_converge(stack_policy_during_update: stack_policy_during_update)
     end
 
-    desc 'delete', 'delete stack'
-    def delete
-      cf(:delete, [stack_name])
-    end
-
-    desc 'generate', 'generate JSON for stack template'
-    def generate
-      cfer_generate
-    end
-
-    desc 'tail', 'tail stack events'
-    def tail
-      cfer_tail
-    end
-
     desc 'policy', 'show stack update policy'
     def policy
       cf(:policy, [stack_name])
@@ -146,38 +132,6 @@ module Stax
     def unlock
       debug("Allowing updates to #{stack_name}")
       cf(:policy, [stack_name], json: JSON.pretty_generate(stack_policy_during_update))
-    end
-
-    desc 'resources', 'show resources for stack'
-    method_option :type,  aliases: '-t', type: :string, default: nil, desc: 'filter by resource type'
-    method_option :match, aliases: '-m', type: :string, default: nil, desc: 'filter by resource regex'
-    def resources
-      cf(:resources, [stack_name], options.merge(long: true))
-    end
-
-    desc 'events', 'show all events for stack'
-    method_option :number, aliases: '-n', type: :numeric, default: nil, desc: 'return n most recent events'
-    def events
-      cf(:events, [stack_name], number: options[:number])
-    rescue Aws::CloudFormation::Errors::ValidationError => e
-      puts e.message
-    end
-
-    desc 'template', 'get template of existing stack from cloudformation'
-    def template
-      cf(:template, [stack_name])
-    end
-
-    desc 'parameters [KEYS]', 'show parameters for stack'
-    def parameters(*keys)
-      params = stack_parameters
-      params.slice!(*keys) unless keys.empty?
-      print_table params.sort
-    end
-
-    desc 'outputs', 'show stack output'
-    def outputs
-      cf(:outputs, [stack_name])
     end
 
     desc 'status', 'show status of ASGs and ELBs'

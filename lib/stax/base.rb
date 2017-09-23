@@ -61,6 +61,10 @@ module Stax
         end
       end
 
+      def color(string, hash)
+        set_color(string, hash.fetch(string.to_sym, :yellow))
+      end
+
     end
   end
 end
