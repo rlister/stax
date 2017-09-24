@@ -45,6 +45,12 @@ module Stax
           end
         end
 
+        def resources_by_type(name, type)
+          resources(name).select do |r|
+            r.resource_type == type
+          end
+        end
+
         def events(name)
           paginate(:stack_events) do |token|
             client.describe_stack_events(stack_name: name, next_token: token)
