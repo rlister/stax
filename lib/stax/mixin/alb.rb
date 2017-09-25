@@ -12,12 +12,12 @@ module Stax
           end
         end
 
-        desc 'alb-dns', 'DNS names for stack ALBs'
+        desc 'alb-dns', 'ALB DNS names'
         def alb_dns
           puts Aws::Alb.describe(stack_albs.map(&:physical_resource_id)).map(&:dns_name)
         end
 
-        desc 'alb-status', 'instance status for ALB'
+        desc 'alb-status', 'ALB instance status'
         def alb_status
           stack_albs.each do |alb|
             Aws::Alb.target_groups(alb.physical_resource_id).each do |t|
