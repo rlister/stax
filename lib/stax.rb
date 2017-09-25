@@ -14,6 +14,7 @@ require 'stax/cfn'
 require 'stax/mixin/ec2'
 require 'stax/mixin/alb'
 require 'stax/mixin/elb'
+require 'stax/mixin/sg'
 
 require 'stax/asg'
 require 'stax/lmi'
