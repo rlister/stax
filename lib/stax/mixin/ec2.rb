@@ -1,7 +1,7 @@
 require 'stax/aws/ec2'
 
 module Stax
-  module Ec2
+  module Ec2Tasks
 
     def self.included(thor)
 

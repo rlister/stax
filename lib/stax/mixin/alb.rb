@@ -1,7 +1,7 @@
 require 'stax/aws/alb'
 
 module Stax
-  module Alb
+  module AlbTasks
 
     def self.included(thor)
       thor.class_eval do

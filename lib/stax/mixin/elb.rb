@@ -1,7 +1,7 @@
 require 'stax/aws/elb'
 
 module Stax
-  module Elb
+  module ElbTasks
 
     def self.included(thor)
       thor.class_eval do
