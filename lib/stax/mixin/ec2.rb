@@ -7,7 +7,7 @@ module Stax
 
       thor.class_eval do
 
-        desc 'ec2-instances', 'list ec2 instances for this stack'
+        desc 'ec2-instances', 'EC2 instances'
         def ec2_instances
           print_table Aws::Ec2.instances(stack_name).map { |i|
             name = i.tags.find { |t| t.key == 'Name' }&.value
