@@ -13,10 +13,10 @@ require 'stax/cfn'
 
 require 'stax/mixin/ec2'
 require 'stax/mixin/alb'
+require 'stax/mixin/elb'
 
 require 'stax/asg'
 require 'stax/lmi'
-require 'stax/elb'
 require 'stax/ecs'
 require 'stax/kms'
 require 'stax/s3'
