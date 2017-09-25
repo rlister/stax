@@ -14,5 +14,8 @@ module Stax
     ## create thor subcommand
     Cli.desc(name, "control #{name} stack")
     Cli.subcommand(name, klass)
+
+    ## return the class
+    klass
   end
 end
