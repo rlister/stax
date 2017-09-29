@@ -6,6 +6,10 @@ module Stax
         @_app_name ||= cfn_safe(File.basename(Git.toplevel))
       end
 
+      def branch_name
+        @_branch_name ||= cfn_safe(options[:branch])
+      end
+
       def stack_prefix
         @_stack_prefix ||= [app_name, branch_name].compact.join('-') + '-'
       end
@@ -29,6 +33,10 @@ module Stax
         exit(1) if quit
       end
 
+      def color(string, hash)
+        set_color(string, hash.fetch(string.to_sym, :yellow))
+      end
+
       ## make string safe to use in naming CFN stuff
       def cfn_safe(string)
         string.gsub(/[\W_]/, '-')
@@ -42,10 +50,6 @@ module Stax
       def append(suffix, id)
         s = suffix.to_s
         id.end_with?(s) ? id : id + s
-      end
-
-      def branch_name
-        @_branch_name ||= cfn_safe(options[:branch])
       end
 
       def stringify_keys(thing)
@@ -70,10 +74,6 @@ module Stax
             puts "please respond 'y' or 'n'"
           end
         end
-      end
-
-      def color(string, hash)
-        set_color(string, hash.fetch(string.to_sym, :yellow))
       end
 
     end
