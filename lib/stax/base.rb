@@ -1,6 +1,12 @@
 module Stax
   class Base < Thor
     no_commands do
+      ## find or create a stack object
+      def stack(id)
+        object = Stax.const_get(id.to_s.capitalize)
+        ObjectSpace.each_object(object).first || object.new([], options)
+      end
+
       def debug(message)
         say "[DEBUG] #{message}", :blue
       end
