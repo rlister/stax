@@ -10,6 +10,7 @@ require 'stax/git'
 require 'stax/docker'
 require 'stax/stack'
 require 'stax/cfn'
+require 'stax/subcommand'
 
 require 'stax/mixin/ec2'
 require 'stax/mixin/alb'
