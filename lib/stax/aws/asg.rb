@@ -24,6 +24,10 @@ module Stax
         def update(name, opt = {})
           client.update_auto_scaling_group(opt.merge(auto_scaling_group_name: name))
         end
+
+        def terminate(id, decrement = false)
+          client.terminate_instance_in_auto_scaling_group(instance_id: id, should_decrement_desired_capacity: decrement)
+        end
       end
     end
   end

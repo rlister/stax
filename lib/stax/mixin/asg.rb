@@ -68,9 +68,33 @@ module Stax
         end
       end
 
+      desc 'terminate [ID_REGEXES]', 'terminate matching instances'
+      method_option :decrement, aliases: '-d', type: :boolean, default: false, desc: 'decrement desired count after terminate'
+      def terminate(*ids)
+         instances = Aws::Asg.instances(stack_asgs.map(&:physical_resource_id))
+         instances.select do |i|
+           ids.any? { |id| i.instance_id.match(id) }
+         end.each do |i|
+           yes?("Terminate #{i.instance_id}?", :yellow) && Aws::Asg.terminate(i.instance_id, options[:decrement])
+         end
+      end
+
       desc 'old', 'ASG instances with outdated launch config'
+      method_option :terminate, aliases: '-t', type: :boolean, default: false, desc: 'terminate outdated instances'
+      method_option :decrement, aliases: '-d', type: :boolean, default: false, desc: 'decrement desired count after terminate'
       def old
-        # TODO
+        Aws::Asg.describe(stack_asgs.map(&:physical_resource_id)).map do |a|
+          Aws::Asg.instances(a.auto_scaling_group_name).select do |i|
+            i.launch_configuration_name != a.launch_configuration_name
+          end
+        end.flatten.tap do |list|
+          print_table list.map { |i| [i.instance_id, i.auto_scaling_group_name, i.launch_configuration_name] }
+          if options[:terminate]
+            list.each do |i|
+              yes?("Terminate #{i.instance_id}?", :yellow) && Aws::Asg.terminate(i.instance_id, options[:decrement])
+            end
+          end
+        end
       end
 
       desc 'scale', 'ASG scale instance count'
