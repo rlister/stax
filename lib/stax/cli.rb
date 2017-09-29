@@ -1,6 +1,7 @@
+require 'stax/aws/cfn'
+
 module Stax
   class Cli < Base
-    # include Awful::Short
     include Aws
 
     desc 'version', 'show version'
