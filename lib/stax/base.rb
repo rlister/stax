@@ -1,6 +1,15 @@
 module Stax
   class Base < Thor
+
     no_commands do
+      def app_name
+        @_app_name ||= cfn_safe(File.basename(Git.toplevel))
+      end
+
+      def stack_prefix
+        @_stack_prefix ||= [app_name, branch_name].compact.join('-') + '-'
+      end
+
       ## find or create a stack object
       def stack(id)
         object = Stax.const_get(id.to_s.capitalize)
@@ -37,10 +46,6 @@ module Stax
 
       def branch_name
         @_branch_name ||= cfn_safe(options[:branch])
-      end
-
-      def stack_prefix
-        @_stack_prefix ||= cfn_safe(branch_name + '-')
       end
 
       def stringify_keys(thing)
