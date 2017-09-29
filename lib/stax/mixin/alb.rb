@@ -16,6 +16,11 @@ module Stax
   module Cmd
     class Alb < SubCommand
 
+      COLORS = {
+        healthy:     :green,
+        unhealthy:   :red,
+        unavailable: :red,
+      }
 
       no_commands do
         def stack_albs

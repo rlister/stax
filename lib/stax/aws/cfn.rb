@@ -12,17 +12,6 @@ module Stax
         REVIEW_IN_PROGRESS
       ]
 
-      COLORS = {
-        CREATE_COMPLETE:      :green,
-        DELETE_COMPLETE:      :green,
-        UPDATE_COMPLETE:      :green,
-        CREATE_FAILED:        :red,
-        DELETE_FAILED:        :red,
-        UPDATE_FAILED:        :red,
-        ROLLBACK_IN_PROGRESS: :red,
-        ROLLBACK_COMPLETE:    :red,
-      }
-
       class << self
 
         def client

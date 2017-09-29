@@ -10,6 +10,11 @@ module Stax
 
   module Cmd
     class Ec2 < SubCommand
+      COLORS = {
+        running:    :green,
+        stopped:    :yellow,
+        terminated: :red,
+      }
 
       desc 'ls', 'list instances for stack'
       def ls
