@@ -1,0 +1,27 @@
+module Stax
+  module Aws
+    class Asg < Sdk
+
+      class << self
+
+        def client
+          @_client ||= ::Aws::AutoScaling::Client.new
+        end
+
+        def describe(names)
+          paginate(:auto_scaling_groups) do |token|
+            client.describe_auto_scaling_groups(auto_scaling_group_names: Array(names), next_token: token)
+          end
+        end
+
+        def instances(names)
+          ids = describe(names).map(&:instances).flatten.map(&:instance_id)
+          paginate(:auto_scaling_instances) do |token|
+            client.describe_auto_scaling_instances(instance_ids: ids, next_token: token)
+          end
+        end
+
+      end
+    end
+  end
+end
