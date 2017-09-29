@@ -21,6 +21,9 @@ module Stax
           end
         end
 
+        def update(name, opt = {})
+          client.update_auto_scaling_group(opt.merge(auto_scaling_group_name: name))
+        end
       end
     end
   end

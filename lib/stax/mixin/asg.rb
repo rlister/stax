@@ -23,9 +23,18 @@ module Stax
         running: :green, stopped: :yellow, terminated: :red,
       }
 
+      class_option :groups, aliases: '-g', type: :array, default: nil, desc: 'limit ASGs returned by id'
+
       no_commands do
         def stack_asgs
-          Aws::Cfn.resources_by_type(my.stack_name, 'AWS::AutoScaling::AutoScalingGroup')
+          a = Aws::Cfn.resources_by_type(my.stack_name, 'AWS::AutoScaling::AutoScalingGroup')
+          filter_asgs(a, options[:groups])
+        end
+
+        def filter_asgs(asgs, groups)
+          return asgs unless groups
+          ids = groups.map { |g| prepend(:asg, g) }
+          asgs.select { |g| ids.include?(g.logical_resource_id) }
         end
       end
 
@@ -64,9 +73,17 @@ module Stax
         # TODO
       end
 
-      desc 'scale', 'scale ASG desired count'
+      desc 'scale', 'ASG scale instance count'
+      method_option :desired_capacity, aliases: '-d', type: :numeric, default: nil, desc: 'set desired instance count'
+      method_option :min_size,         aliases: '-m', type: :numeric, default: nil, desc: 'set minimum capacity'
+      method_option :max_size,         aliases: '-M', type: :numeric, default: nil, desc: 'set maximum capacity'
       def scale
-        # TODO
+        opt = options.slice(:desired_capacity, :min_size, :max_size)
+        fail_task('No change requested') if opt.empty?
+        stack_asgs.each do |a|
+          debug("Scaling to #{opt} for #{a.logical_resource_id} #{a.physical_resource_id}")
+          Aws::Asg.update(a.physical_resource_id, opt)
+        end
       end
 
     end
