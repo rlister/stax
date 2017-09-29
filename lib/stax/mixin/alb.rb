@@ -8,11 +8,6 @@ module Stax
     end
   end
 
-        no_commands do
-          def stack_albs
-            Cfn.resources_by_type(stack_name, 'AWS::ElasticLoadBalancingV2::LoadBalancer')
-          end
-        end
   module Cmd
     class Alb < SubCommand
 
