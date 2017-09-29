@@ -1,7 +1,6 @@
 module Stax
   class Stack < Base
     include Awful::Short
-    include Aws
 
     class_option :resources, type: :array,   default: nil,   desc: 'resources IDs to allow updates'
     class_option :all,       type: :boolean, default: false, desc: 'DANGER: allow updates to all resources'
@@ -12,7 +11,7 @@ module Stax
       end
 
       def stack_name
-        @_stack_name ||= cfn_safe(stack_prefix + class_name.downcase)
+        @_stack_name ||= stack_prefix + class_name.downcase
       end
 
       def stack_parameters
@@ -92,11 +91,6 @@ module Stax
         %w(lc* asg*)
       end
     end
-
-    # desc 'name', 'return stack name'
-    # def name
-    #   puts stack_name
-    # end
 
     desc 'exists', 'test if stack exists'
     def exists
