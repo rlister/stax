@@ -15,22 +15,22 @@ module Stax
       end
 
       def exists?
-        cf(:exists, [stack_name], quiet: true)
+        Cfn.exists?(stack_name)
       end
 
       def stack_status
-        cf(:status, [stack_name], quiet: true)
+        Cfn.describe(stack_name).stack_status
       end
 
       def stack_notification_arns
-        cf(:dump, [stack_name], quiet: true)&.first&.notification_arns
+        Cfn.describe(stack_name).notification_arns
       end
 
     end
 
     desc 'exists', 'test if stack exists'
     def exists
-      puts exists?.to_s
+      puts exists?
     end
 
     desc 'status', 'show status of ASGs and ELBs'
