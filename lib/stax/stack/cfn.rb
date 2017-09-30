@@ -2,13 +2,6 @@ module Stax
   class Stack < Base
     include Aws
 
-    desc 'parameters', 'show stack input parameters'
-    def parameters
-      print_table Cfn.parameters(stack_name).each_with_object({}) { |p, h|
-        h[p.parameter_key] = p.parameter_value
-      }.sort
-    end
-
     desc 'template', 'get template of existing stack from cloudformation'
     method_option :pretty, type: :boolean, default: true, desc: 'format json output'
     def template
@@ -43,22 +36,6 @@ module Stax
     desc 'id [LOGICAL_ID]', 'get physical ID from resource logical ID'
     def id(resource)
       puts Cfn.id(stack_name, resource)
-    end
-
-    desc 'outputs', 'show stack outputs'
-    def outputs(key = nil)
-      if key
-        puts Cfn.output(stack_name, key)
-      else
-        print_table Cfn.outputs(stack_name)
-      end
-    end
-
-    desc 'delete', 'delete stack'
-    def delete
-      if yes? "Really delete stack #{stack_name}?", :yellow
-        Cfn.delete(stack_name)
-      end
     end
 
   end
