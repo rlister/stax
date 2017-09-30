@@ -50,10 +50,5 @@ module Stax
       end
     end
 
-    desc 'tail', 'tail stack events'
-    def tail
-      cfer_tail
-    end
-
   end
 end
