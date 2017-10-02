@@ -7,6 +7,7 @@ require 'stax/aws/sdk'
 require 'stax/aws/cfn'
 
 require 'stax/staxfile'
+require 'stax/git'
 require 'stax/base'
 require 'stax/cli'
 require 'stax/stack'
@@ -16,9 +17,9 @@ require 'stax/stack/parameters'
 require 'stax/stack/outputs'
 require 'stax/subcommand'
 
-require 'stax/git'
 require 'stax/docker'
 
+require 'stax/mixin/git'
 require 'stax/mixin/ec2'
 require 'stax/mixin/alb'
 require 'stax/mixin/elb'

@@ -4,6 +4,8 @@ module Stax
   class Cli < Base
     include Aws
 
+    class_option :branch, type: :string, default: Git.branch, desc: 'git branch to use'
+
     desc 'version', 'show version'
     def version
       puts VERSION
