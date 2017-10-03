@@ -15,9 +15,12 @@ module Stax
           Aws::Cfn.resources_by_type(my.stack_name, 'AWS::EC2::SecurityGroup')
         end
 
+        def get_id(id)
+          id.match(/^sg-\h{8}$/) ? id : Aws::Cfn.id(my.stack_name, id)
+        end
+
         def stack_security_group(id)
-          sg = id.match(/^sg-\h{8}$/) ? id : Aws::Cfn.id(my.stack_name, id)
-          Aws::Sg.describe(sg)
+          Aws::Sg.describe(get_id(id))
         end
 
         ## format permissions output
@@ -27,6 +30,11 @@ module Stax
             port = ((p.from_port == p.to_port) ? p.from_port : [p.from_port, p.to_port].join('-')) || 'all'
             [proto, port, p.ip_ranges.map(&:cidr_ip).join(','), p.user_id_group_pairs.map(&:group_id).join(',')]
           end
+        end
+
+        ## lookup my IP as a CIDR
+        def get_my_ip
+          open('http://v4.ident.me/').read + '/32'
         end
       end
 
@@ -51,6 +59,20 @@ module Stax
           debug("Outbound permissions for #{s.logical_resource_id} #{s.physical_resource_id}")
           print_table sg_permissions(stack_security_group(s.physical_resource_id).first.ip_permissions_egress)
         end
+      end
+
+      desc 'authorize ID', 'open port on security group'
+      method_option :cidr, type: :string,  default: nil, desc: 'cidr block to open'
+      method_option :port, type: :numeric, default: 22,  desc: 'port to open'
+      def authorize(id)
+        p Aws::Sg.authorize(get_id(id), options.fetch(:cidr, get_my_ip), options[:port])
+      end
+
+      desc 'revoke ID', 'close port on security group'
+      method_option :cidr, type: :string,  default: nil, desc: 'cidr block to close'
+      method_option :port, type: :numeric, default: 22,  desc: 'port to close'
+      def revoke(id)
+        p Aws::Sg.revoke(get_id(id), options.fetch(:cidr, get_my_ip), options[:port])
       end
 
     end
