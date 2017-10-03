@@ -27,7 +27,6 @@ require 'stax/mixin/ecs'
 require 'stax/mixin/sqs'
 require 'stax/mixin/kms'
 
-require 'stax/lmi'
 require 'stax/cfer'
 require 'stax/keypair'
 require 'stax/ssm'
