@@ -40,6 +40,11 @@ module Stax
       def self.unpushed_commits?
         sha != origin_sha
       end
+
+      ## tag the sha and push to origin
+      def self.tag(tag, sha)
+        system "git tag #{tag} #{sha} && git push origin #{tag} --quiet"
+      end
     end
 
     desc 'branch', 'show current git branch'
