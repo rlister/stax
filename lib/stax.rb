@@ -17,8 +17,6 @@ require 'stax/stack/parameters'
 require 'stax/stack/outputs'
 require 'stax/subcommand'
 
-require 'stax/docker'
-
 require 'stax/mixin/git'
 require 'stax/mixin/ec2'
 require 'stax/mixin/alb'
