@@ -4,6 +4,7 @@ module Stax
     Stax.class_eval(File.binread(file)) if File.exist?(file)
   end
 
+  ## add a stack by name, creates class as needed
   def self.add_stack(name)
     c = name.capitalize
 
@@ -16,6 +17,12 @@ module Stax
       Cli.desc(name, "#{name} stack")
       Cli.subcommand(name, klass)
     end
+  end
+
+  ## add a non-stack command at top level
+  def self.add_command(name, klass)
+    Cli.desc(name, "#{name} commands")
+    Cli.subcommand(name, klass)
   end
 
 end
