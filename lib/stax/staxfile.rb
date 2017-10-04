@@ -1,7 +1,15 @@
 module Stax
+
+  ## search up the dir tree for nearest Staxfile
   def self.load_staxfile
-    file = File.join(Dir.pwd, 'Staxfile')
-    Stax.class_eval(File.binread(file)) if File.exist?(file)
+    file = nil
+    Pathname.pwd.ascend do |path|
+      if File.exist?(f = File.join(path, 'Staxfile'))
+        file = f
+        break
+      end
+    end
+    load(file) if file
   end
 
   ## add a stack by name, creates class as needed
