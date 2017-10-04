@@ -3,6 +3,7 @@ require 'thor'
 require 'stax/aws/sdk'
 require 'stax/aws/cfn'
 
+require 'stax/dsl'
 require 'stax/staxfile'
 require 'stax/base'
 require 'stax/git'

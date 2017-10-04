@@ -5,7 +5,7 @@ module Stax
   end
 
   ## add a stack by name, creates class as needed
-  def self.add_stack(name)
+  def self.add_stack(name, opt = {})
     c = name.capitalize
 
     ## create the class if it does not exist yet
@@ -16,6 +16,11 @@ module Stax
     end.tap do |klass|
       Cli.desc(name, "#{name} stack")
       Cli.subcommand(name, klass)
+
+      ## has syntax to include mixins
+      opt.fetch(:include, []).each do |i|
+        klass.include(self.const_get(i))
+      end
     end
   end
 
