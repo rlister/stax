@@ -24,6 +24,24 @@ module Stax
           client.list_command_invocations(command_id: id, details: true).command_invocations
         end
 
+        def parameters(opt)
+          paginate(:parameters) do |token|
+            client.get_parameters_by_path(opt.merge(next_token: token))
+          end
+        end
+
+        def get(opt)
+          client.get_parameters(opt).parameters
+        end
+
+        def put(opt)
+          client.put_parameter(opt)
+        end
+
+        def delete(opt)
+          client.delete_parameters(opt).deleted_parameters
+        end
+
       end
 
     end
