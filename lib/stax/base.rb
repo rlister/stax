@@ -1,6 +1,25 @@
 module Stax
   class Base < Thor
+
     no_commands do
+      def app_name
+        @_app_name ||= options[:app].empty? ? nil : cfn_safe(options[:app])
+      end
+
+      def branch_name
+        @_branch_name ||= cfn_safe(options[:branch])
+      end
+
+      def stack_prefix
+        @_stack_prefix ||= [app_name, branch_name].compact.join('-') + '-'
+      end
+
+      ## find or create a stack object
+      def stack(id)
+        object = Stax.const_get(id.to_s.capitalize)
+        ObjectSpace.each_object(object).first || object.new([], options)
+      end
+
       def debug(message)
         say "[DEBUG] #{message}", :blue
       end
@@ -12,6 +31,10 @@ module Stax
       def fail_task(message, quit = true)
         say "[FAIL] #{message}", :red
         exit(1) if quit
+      end
+
+      def color(string, hash)
+        set_color(string, hash.fetch(string.to_sym, :yellow))
       end
 
       ## make string safe to use in naming CFN stuff
@@ -27,14 +50,6 @@ module Stax
       def append(suffix, id)
         s = suffix.to_s
         id.end_with?(s) ? id : id + s
-      end
-
-      def branch_name
-        @_branch_name ||= cfn_safe(options[:branch])
-      end
-
-      def stack_prefix
-        @_stack_prefix ||= cfn_safe(branch_name + '-')
       end
 
       def stringify_keys(thing)
@@ -59,10 +74,6 @@ module Stax
             puts "please respond 'y' or 'n'"
           end
         end
-      end
-
-      def color(string, hash)
-        set_color(string, hash.fetch(string.to_sym, :yellow))
       end
 
     end

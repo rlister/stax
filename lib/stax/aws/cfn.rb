@@ -71,6 +71,12 @@ module Stax
           client.describe_stacks(stack_name: name).stacks.first
         end
 
+        def exists?(name)
+          Cfn.describe(name) && true
+        rescue ::Aws::CloudFormation::Errors::ValidationError
+          false
+        end
+
         def outputs(name)
           describe(name).outputs.each_with_object(HashWithIndifferentAccess.new) do |o, h|
             h[o.output_key] = o.output_value

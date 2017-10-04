@@ -1,8 +1,7 @@
-require 'awful/ecr'
+require 'stax/aws/ecr'
 
 module Stax
   class Docker < Base
-    include Awful::Short
 
     no_commands do
       ## TODO: look me up if not overridden by user
@@ -23,8 +22,11 @@ module Stax
 
     desc 'login', 'login to registry'
     def login
-      debug("Login to ECR registry #{registry}")
-      ecr(:login)
+      Aws::Ecr.auth.each do |auth|
+        debug("Login to ECR registry #{auth.proxy_endpoint}")
+        user, pass = Base64.decode64(auth.authorization_token).split(':')
+        system "docker login -u #{user} -p #{pass} #{auth.proxy_endpoint}"
+      end
     end
 
     desc 'push', 'push docker image to registry'
@@ -34,8 +36,4 @@ module Stax
     end
   end
 
-  class Cli < Base
-    desc 'docker', 'docker tasks'
-    subcommand 'docker', Docker
-  end
 end

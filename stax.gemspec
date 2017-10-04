@@ -24,8 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 1.14"
   spec.add_development_dependency "rake", "~> 10.0"
 
-  # spec.add_dependency('aws-sdk', '>= 2.7.9')
-  spec.add_dependency('awful', '>= 0.0.174')
+  spec.add_dependency('aws-sdk', '~> 2')
   spec.add_dependency('thor')
   spec.add_dependency('cfer')
   spec.add_dependency('octokit')

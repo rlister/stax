@@ -2,12 +2,6 @@ module Stax
   module Aws
     class Alb < Sdk
 
-      COLORS = {
-        healthy:     :green,
-        unhealthy:   :red,
-        unavailable: :red,
-      }
-
       class << self
 
         def client

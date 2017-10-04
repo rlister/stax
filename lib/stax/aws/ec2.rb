@@ -2,12 +2,6 @@ module Stax
   module Aws
     class Ec2 < Sdk
 
-      COLORS = {
-        running:    :green,
-        stopped:    :yellow,
-        terminated: :red,
-      }
-
       class << self
 
         def client

@@ -1,21 +1,41 @@
 module Stax
+
+  ## search up the dir tree for nearest Staxfile
   def self.load_staxfile
-    file = File.join(Dir.pwd, 'Staxfile')
-    Stax.class_eval(File.binread(file)) if File.exist?(file)
+    file = nil
+    Pathname.pwd.ascend do |path|
+      if File.exist?(f = File.join(path, 'Staxfile'))
+        file = f
+        break
+      end
+    end
+    load(file) if file
   end
 
-  ## add a Stack subclass as a thor subcommand
-  def self.add_stack(name)
+  ## add a stack by name, creates class as needed
+  def self.add_stack(name, opt = {})
     c = name.capitalize
 
     ## create the class if it does not exist yet
-    klass = self.const_defined?(c) ? self.const_get(c) : self.const_set(c, Class.new(Stack))
+    if self.const_defined?(c)
+      self.const_get(c)
+    else
+      self.const_set(c, Class.new(Stack))
+    end.tap do |klass|
+      Cli.desc(name, "#{name} stack")
+      Cli.subcommand(name, klass)
 
-    ## create thor subcommand
-    Cli.desc(name, "control #{name} stack")
-    Cli.subcommand(name, klass)
-
-    ## return the class
-    klass
+      ## has syntax to include mixins
+      opt.fetch(:include, []).each do |i|
+        klass.include(self.const_get(i))
+      end
+    end
   end
+
+  ## add a non-stack command at top level
+  def self.add_command(name, klass)
+    Cli.desc(name, "#{name} commands")
+    Cli.subcommand(name, klass)
+  end
+
 end
