@@ -7,11 +7,11 @@ module Stax
 
     no_commands do
       def class_name
-        @_class_name ||= self.class.to_s.split('::').last
+        @_class_name ||= self.class.to_s.split('::').last.downcase
       end
 
       def stack_name
-        @_stack_name ||= stack_prefix + class_name.downcase
+        @_stack_name ||= stack_prefix + class_name
       end
 
       def exists?
