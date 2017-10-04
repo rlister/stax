@@ -1,6 +1,5 @@
 module Stax
   class Stack < Base
-    include Awful::Short
 
     class_option :resources, type: :array,   default: nil,   desc: 'resources IDs to allow updates'
     class_option :all,       type: :boolean, default: false, desc: 'DANGER: allow updates to all resources'

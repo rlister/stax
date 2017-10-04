@@ -1,8 +1,5 @@
 require 'thor'
 
-require 'awful'
-require 'awful/cloudformation'
-
 require 'stax/aws/sdk'
 require 'stax/aws/cfn'
 
