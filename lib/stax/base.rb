@@ -3,7 +3,7 @@ module Stax
 
     no_commands do
       def app_name
-        @_app_name ||= cfn_safe(File.basename(Git.toplevel))
+        @_app_name ||= options[:app].empty? ? nil : cfn_safe(options[:app])
       end
 
       def branch_name

@@ -5,6 +5,7 @@ module Stax
     include Aws
 
     class_option :branch, type: :string, default: Git.branch, desc: 'git branch to use'
+    class_option :app,    type: :string, default: File.basename(Git.toplevel), desc: 'application name'
 
     desc 'version', 'show version'
     def version
