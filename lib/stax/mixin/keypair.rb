@@ -9,6 +9,8 @@ module Stax
 
     def keypair_create
       Aws::Keypair.create(stack_name).key_material
+    rescue ::Aws::EC2::Errors::InvalidKeyPairDuplicate => e
+      fail_task(e.message)
     end
 
     def keypair_delete
