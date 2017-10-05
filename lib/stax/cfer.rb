@@ -45,7 +45,7 @@ module Stax
 
       def cfer_tail
         Cfer.tail!(stack_name, follow: true, number: 1)
-      rescue Aws::CloudFormation::Errors::ValidationError => e
+      rescue ::Aws::CloudFormation::Errors::ValidationError => e
         puts e.message
       end
     end
