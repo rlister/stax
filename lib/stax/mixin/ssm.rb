@@ -3,9 +3,38 @@ require 'stax/aws/ssm'
 
 module Stax
   module Ssm
+
     def self.included(thor)
       thor.desc(:ssm, 'SSM subcommands')
       thor.subcommand(:ssm, Cmd::Ssm)
+    end
+
+    def ssm_parameter_path
+      @_ssm_parameter_path ||= prepend('/', [app_name, branch_name, class_name].join('/'))
+    end
+
+    def ssm_parameter_name(name)
+      [ssm_parameter_path, name].join('/')
+    end
+
+    def ssm_parameter_put(name, value, opt = {})
+      Aws::Ssm.put(
+        {
+          name: ssm_parameter_name(name),
+          value: value,
+          type: :SecureString,
+          # key_id: options[:key],
+          overwrite: true,
+        }.merge(opt)
+      )
+    end
+
+    def ssm_parameter_get(name)
+      Aws::Ssm.get(names: [ssm_parameter_name(name)], with_decryption: true).first&.value
+    end
+
+    def ssm_parameter_delete(*names)
+      Aws::Ssm.delete(names: names.map { |name| ssm_parameter_name(name) })
     end
   end
 
@@ -16,12 +45,6 @@ module Stax
         Online:         :green,
         ConnectionLost: :red,
       }
-
-      no_commands do
-        def ssm_parameter_path
-          @_ssm_parameter_path ||= prepend('/', [app_name, branch_name, my.class_name].join('/'))
-        end
-      end
 
       desc 'instances', 'SSM instance agent information'
       def instances
@@ -66,7 +89,7 @@ module Stax
       desc 'parameters [PATH]', 'list parameters'
       method_option :decrypt, aliases: '-d', type: :boolean, default: false, desc: 'decrypt and show values'
       method_option :recurse, aliases: '-r', type: :boolean, default: false, desc: 'recurse path hierarchy'
-      def parameters(path = ssm_parameter_path)
+      def parameters(path = my.ssm_parameter_path)
         fields = %i[name type]
         fields << :value if options[:decrypt]
         print_table Aws::Ssm.parameters(
@@ -76,10 +99,9 @@ module Stax
         ).map { |p| fields.map{ |f| p.send(f) } }
       end
 
-      desc 'get NAMES', 'get parameters'
-      def get(*names)
-        paths = names.map { |n| "#{ssm_parameter_path}/#{n}" }
-        puts Aws::Ssm.get(names: paths, with_decryption: true).map(&:value)
+      desc 'get NAME', 'get parameter'
+      def get(name)
+        puts my.ssm_parameter_get(name)
       end
 
       desc 'put NAME VALUE', 'put parameter'
@@ -87,21 +109,14 @@ module Stax
       method_option :key,                      type: :string,  default: nil,           desc: 'kms key'
       method_option :overwrite, aliases: '-o', type: :boolean, default: false,         desc: 'overwrite existing'
       def put(name, value)
-        Aws::Ssm.put(
-          name: [ssm_parameter_path, name].join('/'),
-          value: value,
-          type: options[:type],
-          key_id: options[:key],
-          overwrite: options[:overwrite],
-        )
+        my.ssm_parameter_put(name, value, type: options[:type], key_id: options[:key], overwrite: options[:overwrite])
       rescue ::Aws::SSM::Errors::ParameterAlreadyExists => e
         warn(e.message)
       end
 
       desc 'delete NAMES', 'delete parameters'
       def delete(*names)
-        paths = names.map { |n| "#{ssm_parameter_path}/#{n}" }
-        puts Aws::Ssm.delete(names: paths)
+        puts my.ssm_parameter_delete(*names)
       end
 
     end
