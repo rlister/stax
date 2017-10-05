@@ -6,6 +6,14 @@ module Stax
       thor.desc(:keypair, 'Keypair subcommands')
       thor.subcommand(:keypair, Cmd::Keypair)
     end
+
+    def keypair_create
+      Aws::Keypair.create(stack_name).key_material
+    end
+
+    def keypair_delete
+      Aws::Keypair.delete(stack_name)
+    end
   end
 
   module Cmd
@@ -21,13 +29,13 @@ module Stax
       end
 
       desc 'create [NAME]', 'create keypair'
-      def create(name = my.stack_name)
-        puts Aws::Keypair.create(name).key_material
+      def create
+        puts my.keypair_create
       end
 
       desc 'delete [NAME]', 'delete keypair'
       def delete(name = my.stack_name)
-        Aws::Keypair.delete(name)
+        my.keypair_delete if yes?("Really delete keypair #{name}?", :yellow)
       end
 
     end
