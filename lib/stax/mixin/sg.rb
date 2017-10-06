@@ -80,14 +80,14 @@ module Stax
       method_option :cidr, type: :string,  default: nil, desc: 'cidr block to open'
       method_option :port, type: :numeric, default: 22,  desc: 'port to open'
       def authorize(id)
-        p Aws::Sg.authorize(get_id(id), options.fetch(:cidr, get_my_ip), options[:port])
+        Aws::Sg.authorize(get_id(id), options.fetch(:cidr, get_my_ip), options[:port])
       end
 
       desc 'revoke ID', 'close port on security group'
       method_option :cidr, type: :string,  default: nil, desc: 'cidr block to close'
       method_option :port, type: :numeric, default: 22,  desc: 'port to close'
       def revoke(id)
-        p Aws::Sg.revoke(get_id(id), options.fetch(:cidr, get_my_ip), options[:port])
+        Aws::Sg.revoke(get_id(id), options.fetch(:cidr, get_my_ip), options[:port])
       end
 
     end
