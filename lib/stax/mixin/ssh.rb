@@ -6,13 +6,13 @@ module Stax
   module Ssh
     def self.included(thor)
 
-      ## stack class will probably overwrite this
-      def ssh_options
-        {
-          StrictHostKeyChecking: 'no',
-          UserKnownHostsFile: '/dev/null',
-        }
-      end
+      ## stack class can define this
+      # def ssh_options
+      #   {
+      #     StrictHostKeyChecking: 'no',
+      #     UserKnownHostsFile: '/dev/null',
+      #   }
+      # end
 
       ## IP address to ssh
       def ssh_instances
@@ -29,7 +29,7 @@ module Stax
 
       def ssh_cmd(instances, cmd = [], opt = {})
         c = cmd.join(' ')
-        o = ssh_options_format(ssh_options.merge(opt))
+        o = ssh_options_format((try(:ssh_options) || {}).merge(opt))
         instances.each do |i|
           system "ssh #{o} #{i} #{c}"
         end
