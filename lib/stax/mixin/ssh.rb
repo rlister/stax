@@ -42,6 +42,7 @@ module Stax
         def ssh(*cmd)
           try(:before_ssh)
           ssh_cmd(ssh_instances, cmd)
+        ensure
           try(:after_ssh)
         end
 
