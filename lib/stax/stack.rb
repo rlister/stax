@@ -25,6 +25,9 @@ module Stax
         Cfn.describe(stack_name).notification_arns
       end
 
+      def resource(id)
+        Aws::Cfn.id(stack_name, id)
+      end
     end
 
     desc 'exists', 'test if stack exists'
