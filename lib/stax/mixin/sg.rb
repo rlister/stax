@@ -1,10 +1,24 @@
 require 'stax/aws/sg'
+require 'open-uri'
 
 module Stax
   module Sg
     def self.included(thor)
       thor.desc(:sg, 'Security group subcommands')
       thor.subcommand(:sg, Cmd::Sg)
+    end
+
+    ## look up my local public IP
+    def get_my_ip
+      open('http://v4.ident.me/').read + '/32'
+    end
+
+    def sg_authorize(id, cidr = get_my_ip, port = 22)
+      Aws::Sg.authorize(id, cidr, port)
+    end
+
+    def sg_revoke(id, cidr = get_my_ip, port = 22)
+      Aws::Sg.revoke(id, cidr, port)
     end
   end
 
@@ -36,6 +50,7 @@ module Stax
         def get_my_ip
           open('http://v4.ident.me/').read + '/32'
         end
+
       end
 
       desc 'ls', 'SGs for stack'
