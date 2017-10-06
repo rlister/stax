@@ -33,6 +33,15 @@ module Stax
       Aws::Ssm.get(names: [ssm_parameter_name(name)], with_decryption: true).first&.value
     end
 
+    ## get a parameter from the store to a Tmpfile
+    def ssm_parameter_tmpfile(name)
+      Tempfile.new(stack_name).tap do |file|
+        file.write(ssm_parameter_get(name))
+        File.chmod(0400, file.path)
+        file.close
+      end
+    end
+
     def ssm_parameter_delete(*names)
       Aws::Ssm.delete(names: names.map { |name| ssm_parameter_name(name) })
     end
