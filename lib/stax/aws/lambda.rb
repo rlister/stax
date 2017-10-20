@@ -22,6 +22,10 @@ module Stax
           client.get_function(function_name: name).code.location
         end
 
+        def invoke(opt)
+          client.invoke(opt)
+        end
+
       end
 
     end

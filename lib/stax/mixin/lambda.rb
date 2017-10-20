@@ -1,5 +1,6 @@
 require 'open-uri'
 require 'yaml'
+require 'base64'
 require 'stax/aws/lambda'
 
 module Stax
@@ -48,6 +49,24 @@ module Stax
             file.close
             puts %x[unzip -p #{file.path}] # unzip all contents to stdout
           end
+        end
+      end
+
+      desc 'test ID', 'run lambda with ID'
+      method_option :type,    type: :string,  default: nil,   desc: 'invocation type: RequestResponse, Event'
+      method_option :tail,    type: :boolean, default: false, desc: 'tail log for RequestResponse'
+      method_option :payload, type: :string,  default: nil,   desc: 'json input to function'
+      method_option :file,    type: :string,  default: nil,   desc: 'get json payload from file'
+      def test(id)
+        Aws::Lambda.invoke(
+          function_name: my.resource(id),
+          invocation_type: options[:type],
+          log_type: options[:tail] ? 'Tail' : nil,
+          payload: options[:file] ? File.open(options[:file]) : options[:payload],
+        ).tap do |resp|
+          puts resp.status_code
+          warn(resp.function_error) if resp.function_error
+          puts Base64.decode64(resp.log_result) if options[:tail]
         end
       end
 
