@@ -20,6 +20,11 @@ module Stax
         ObjectSpace.each_object(object).first || object.new([], options)
       end
 
+      ## alias for stack to preserve semantics
+      def command(id)
+        stack(id)
+      end
+
       def debug(message)
         say "[DEBUG] #{message}", :blue
       end
