@@ -10,7 +10,7 @@ module Stax
 
     ## look up my local public IP
     def get_my_ip
-      open('http://v4.ident.me/').read + '/32'
+      URI.parse('http://v4.ident.me/').read + '/32'
     end
 
     def sg_authorize(id, cidr = get_my_ip, port = 22)
