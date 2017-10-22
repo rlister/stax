@@ -50,6 +50,13 @@ module Stax
         }.sort
       end
 
+      desc 'keys ID', 'get hash and range keys of table with ID'
+      def keys(id)
+        print_table Aws::DynamoDB.table(my.resource(id)).key_schema.each_with_object({}) { |schema, h|
+          h[schema.key_type.downcase.to_sym] = schema.attribute_name
+        }
+      end
+
     end
   end
 end
