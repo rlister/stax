@@ -32,6 +32,24 @@ module Stax
         }
       end
 
+      desc 'gsi ID', 'list global secondary indexes for table with ID'
+      def gsi(id)
+        print_table Aws::DynamoDB.gsi(my.resource(id)).map { |i|
+          hash  = i.key_schema.find{ |k| k.key_type == 'HASH' }&.attribute_name
+          range = i.key_schema.find{ |k| k.key_type == 'RANGE' }&.attribute_name
+          [i.index_name, hash, range, i.projection.projection_type, i.index_size_bytes, i.item_count]
+        }.sort
+      end
+
+      desc 'lsi ID', 'list local secondary indexes for table with ID'
+      def lsi(id)
+        print_table Aws::DynamoDB.lsi(my.resource(id)).map { |i|
+          hash  = i.key_schema.find{ |k| k.key_type == 'HASH' }&.attribute_name
+          range = i.key_schema.find{ |k| k.key_type == 'RANGE' }&.attribute_name
+          [i.index_name, hash, range, i.projection.projection_type, i.index_size_bytes, i.item_count]
+        }.sort
+      end
+
     end
   end
 end

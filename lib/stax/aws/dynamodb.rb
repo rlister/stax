@@ -12,6 +12,14 @@ module Stax
           client.describe_table(table_name: name).table
         end
 
+        def gsi(name)
+          client.describe_table(table_name: name).table.global_secondary_indexes || []
+        end
+
+        def lsi(name)
+          client.describe_table(table_name: name).table.local_secondary_indexes || []
+        end
+
       end
 
     end
