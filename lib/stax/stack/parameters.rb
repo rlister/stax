@@ -7,7 +7,9 @@ module Stax
       end
 
       def stack_parameter(key)
-        stack_parameters.fetch(key.to_s, nil)
+        stack_parameters.find do |p|
+          p.parameter_key == key.to_s
+        end&.parameter_value
       end
     end
 
