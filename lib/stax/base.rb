@@ -81,6 +81,19 @@ module Stax
         end
       end
 
+      ## make epoch human-readable
+      def human_time(timestamp)
+        timestamp.nil? ? '-' : Time.at(timestamp.to_i/1000)
+      end
+
+      ## convert bytes to nearest unit
+      def human_bytes(bytes, precision = 0)
+        return 0.to_s if bytes < 1
+        {T: 1000*1000*1000*1000, G: 1000*1000*1000, M: 1000*1000, K: 1000, B: 1}.each do |unit, value|
+          return "#{(bytes.to_f/value).round(precision)}#{unit}" if bytes >= value
+        end
+      end
+
     end
   end
 end
