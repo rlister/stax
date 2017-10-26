@@ -9,12 +9,7 @@ module Stax
     end
 
     def stack_log_groups
-      Aws::Cfn.resources_by_type(stack_name, 'AWS::Logs::LogGroup')
-    end
-
-    ## override this to customize
-    def log_group_names
-      stack_log_groups.map(&:physical_resource_id)
+      @_stack_log_groups ||= stack_resources_by_type('AWS::Logs::LogGroup')
     end
 
   end
@@ -28,13 +23,24 @@ module Stax
           n = n.to_i.abs          # convert string and -ves
           Aws::Logs.streams(log_group_name: group, order_by: :LastEventTime, descending: true, limit: n+1)[n]
         end
+
+        ## hash of resource id to log group objects, including lambda auto-created groups
+        def log_groups
+          {}.tap do |h|
+            my.stack_resources_by_type('AWS::Logs::LogGroup').each do |r|
+              h[r.logical_resource_id] = Aws::Logs.groups(r.physical_resource_id)&.first
+            end
+            my.stack_resources_by_type('AWS::Lambda::Function').each do |r|
+              h[r.logical_resource_id] = Aws::Logs.groups("/aws/lambda/#{r.physical_resource_id}")&.first
+            end
+          end.compact # lambda groups may be nil if not invoked yet
+        end
       end
 
       desc 'groups', 'list log groups for stack'
       def groups
-        print_table my.log_group_names.map { |name|
-          l = Aws::Logs.groups(name).first
-          [l.log_group_name, l.retention_in_days, human_time(l.creation_time), human_bytes(l.stored_bytes)]
+        print_table log_groups.map { |id, g|
+          [id, g.log_group_name, g.retention_in_days, human_time(g.creation_time), human_bytes(g.stored_bytes)]
         }
       end
 
@@ -42,12 +48,12 @@ module Stax
       method_option :alpha, aliases: '-a', type: :boolean, default: false, desc: 'order by name'
       method_option :limit, aliases: '-n', type: :numeric, default: nil,   desc: 'number of streams to list'
       def streams
-        my.log_group_names.each do |group|
-          debug("Log streams for group #{group}")
+        log_groups.each do |id, group|
+          debug(group.log_group_name)
           streams = Aws::Logs.streams(
-            log_group_name: group,
+            log_group_name: group.log_group_name,
             order_by: options[:alpha] ? :LogStreamName : :LastEventTime,
-            descending: !options[:alpha],
+            descending: !options[:alpha], # most recent first
             limit: options[:limit],
           )
           print_table streams.map { |s|
