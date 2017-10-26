@@ -15,6 +15,7 @@ require 'stax/stack/cfn'
 require 'stax/stack/crud'
 require 'stax/stack/parameters'
 require 'stax/stack/outputs'
+require 'stax/stack/resources'
 
 require 'stax/mixin/ec2'
 require 'stax/mixin/alb'
