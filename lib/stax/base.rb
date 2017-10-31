@@ -20,6 +20,12 @@ module Stax
         ObjectSpace.each_object(object).first || object.new([], options)
       end
 
+      def ensure_stack(*stacks)
+        stacks.each do |s|
+          stack(s)&.exists? or fail_task("#{s} stack is required")
+        end
+      end
+
       ## alias for stack to preserve semantics
       def command(id)
         stack(id)
