@@ -66,6 +66,8 @@ module Stax
       if yes? "Really delete stack #{stack_name}?", :yellow
         Cfn.delete(stack_name)
       end
+    rescue ::Aws::CloudFormation::Errors::ValidationError => e
+      fail_task(e.message)
     end
 
     desc 'tail', 'tail stack events'
