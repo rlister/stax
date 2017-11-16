@@ -1,3 +1,4 @@
+require 'stax/aws/sts'
 require 'stax/aws/ecr'
 
 module Stax
