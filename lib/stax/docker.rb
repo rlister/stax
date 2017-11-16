@@ -15,12 +15,36 @@ module Stax
 
       ## build a docker image locally
       def docker_local_build
+        debug("Docker build #{docker_repository}")
         system "docker build -t #{docker_repository} #{Git.toplevel}"
       end
 
       ## push docker image from local
       def docker_push
+        debug("Docker push #{docker_repository}")
         system "docker push #{docker_repository}"
+      end
+
+      ## override this for your argus setup
+      def docker_argus_queue
+        @_docker_argus_queue ||= Aws::Sqs.queue_url('argus.fifo')
+      end
+
+      def docker_argus_build
+        debug("Sending to argus #{Git.branch}:#{Git.sha}")
+        org, repo = Git.repo.split('/')
+        Aws::Sqs.send(
+          queue_url: docker_argus_queue,
+          message_group_id: repo,
+          message_body: {
+            org:    org,
+            repo:   repo,
+            branch: Git.branch,
+            sha:    Git.sha,
+          }.to_json
+        ).tap do |r|
+          puts r&.message_id
+        end
       end
     end
 
@@ -36,8 +60,9 @@ module Stax
 
     desc 'build', 'build docker image'
     def build
-      debug("Docker build #{docker_repository}")
+      ## override this method with the desired builder
       docker_local_build
+      # docker_argus_build
     end
 
     desc 'login', 'login to registry'
@@ -51,9 +76,8 @@ module Stax
 
     desc 'push', 'push docker image to registry'
     def push
-      debug("Docker push #{docker_repository}")
       docker_push
     end
-  end
 
+  end
 end
