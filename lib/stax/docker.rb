@@ -12,6 +12,16 @@ module Stax
       def docker_repository
         @_docker_repository ||= "#{docker_registry}/#{File.basename(Git.toplevel)}"
       end
+
+      ## build a docker image locally
+      def docker_local_build
+        system "docker build -t #{docker_repository} #{Git.toplevel}"
+      end
+
+      ## push docker image from local
+      def docker_push
+        system "docker push #{docker_repository}"
+      end
     end
 
     desc 'registry', 'show registry'
@@ -26,8 +36,8 @@ module Stax
 
     desc 'build', 'build docker image'
     def build
-      debug("Docker build #{repository}")
-      system "docker build -t #{repository} #{Git.toplevel}"
+      debug("Docker build #{docker_repository}")
+      docker_local_build
     end
 
     desc 'login', 'login to registry'
@@ -41,8 +51,8 @@ module Stax
 
     desc 'push', 'push docker image to registry'
     def push
-      debug("Docker push #{repository}")
-      system "docker push #{repository}"
+      debug("Docker push #{docker_repository}")
+      docker_push
     end
   end
 
