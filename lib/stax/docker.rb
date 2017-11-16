@@ -7,6 +7,7 @@ module Stax
       ## TODO: look me up if not overridden by user
       def registry
         @_registry ||= 'xxx.dkr.ecr.us-east-1.amazonaws.com'
+        @_docker_registry ||= "#{Aws::Sts.id.account}.dkr.ecr.#{ENV['AWS_REGION']}.amazonaws.com"
       end
 
       def repository
