@@ -5,15 +5,23 @@ module Stax
   class Docker < Base
 
     no_commands do
-      ## TODO: look me up if not overridden by user
-      def registry
-        @_registry ||= 'xxx.dkr.ecr.us-east-1.amazonaws.com'
+      def docker_registry
         @_docker_registry ||= "#{Aws::Sts.id.account}.dkr.ecr.#{ENV['AWS_REGION']}.amazonaws.com"
       end
 
-      def repository
-        @_repository ||= "#{registry}/#{File.basename(Git.toplevel)}"
+      def docker_repository
+        @_docker_repository ||= "#{docker_registry}/#{File.basename(Git.toplevel)}"
       end
+    end
+
+    desc 'registry', 'show registry'
+    def registry
+      puts docker_registry
+    end
+
+    desc 'repository', 'show repository'
+    def repository
+      puts docker_repository
     end
 
     desc 'build', 'build docker image'
