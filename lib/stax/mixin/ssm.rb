@@ -45,6 +45,15 @@ module Stax
     def ssm_parameter_delete(*names)
       Aws::Ssm.delete(names: names.map { |name| ssm_parameter_name(name) })
     end
+
+    ## run a command on stack instances
+    def ssm_run_shellscript(*cmd)
+      Aws::Ssm.run(
+        document_name: 'AWS-RunShellScript',
+        targets: [{key: 'tag:aws:cloudformation:stack-name', values: [stack_name]}],
+        parameters: {commands: cmd}
+      )&.command_id.tap(&method(:puts))
+    end
   end
 
   module Cmd
@@ -65,14 +74,7 @@ module Stax
 
       desc 'shellscript CMD', 'SSM run shell command'
       def shellscript(*cmd)
-        opt = {
-          document_name: 'AWS-RunShellScript',
-          targets: [{key: 'tag:aws:cloudformation:stack-name', values: [my.stack_name]}],
-          parameters: {commands: cmd}
-        }
-        Aws::Ssm.run(opt).tap do |i|
-          puts YAML.dump(stringify_keys(i.to_hash))
-        end
+        my.ssm_run_shellscript(*cmd)
       end
 
       desc 'commands', 'list SSM commands'
