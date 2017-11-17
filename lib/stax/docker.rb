@@ -5,12 +5,15 @@ module Stax
   class Docker < Base
 
     no_commands do
+      ## default to ECR registry for this account
       def docker_registry
         @_docker_registry ||= "#{Aws::Sts.id.account}.dkr.ecr.#{ENV['AWS_REGION']}.amazonaws.com"
       end
 
+      ## name the docker repo after the git repo
       def docker_repository
         @_docker_repository ||= "#{docker_registry}/#{File.basename(Git.toplevel)}"
+      ## full image name for docker push
       end
 
       ## build a docker image locally
