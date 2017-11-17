@@ -14,6 +14,10 @@ module Stax
           client.get_authorization_token.authorization_data
         end
 
+        def exists?(repo, tag)
+          !client.batch_get_image(repository_name: repo, image_ids: [{image_tag: tag}]).images.empty?
+        end
+
       end
 
     end

@@ -55,12 +55,12 @@ module Stax
       end
     end
 
-    desc 'registry', 'show registry'
+    desc 'registry', 'show registry name'
     def registry
       puts docker_registry
     end
 
-    desc 'repository', 'show repository'
+    desc 'repository', 'show repository name'
     def repository
       puts docker_repository
     end
@@ -89,6 +89,17 @@ module Stax
     desc 'push', 'push docker image to registry'
     def push
       docker_push
+    end
+
+    desc 'exists', 'check if docker image exists in ECR'
+    def exists
+      puts Aws::Ecr.exists?(docker_repository, Git.sha)
+    end
+
+    desc 'poll', 'poll ECR until docker image exists'
+    def poll
+      debug("Waiting for image in ECR #{docker_repository}:#{Git.sha}")
+      sleep 10 until Aws::Ecr.exists?(docker_repository, Git.sha)
     end
 
   end
