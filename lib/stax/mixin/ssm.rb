@@ -90,8 +90,9 @@ module Stax
         }
       end
 
-      desc 'invocation', 'SSM invocation details'
-      def invocation(id)
+      desc 'invocation [ID]', 'details for given/latest invocation'
+      def invocation(id = nil)
+        id ||= Aws::Ssm.commands.first.command_id
         Aws::Ssm.invocation(id).each do |i|
           puts YAML.dump(stringify_keys(i.to_hash))
         end
