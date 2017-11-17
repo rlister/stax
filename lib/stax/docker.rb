@@ -12,20 +12,24 @@ module Stax
 
       ## name the docker repo after the git repo
       def docker_repository
-        @_docker_repository ||= "#{docker_registry}/#{File.basename(Git.toplevel)}"
+        @_docker_repository ||= File.basename(Git.toplevel)
+      end
+
       ## full image name for docker push
+      def docker_image
+        @_docker_image ||= "#{docker_registry}/#{docker_repository}"
       end
 
       ## build a docker image locally
       def docker_local_build
-        debug("Docker build #{docker_repository}")
-        system "docker build -t #{docker_repository} #{Git.toplevel}"
+        debug("Docker build #{docker_image}")
+        system "docker build -t #{docker_image} #{Git.toplevel}"
       end
 
       ## push docker image from local
       def docker_push
-        debug("Docker push #{docker_repository}")
-        system "docker push #{docker_repository}"
+        debug("Docker push #{docker_image}")
+        system "docker push #{docker_image}"
       end
 
       ## override this for your argus setup
@@ -59,6 +63,11 @@ module Stax
     desc 'repository', 'show repository'
     def repository
       puts docker_repository
+    end
+
+    desc 'image', 'show image name'
+    def image
+      puts docker_image
     end
 
     desc 'build', 'build docker image'
