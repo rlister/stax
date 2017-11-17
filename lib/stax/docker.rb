@@ -70,9 +70,9 @@ module Stax
       puts docker_image
     end
 
+    ## override this method with the desired builder
     desc 'build', 'build docker image'
     def build
-      ## override this method with the desired builder
       docker_local_build
       # docker_argus_build
     end
