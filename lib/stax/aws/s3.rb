@@ -22,6 +22,10 @@ module Stax
           client.get_bucket_location(bucket: bucket).location_constraint
         end
 
+        def put(opt)
+          client.put_object(opt)
+        end
+
       end
 
     end
