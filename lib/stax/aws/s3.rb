@@ -26,6 +26,14 @@ module Stax
           client.put_object(opt)
         end
 
+        def get_lifecycle(bucket)
+          client.get_bucket_lifecycle_configuration(bucket: bucket).rules
+        end
+
+        def put_lifecycle(bucket, cfg)
+          client.put_bucket_lifecycle_configuration(bucket: bucket, lifecycle_configuration: cfg)
+        end
+
       end
 
     end

@@ -37,25 +37,39 @@ module Stax
         }
       end
 
-      # desc 'reap', 'S3 reaper for all buckets tagged by this stack'
-      # def reap
-      #   s3_buckets.map(&:name).each do |bucket|
-      #     debug("Cleaning up #{bucket}")
-      #     begin
-      #       debug("Removing all objects in bucket #{bucket}")
-      #       s3(:clean, [bucket], yes: true)
-      #       sleep(3)
-      #       debug("Deleting S3 bucket #{bucket}")
-      #       if s3(:empty?, [bucket], quiet: true)
-      #         s3(:remove_bucket, [bucket], yes: true)
-      #       else
-      #         warn("#{bucket} not empty: maybe re-run cleanup")
-      #       end
-      #     rescue Aws::S3::Errors::NoSuchBucket # allow a little idempotence
-      #       debug("No bucket #{bucket}: skipping")
-      #     end
-      #   end
-      # end
+      desc 'lifecycle', 'show/set lifecycle for tagged buckets'
+      def lifecycle
+        debug("Lifecycle for buckets tagged by #{my.stack_name}")
+        stack_tagged_buckets.each do |bucket|
+          Aws::S3.get_lifecycle(bucket.name).each do |l|
+            puts YAML.dump(stringify_keys(l.to_hash))
+          end
+        end
+      end
+
+      desc 'expire', 'expire objects in tagged buckets'
+      def expire(days = 1)
+        debug("Expiring objects in buckets tagged by #{my.stack_name}")
+        stack_tagged_buckets.each do |bucket|
+          if yes?("Expire all objects for #{bucket.name} in #{days}d?", :yellow)
+            Aws::S3.put_lifecycle(
+              bucket.name,
+              rules: [
+                {
+                  prefix: '',   # required, all objects
+                  status: :Enabled,
+                  expiration: {
+                    days: days,
+                  },
+                  noncurrent_version_expiration: {
+                    noncurrent_days: days,
+                  },
+                }
+              ]
+            )
+          end
+        end
+      end
 
     end
   end
