@@ -44,6 +44,18 @@ module Stax
         exit(1) if quit
       end
 
+      ## return true only if all given env vars are set
+      def env_set?(*vars)
+        vars.map{ |v| ENV.has_key?(v) }.all?
+      end
+
+      ## fail unless given env vars are set
+      def ensure_env(*vars)
+        unless env_set?(*vars)
+          fail_task("Please set env: #{vars.join(' ')}")
+        end
+      end
+
       def color(string, hash)
         set_color(string, hash.fetch(string.to_sym, :yellow))
       end
