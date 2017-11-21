@@ -9,7 +9,19 @@ module Stax
         end
 
         def id
-          client.get_caller_identity
+          @_id ||= client.get_caller_identity
+        end
+
+        def account_id
+          id.account
+        end
+
+        def user_id
+          id.user_id
+        end
+
+        def user_arn
+          id.arn
         end
 
       end
