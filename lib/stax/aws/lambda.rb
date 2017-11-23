@@ -26,6 +26,10 @@ module Stax
           client.invoke(opt)
         end
 
+        def update_code(opt)
+          client.update_function_code(opt)
+        end
+
       end
 
     end

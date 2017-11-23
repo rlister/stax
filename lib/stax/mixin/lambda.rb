@@ -70,7 +70,7 @@ module Stax
       desc 'update ID FILE', 'update code for lambda function with ID'
       method_option :publish, aliases: '-p', type: :boolean, default: false, desc: 'publish as a new version'
       def update(id, file)
-        Aws::Lambda.client.update_function_code(
+        Aws::Lambda.update_code(
           function_name: my.resource(id),
           publish: options[:publish],
           zip_file: zip_thing(file),
