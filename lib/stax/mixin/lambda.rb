@@ -18,6 +18,21 @@ module Stax
         def stack_lambdas
           Aws::Cfn.resources_by_type(my.stack_name, 'AWS::Lambda::Function')
         end
+
+        ## return zip file contents, make it if necessary
+        def zip_thing(thing)
+          if File.directory?(thing)
+            Dir.chdir(thing) do
+              %x[zip -q -r - .]      # zip dir contents
+            end
+          elsif thing.match(/\.zip$/i)
+            File.read(thing)         # raw zipfile contents
+          elsif File.file?(thing)
+            %x[zip -q -j - #{thing}] # zip a single file
+          else
+            nil
+          end
+        end
       end
 
       desc 'ls', 'list lambdas for stack'
@@ -49,6 +64,18 @@ module Stax
             file.close
             puts %x[unzip -p #{file.path}] # unzip all contents to stdout
           end
+        end
+      end
+
+      desc 'update ID FILE', 'update code for lambda function with ID'
+      method_option :publish, aliases: '-p', type: :boolean, default: false, desc: 'publish as a new version'
+      def update(id, file)
+        Aws::Lambda.client.update_function_code(
+          function_name: my.resource(id),
+          publish: options[:publish],
+          zip_file: zip_thing(file),
+        )&.version.tap do |v|
+          puts "version: #{v}"
         end
       end
 
