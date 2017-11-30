@@ -75,6 +75,11 @@ module Stax
       cfer_tail
     end
 
+    desc 'generate', 'generate cloudformation template'
+    def generate
+      cfer_generate
+    end
+
     desc 'protection', 'show/set termination protection for stack'
     method_option :enable,  aliases: '-e', type: :boolean, default: nil, desc: 'enable termination protection'
     method_option :disable, aliases: '-d', type: :boolean, default: nil, desc: 'disable termination protection'
