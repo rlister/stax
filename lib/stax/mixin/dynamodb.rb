@@ -52,9 +52,7 @@ module Stax
 
       desc 'keys ID', 'get hash and range keys of table with ID'
       def keys(id)
-        print_table Aws::DynamoDB.table(my.resource(id)).key_schema.each_with_object({}) { |schema, h|
-          h[schema.key_type.downcase.to_sym] = schema.attribute_name
-        }
+        print_table Aws::DynamoDB.keys(my.resource(id))
       end
 
       desc 'scan ID', 'scan table with given logical id from this stack'

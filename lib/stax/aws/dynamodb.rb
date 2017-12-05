@@ -22,6 +22,17 @@ module Stax
           client.describe_table(table_name: name).table.local_secondary_indexes || []
         end
 
+        def key_schema(name)
+          client.describe_table(table_name: name).table.key_schema
+        end
+
+        ## key schema as a hash
+        def keys(name)
+          key_schema(name).each_with_object({}) do |s, h|
+            h[s.key_type.downcase.to_sym] = s.attribute_name
+          end
+        end
+
         def do_scan(opt)
           exclusive_start_key = nil
           loop do
