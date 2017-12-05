@@ -57,6 +57,16 @@ module Stax
         }
       end
 
+      desc 'scan ID', 'scan table with given logical id from this stack'
+      def scan(id)
+        Aws::DynamoDB.scan(table_name: id)
+      end
+
+      desc 'count ID', 'count items in table with given id'
+      def count(id)
+        puts Aws::DynamoDB.count(table_name: id)
+      end
+
     end
   end
 end
