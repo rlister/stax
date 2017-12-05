@@ -37,9 +37,6 @@ module Stax
           exclusive_start_key = nil
           loop do
             r = client.scan(opt.merge(exclusive_start_key: exclusive_start_key))
-            # r.items.each do |item|
-            #   puts JSON.generate(item)
-            # end
             yield r
             exclusive_start_key = r.last_evaluated_key
             break unless exclusive_start_key
