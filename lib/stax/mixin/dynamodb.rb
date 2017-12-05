@@ -65,6 +65,23 @@ module Stax
         puts Aws::DynamoDB.count(table_name: my.resource(id))
       end
 
+      desc 'query ID HASH_VALUE [RANGE_VALUE]', 'query table with id'
+      def query(id, hash_value, range_value = nil)
+        name = my.resource(id)
+        k = Aws::DynamoDB.keys(name)
+        Aws::DynamoDB.query(
+          table_name: name,
+          expression_attribute_values: {
+            ':h' => hash_value,
+            ':r' => range_value,
+          }.compact,
+          key_condition_expression: [
+            "#{k[:hash]} = :h",
+            range_value ? "#{k[:range]} = :r" : nil,
+          ].compact.join(' and '),
+        )
+      end
+
     end
   end
 end

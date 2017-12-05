@@ -59,6 +59,18 @@ module Stax
           return total
         end
 
+        def query(opt)
+          exclusive_start_key = nil
+          loop do
+            r = client.query(opt.merge(exclusive_start_key: exclusive_start_key))
+            r.items.each do |item|
+              puts JSON.generate(item)
+            end
+            exclusive_start_key = r.last_evaluated_key
+            break unless exclusive_start_key
+          end
+        end
+
       end
 
     end
