@@ -1,4 +1,9 @@
 module Stax
+  @@_stack_list = []
+
+  def self.stack_list
+    @@_stack_list
+  end
 
   ## search up the dir tree for nearest Staxfile
   def self.load_staxfile
@@ -14,6 +19,7 @@ module Stax
 
   ## add a stack by name, creates class as needed
   def self.add_stack(name, opt = {})
+    @@_stack_list << name
     c = name.capitalize
 
     ## create the class if it does not exist yet
