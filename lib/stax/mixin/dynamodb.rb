@@ -1,4 +1,5 @@
 require 'stax/aws/dynamodb'
+require_relative 'dynamodb/throughput'
 
 module Stax
   module DynamoDB
@@ -21,6 +22,13 @@ module Stax
       no_commands do
         def stack_tables
           Aws::Cfn.resources_by_type(my.stack_name, 'AWS::DynamoDB::Table')
+        end
+
+        ## get table names from logical IDs, return all tables if nil
+        def stack_table_names(logical_ids)
+          stack_tables.tap do |tables|
+            tables.select! { |t| logical_ids.include?(t.logical_resource_id) } if logical_ids
+          end.map(&:physical_resource_id)
         end
       end
 
