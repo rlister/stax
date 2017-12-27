@@ -13,10 +13,12 @@ module Stax
     class DynamoDB < SubCommand
 
       COLORS = {
-        CREATING: :yellow,
-        UPDATING: :yellow,
-        DELETING: :red,
-        ACTIVE:   :green,
+        CREATING:  :yellow,
+        UPDATING:  :yellow,
+        DELETING:  :red,
+        ACTIVE:    :green,
+        DELETED:   :red,
+        AVAILABLE: :green,
       }
 
       no_commands do
@@ -88,6 +90,13 @@ module Stax
             range_value ? "#{k[:range]} = :r" : nil,
           ].compact.join(' and '),
         )
+      end
+
+      desc 'backups', 'table backups'
+      def backups
+        print_table Aws::DynamoDB.list_backups.map { |b|
+          [b.backup_name, color(b.backup_status, COLORS), b.table_name, b.backup_creation_date_time, human_bytes(b.backup_size_bytes)]
+        }
       end
 
     end

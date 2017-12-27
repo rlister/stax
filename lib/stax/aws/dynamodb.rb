@@ -71,6 +71,18 @@ module Stax
           end
         end
 
+        def list_backups(opt = {})
+          last_arn = nil
+          backups = []
+          loop do
+            r = client.list_backups(opt.merge(exclusive_start_backup_arn: last_arn))
+            backups += r.backup_summaries
+            last_arn = r.last_evaluated_backup_arn
+            break unless last_arn
+          end
+          backups
+        end
+
       end
 
     end
