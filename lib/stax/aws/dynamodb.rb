@@ -83,6 +83,13 @@ module Stax
           backups
         end
 
+        def create_backup(table_name, backup_name)
+          client.create_backup(
+            table_name:  table_name,
+            backup_name: backup_name,
+          ).backup_details
+        end
+
       end
 
     end
