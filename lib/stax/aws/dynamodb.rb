@@ -90,6 +90,13 @@ module Stax
           ).backup_details
         end
 
+        def restore_backup(table_name, backup_arn)
+          client.restore_table_from_backup(
+            target_table_name: table_name,
+            backup_arn:        backup_arn,
+          ).table_description
+        end
+
       end
 
     end

@@ -30,6 +30,12 @@ module Stax
         end
       end
 
+      desc 'restore ARN TABLE', 'restore backup to a new table'
+      def restore(arn, table)
+        debug("Creating table #{table} from backup #{arn}")
+        Aws::DynamoDB.restore_backup(table, arn)
+      end
+
     end
   end
 end
