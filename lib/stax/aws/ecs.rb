@@ -27,7 +27,12 @@ module Stax
         end
 
         def tasks(cluster, status = :RUNNING)
-          client.describe_tasks(cluster: cluster, tasks: list_tasks(cluster, status)).tasks
+          tasks = list_tasks(cluster, status)
+          if tasks.empty?
+            []
+          else
+            client.describe_tasks(cluster: cluster, tasks: tasks).tasks
+          end
         end
 
         def list_instances(cluster)
