@@ -6,6 +6,10 @@ module Stax
       thor.desc(:ecs, 'ECS subcommands')
       thor.subcommand(:ecs, Cmd::Ecs)
     end
+
+    def ecs_cluster_name
+      'default'
+    end
   end
 
   module Cmd
@@ -18,10 +22,6 @@ module Stax
       }
 
       no_commands do
-        def ecs_cluster_name
-          @_ecs_cluster_name ||= my.stack_name
-        end
-
         def ecs_task_definitions
           @_ecs_task_definitions ||= Aws::Cfn.resources_by_type(my.stack_name, 'AWS::ECS::TaskDefinition' )
         end
@@ -37,7 +37,7 @@ module Stax
 
       desc 'clusters', 'ECS cluster for stack'
       def clusters
-        print_table Aws::Ecs.clusters(ecs_cluster_name).map { |c|
+        print_table Aws::Ecs.clusters(my.ecs_cluster_name).map { |c|
           [
             c.cluster_name,
             color(c.status, COLORS),
@@ -50,7 +50,7 @@ module Stax
 
       desc 'services', 'ECS services for stack'
       def services
-        print_table Aws::Ecs.services(ecs_cluster_name, ecs_services.map(&:physical_resource_id)).map { |s|
+        print_table Aws::Ecs.services(my.ecs_cluster_name, ecs_services.map(&:physical_resource_id)).map { |s|
           [s.service_name, color(s.status, COLORS), s.task_definition.split('/').last, "#{s.running_count}/#{s.desired_count}"]
         }
       end
@@ -66,7 +66,7 @@ module Stax
      desc 'tasks' , 'ECS tasks for stack'
      method_option :status, aliases: '-s', type: :string, default: 'RUNNING', desc: 'status to list'
      def tasks
-       print_table Aws::Ecs.tasks(ecs_cluster_name, options[:status].upcase).map { |t|
+       print_table Aws::Ecs.tasks(my.ecs_cluster_name, options[:status].upcase).map { |t|
          [
            t.task_arn.split('/').last,
            t.task_definition_arn.split('/').last,
@@ -80,7 +80,7 @@ module Stax
 
      desc 'instances', 'ECS instances'
      def instances
-       print_table Aws::Ecs.instances(ecs_cluster_name).map { |i|
+       print_table Aws::Ecs.instances(my.ecs_cluster_name).map { |i|
          [
            i.container_instance_arn.split('/').last,
            i.ec2_instance_id,
@@ -96,14 +96,14 @@ module Stax
 
      desc 'run_task [ID]', 'run task by id'
      def run_task(id)
-       Aws::Ecs.run(ecs_cluster_name, Aws::Cfn.id(my.stack_name, id)).tap do |tasks|
+       Aws::Ecs.run(my.ecs_cluster_name, Aws::Cfn.id(my.stack_name, id)).tap do |tasks|
          puts tasks.map(&:container_instance_arn)
        end
      end
 
      desc 'stop_task [TASK]', 'stop task'
      def stop_task(task)
-       Aws::Ecs.stop(ecs_cluster_name, task).tap do |task|
+       Aws::Ecs.stop(my.ecs_cluster_name, task).tap do |task|
          puts task.container_instance_arn
        end
      end
