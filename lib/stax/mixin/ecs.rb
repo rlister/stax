@@ -63,7 +63,7 @@ module Stax
         }
       end
 
-     desc 'tasks' , 'ECS tasks for stack'
+     desc 'tasks', 'ECS tasks for stack'
      method_option :status, aliases: '-s', type: :string, default: 'RUNNING', desc: 'status to list'
      def tasks
        print_table Aws::Ecs.tasks(my.ecs_cluster_name, options[:status].upcase).map { |t|
