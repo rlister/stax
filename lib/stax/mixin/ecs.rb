@@ -78,6 +78,24 @@ module Stax
        }
      end
 
+     desc 'containers', 'containers for running tasks'
+     method_option :status, aliases: '-s', type: :string, default: 'RUNNING', desc: 'status to list'
+     def containers
+       Aws::Ecs.tasks(my.ecs_cluster_name, options[:status].upcase).each do |task|
+         debug("Containers for task #{task.task_definition_arn.split('/').last}")
+         print_table task.containers.map { |c|
+           [
+             c.name,
+             c.container_arn.split('/').last,
+             color(c.last_status, COLORS),
+             c.network_interfaces.map(&:private_ipv_4_address).join(','),
+             c.exit_code,
+             c.reason,
+           ]
+         }
+       end
+     end
+
      desc 'instances', 'ECS instances'
      def instances
        print_table Aws::Ecs.instances(my.ecs_cluster_name).map { |i|
