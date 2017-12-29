@@ -70,7 +70,7 @@ module Stax
          [
            t.task_arn.split('/').last,
            t.task_definition_arn.split('/').last,
-           t.container_instance_arn.split('/').last,
+           t.container_instance_arn&.split('/')&.last || '--',
            color(t.last_status, COLORS),
            "(#{t.desired_status})",
            t.started_by,
