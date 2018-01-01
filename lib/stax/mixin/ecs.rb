@@ -128,6 +128,20 @@ module Stax
        end
      end
 
+     desc 'scale', 'scale containers for service'
+     method_option :desired, aliases: '-d', type: :numeric, default: nil, desc: 'desired container count'
+     def scale
+       ecs_services.each do |s|
+         debug("Scaling service #{s.logical_resource_id}")
+          Aws::Ecs.client.update_service(
+            service: s.physical_resource_id,
+            desired_count: options[:desired],
+          ).service.tap do |s|
+            puts "desired: #{s.desired_count}"
+          end
+       end
+     end
+
     end
 
   end
