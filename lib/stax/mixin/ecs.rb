@@ -59,6 +59,28 @@ module Stax
         }
       end
 
+      desc 'events', 'show service events'
+      method_option :number, aliases: '-n', type: :numeric, default: 10, desc: 'number of events to show'
+      def events
+        my.ecs_service_objects.each do |s|
+          debug("Events for #{s.service_name}")
+          print_table s.events.first(options[:number]).map { |e|
+            [set_color(e.created_at, :green), e.message]
+          }.reverse
+        end
+      end
+
+      desc 'deployments', 'show service deployments'
+      def deployments
+        my.ecs_service_objects.each do |s|
+          debug("Deployments for #{s.service_name}")
+          print_table s.deployments.map { |d|
+            count = "#{d.running_count}/#{d.desired_count} (#{d.pending_count})"
+            [d.id, d.status, count, d.created_at, d.updated_at, d.task_definition.split('/').last]
+          }
+        end
+      end
+
       desc 'definitions', 'ECS task definitions for stack'
       def definitions
         print_table my.ecs_task_definitions.map { |r|
