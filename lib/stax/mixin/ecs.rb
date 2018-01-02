@@ -18,6 +18,10 @@ module Stax
     def ecs_task_definitions
       @_ecs_task_definitions ||= Aws::Cfn.resources_by_type(stack_name, 'AWS::ECS::TaskDefinition')
     end
+
+    def ecs_service_objects
+      Aws::Ecs.services(ecs_cluster_name, ecs_services.map(&:physical_resource_id))
+    end
   end
 
   module Cmd
@@ -50,7 +54,7 @@ module Stax
 
       desc 'services', 'ECS services for stack'
       def services
-        print_table Aws::Ecs.services(my.ecs_cluster_name, my.ecs_services.map(&:physical_resource_id)).map { |s|
+        print_table my.ecs_service_objects.map { |s|
           [s.service_name, color(s.status, COLORS), s.task_definition.split('/').last, "#{s.running_count}/#{s.desired_count}"]
         }
       end
