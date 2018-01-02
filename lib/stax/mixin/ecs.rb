@@ -14,6 +14,10 @@ module Stax
     def ecs_services
       @_ecs_services ||= Aws::Cfn.resources_by_type(stack_name, 'AWS::ECS::Service')
     end
+
+    def ecs_task_definitions
+      @_ecs_task_definitions ||= Aws::Cfn.resources_by_type(stack_name, 'AWS::ECS::TaskDefinition')
+    end
   end
 
   module Cmd
@@ -26,10 +30,6 @@ module Stax
       }
 
       no_commands do
-        def ecs_task_definitions
-          @_ecs_task_definitions ||= Aws::Cfn.resources_by_type(my.stack_name, 'AWS::ECS::TaskDefinition' )
-        end
-
         def ecs_task_definition(id)
           Aws::Cfn.id(my.stack_name, id)
         end
@@ -57,7 +57,7 @@ module Stax
 
       desc 'definitions', 'ECS task definitions for stack'
       def definitions
-        print_table ecs_task_definitions.map { |r|
+        print_table my.ecs_task_definitions.map { |r|
           t = Aws::Ecs.task_definition(r.physical_resource_id)
           [r.logical_resource_id, t.family, t.revision, color(t.status, COLORS)]
         }
