@@ -16,6 +16,10 @@ module Stax
           client.describe_services(cluster: cluster, services: services).services
         end
 
+        def update_service(opt)
+          client.update_service(opt).service
+        end
+
         def task_definition(name)
           client.describe_task_definition(task_definition: name).task_definition
         end

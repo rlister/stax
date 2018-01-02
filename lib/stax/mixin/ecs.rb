@@ -159,10 +159,10 @@ module Stax
       def scale
         my.ecs_services.each do |s|
           debug("Scaling service #{s.logical_resource_id}")
-          Aws::Ecs.client.update_service(
+          Aws::Ecs.update_service(
             service: s.physical_resource_id,
             desired_count: options[:desired],
-          ).service.tap do |s|
+          ).tap do |s|
             puts "desired: #{s.desired_count}"
           end
         end
