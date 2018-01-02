@@ -10,6 +10,10 @@ module Stax
     def ecs_cluster_name
       'default'
     end
+
+    def ecs_services
+      @_ecs_services ||= Aws::Cfn.resources_by_type(stack_name, 'AWS::ECS::Service')
+    end
   end
 
   module Cmd
@@ -29,10 +33,6 @@ module Stax
         def ecs_task_definition(id)
           Aws::Cfn.id(my.stack_name, id)
         end
-
-        def ecs_services
-          @_ecs_services ||= Aws::Cfn.resources_by_type(my.stack_name,  'AWS::ECS::Service')
-        end
       end
 
       desc 'clusters', 'ECS cluster for stack'
@@ -50,7 +50,7 @@ module Stax
 
       desc 'services', 'ECS services for stack'
       def services
-        print_table Aws::Ecs.services(my.ecs_cluster_name, ecs_services.map(&:physical_resource_id)).map { |s|
+        print_table Aws::Ecs.services(my.ecs_cluster_name, my.ecs_services.map(&:physical_resource_id)).map { |s|
           [s.service_name, color(s.status, COLORS), s.task_definition.split('/').last, "#{s.running_count}/#{s.desired_count}"]
         }
       end
@@ -131,7 +131,7 @@ module Stax
      desc 'scale', 'scale containers for service'
      method_option :desired, aliases: '-d', type: :numeric, default: nil, desc: 'desired container count'
      def scale
-       ecs_services.each do |s|
+       my.ecs_services.each do |s|
          debug("Scaling service #{s.logical_resource_id}")
           Aws::Ecs.client.update_service(
             service: s.physical_resource_id,
