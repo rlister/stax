@@ -22,6 +22,26 @@ module Stax
     def ecs_service_objects
       Aws::Ecs.services(ecs_cluster_name, ecs_services.map(&:physical_resource_id))
     end
+
+    ## register a new revision of existing task definition
+    def ecs_update_taskdef(id)
+      taskdef = Aws::Ecs.task_definition(resource(id))
+      debug("Registering new revision of #{taskdef.family}")
+      args = %i[family cpu memory requires_compatibilities task_role_arn execution_role_arn network_mode container_definitions volumes placement_constraints]
+      Aws::Ecs.client.register_task_definition(taskdef.to_hash.slice(*args)).task_definition.tap do |t|
+        puts t.task_definition_arn
+      end
+    end
+
+    ## update service to use a new task definition
+    def ecs_update_service(id, taskdef)
+      service_name = resource(id).split('/').last
+      taskdef_name = taskdef.task_definition_arn.split('/').last
+      debug("Updating #{service_name} to #{taskdef_name}")
+      Aws::Ecs.update_service(service: service_name, task_definition: taskdef_name).tap do |s|
+        puts s.task_definition
+      end
+    end
   end
 
   module Cmd
