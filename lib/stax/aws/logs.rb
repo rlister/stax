@@ -18,6 +18,10 @@ module Stax
           client.describe_log_streams(opt).log_streams
         end
 
+        def delete_group(name)
+          client.delete_log_group(log_group_name: name)
+        end
+
       end
 
     end

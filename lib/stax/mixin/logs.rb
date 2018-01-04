@@ -89,6 +89,18 @@ module Stax
         end
       end
 
+      ## lambdas create their own log groups, and when we delete stack they are left behind;
+      ## this task looks up their names by stack prefix, and deletes them
+      desc 'cleanup', 'cleanup lambda log groups named for stack'
+      method_option :test, aliases: '-t', type: :boolean, default: false, desc: 'show group names without deleting'
+      def cleanup
+        debug("Cleaning up log groups for stack #{my.stack_name}")
+        Aws::Logs.groups("/aws/lambda/#{my.stack_name}").map(&:log_group_name).each do |name|
+          puts name
+          Aws::Logs.delete_group(name) unless options[:test]
+        end
+      end
+
     end
   end
 end
