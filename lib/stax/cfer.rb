@@ -5,6 +5,7 @@ module Stax
     class_option :use_previous_value, aliases: '-u', type: :array, default: [], desc: 'params to use previous value'
 
     no_commands do
+
       def cfer_parameters
         {}
       end
@@ -48,11 +49,28 @@ module Stax
         Cfer.generate!(cfer_template, opts)
       end
 
+      ## generate method does puts, so steal stdout into a string
+      def cfer_generate_string
+        capture_stdout do
+          cfer_generate
+        end
+      end
+
       def cfer_tail
         Cfer.tail!(stack_name, follow: true, number: 1)
       rescue ::Aws::CloudFormation::Errors::ValidationError => e
         puts e.message
       end
+
+      ## temporarily grab stdout to a string
+      def capture_stdout
+        stdout, $stdout = $stdout, StringIO.new
+        yield
+        $stdout.string
+      ensure
+        $stdout = stdout
+      end
+
     end
 
   end
