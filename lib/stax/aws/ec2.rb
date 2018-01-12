@@ -16,7 +16,18 @@ module Stax
           end.map(&:instances).flatten
         end
 
+        ## list AMIs
+        def images(opt = {})
+          client.describe_images(opt).images.sort_by(&:creation_date)
+        end
+
+        ## tag AMIs
+        def create_tags(opt)
+          client.create_tags(opt)
+        end
+
       end
+
     end
   end
 end
