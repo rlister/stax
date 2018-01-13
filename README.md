@@ -144,7 +144,7 @@ By default Stax will name stacks as `$app-$branch-$stack`. For our
 example we will have e.g. `website-master-vpc`, `website-master-db`,
 etc.
 
-To modify this scheme modify the methods `Stax::Base::stack_prefix`
+To change this scheme modify the methods `Stax::Base::stack_prefix`
 and/or `Stax::Stack::stack_name`.
 
 ## Stack parameters
