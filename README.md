@@ -3,6 +3,9 @@
 Stax is a highly-opionated framework for managing Cloudformation
 stacks along with all the crappy glue code you need around them.
 
+Stax is built as a set of ruby classes, with configuration based
+around sub-classing and monkey-patching.
+
 ## Concepts
 
 ### Application
@@ -34,9 +37,30 @@ example, `vpc` stack outputs its subnet IDs, which are passed as
 parameters to the `app` stack. Stax is designed to handle this wiring
 for us.
 
+### Extensions
+
+Stax is intended to be modified to handle all the hackery needed in
+real-world app deployments. Each stack is modeled by subclassing the
+`Stax::Stack` class, and you are encouraged to monkey-patch methods,
+for example to perform extra work before/after creating or destroying
+stacks.
+
 ## Installation
 
-Add this line to your application's Gemfile:
+We like to keep all infrastructure code in a subdirectory `ops` of
+application repos, but you can use any layout you like.
+
+Example directory structure:
+
+```
+ops/
+├── Gemfile
+├── Staxfile
+├── cf/
+├── lib/
+```
+
+Add this line to your `ops/Gemfile`:
 
 ```ruby
 gem 'stax'
@@ -44,15 +68,21 @@ gem 'stax'
 
 And then execute:
 
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install stax
+```
+cd ops
+bundle
+bundle exec stax version
+```
 
 ## Usage
 
-TODO: Write usage instructions here
+Add each of your stacks to `ops/Staxfile`:
+
+```
+stack :vpc
+stack :db
+stack :app
+```
 
 ## Development
 
