@@ -73,7 +73,7 @@ gem 'stax'
 
 And then execute:
 
-```
+```bash
 $ cd ops
 $ bundle
 $ bundle exec stax version
@@ -83,7 +83,7 @@ $ bundle exec stax version
 
 Add each of your stacks to `ops/Staxfile`:
 
-```
+```ruby
 stack :vpc
 stack :db
 stack :app
@@ -91,7 +91,7 @@ stack :app
 
 Run stax to see it has created subcommands for each of your stacks:
 
-```
+```bash
 $ bundle exec stax
 Commands:
   stax app             # app stack
@@ -107,7 +107,7 @@ Commands:
 
 with the standard create/update/delete tasks for each:
 
-```
+```bash
 $ bundle exec stax vpc
 Commands:
   stax vpc create           # create stack
@@ -134,7 +134,7 @@ See `examples` for a typical setup.
 
 Simply control stacks using the relevant subcommands:
 
-```
+```bash
 $ stax vpc create
 $ stax vpc update
 $ stax vpc delete
@@ -145,7 +145,7 @@ $ stax vpc delete
 For any given stack, subclass `Stax::Stack` and return define a hash of
 parameters from the method `cfer_parameters`. For example:
 
-```
+```ruby
 module Stax
   class App < Stack
     no_commands do
@@ -177,7 +177,7 @@ infrastructure. This is handled by sub-classing and monkey-patching
 
 For example, in our `Stax::App` class:
 
-```
+```ruby
 module Stax
   class App < Stack
 
