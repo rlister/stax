@@ -1,8 +1,38 @@
 # Stax
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/stax`. To experiment with that code, run `bin/console` for an interactive prompt.
+Stax is a highly-opionated framework for managing Cloudformation
+stacks along with all the crappy glue code you need around them.
 
-TODO: Delete this and the text above, and describe your gem
+## Concepts
+
+### Application
+
+You have an application in a git repo. Our example will be called
+`website`. The Stax infrastructure code and cloudformation templates
+live in the same repo as the application code.
+
+### Branch
+
+You can check out any branch of your repo and deploy a
+fully-operational infrastructure using Stax.
+
+Example branches might be `prod`, `stg`, `dev`, or perhaps your model
+is `release/37`, `feature/38`, `hotfix/1234`, etc.
+
+### Stacks
+
+Each deployable branch consists of one or more actual cloudformation
+stacks. For example, our website app may consist of stacks `vpc`, `db`
+and `app`.
+
+In our experience it is better to build multiple coupled
+cloudformation stacks, handling discrete parts of an application
+infrastructure, rather than having a single giant template.
+
+These stacks are connected via their outputs and input parameters. For
+example, `vpc` stack outputs its subnet IDs, which are passed as
+parameters to the `app` stack. Stax is designed to handle this wiring
+for us.
 
 ## Installation
 
