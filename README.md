@@ -6,6 +6,11 @@ stacks along with all the crappy glue code you need around them.
 Stax is built as a set of ruby classes, with configuration based
 around sub-classing and monkey-patching.
 
+For now, Stax reads template files written using the
+[cfer](https://github.com/seanedwards/cfer) ruby wrapper. It should be
+straightforward to change to raw json/yaml, or a different wrapper by
+re-implementing the methods in `lib/stax/stack/crud.rb`.
+
 ## Concepts
 
 ### Application
@@ -69,9 +74,9 @@ gem 'stax'
 And then execute:
 
 ```
-cd ops
-bundle
-bundle exec stax version
+$ cd ops
+$ bundle
+$ bundle exec stax version
 ```
 
 ## Usage
@@ -82,6 +87,116 @@ Add each of your stacks to `ops/Staxfile`:
 stack :vpc
 stack :db
 stack :app
+```
+
+Run stax to see it has created subcommands for each of your stacks:
+
+```
+$ bundle exec stax
+Commands:
+  stax app             # app stack
+  stax create          # meta create task
+  stax db              # db stack
+  stax delete          # meta delete task
+  stax help [COMMAND]  # Describe available commands or one specific command
+  stax ls              # list stacks for this branch
+  stax version         # show version
+  stax vpc             # vpc stack
+
+```
+
+with the standard create/update/delete tasks for each:
+
+```
+$ bundle exec stax vpc
+Commands:
+  stax vpc create           # create stack
+  stax vpc delete           # delete stack
+  stax vpc events           # show all events for stack
+  stax vpc exists           # test if stack exists
+  stax vpc generate         # generate cloudformation template
+  stax vpc help [COMMAND]   # Describe subcommands or one specific subcommand
+  stax vpc id [LOGICAL_ID]  # get physical ID from resource logical ID
+  stax vpc outputs          # show stack outputs
+  stax vpc parameters       # show stack input parameters
+  stax vpc protection       # show/set termination protection for stack
+  stax vpc resources        # list resources for this stack
+  stax vpc tail             # tail stack events
+  stax vpc template         # get template of existing stack from cloudformation
+  stax vpc update           # update stack
+```
+
+## Cloudformation templates
+
+Stax will load template files from the path relative to its `Staxfile`
+as `cf/$stack.rb`, e.g. `cf/vpc.rb`. Modify this using the method `Stax::Stack::cfer_template`.
+See `examples` for a typical setup.
+
+Simply control stacks using the relevant subcommands:
+
+```
+$ stax vpc create
+$ stax vpc update
+$ stax vpc delete
+```
+
+## Stack parameters
+
+For any given stack, subclass `Stax::Stack` and return define a hash of
+parameters from the method `cfer_parameters`. For example:
+
+```
+module Stax
+  class App < Stack
+    no_commands do
+
+      def cfer_parameters
+        {
+          vpc: stack(:vpc).stack_name,  # how to reference other stacks
+          db:  stack(:db).stack_name,
+          ami: 'ami-e582d29f',
+        }
+      end
+
+    end
+  end
+end
+```
+
+Note, `Stax::Stack` objects are subclassed from
+[Thor](https://github.com/erikhuda/thor), and any non-CLI command
+methods must be defined inside a `no_commands` block. See examples for
+clearer illustration of this.
+
+## Adding and modifying tasks
+
+A strong underlying assumption of Stax is that you will always need
+extra non-cloudformation glue code to handle edge-cases in your
+infrastructure. This is handled by sub-classing and monkey-patching
+`Stax::Stack`.
+
+For example, in our `Stax::App` class:
+
+```
+module Stax
+  class App < Stack
+
+    desc 'create', 'create stack'
+    def create
+      ensure_stack :vpc, :db   # make sure vpc and db stacks are created first
+      super                    # create the stack
+      notify_slack()           # define and call any extra code you need
+    end
+
+    desc 'delete', 'delete stack'
+    def delete
+      super                    # delete the stack
+      cleanup_code()           # do some extra work
+      notify_slack()           # etc
+    end
+
+  end
+end
 ```
 
 ## Development
