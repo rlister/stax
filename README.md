@@ -140,6 +140,13 @@ $ stax vpc update
 $ stax vpc delete
 ```
 
+By default Stax will name stacks as `$app-$branch-$stack`. For our
+example we will have e.g. `website-master-vpc`, `website-master-db`,
+etc.
+
+To modify this scheme modify the methods `Stax::Base::stack_prefix`
+and/or `Stax::Stack::stack_name`.
+
 ## Stack parameters
 
 For any given stack, subclass `Stax::Stack` and return define a hash of
