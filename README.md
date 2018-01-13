@@ -73,7 +73,7 @@ gem 'stax'
 
 And then execute:
 
-```bash
+```
 $ cd ops
 $ bundle
 $ bundle exec stax version
@@ -91,7 +91,7 @@ stack :app
 
 Run stax to see it has created subcommands for each of your stacks:
 
-```bash
+```
 $ bundle exec stax
 Commands:
   stax app             # app stack
@@ -107,7 +107,7 @@ Commands:
 
 with the standard create/update/delete tasks for each:
 
-```bash
+```
 $ bundle exec stax vpc
 Commands:
   stax vpc create           # create stack
@@ -134,7 +134,7 @@ See `examples` for a typical setup.
 
 Simply control stacks using the relevant subcommands:
 
-```bash
+```
 $ stax vpc create
 $ stax vpc update
 $ stax vpc delete
