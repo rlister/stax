@@ -133,16 +133,15 @@ module Stax
       def containers
         my.ecs_services.each do |s|
           Aws::Ecs.tasks(service_name: s.physical_resource_id, desired_status: options[:status].upcase).each do |t|
-            task    = t.task_arn.split('/').last
-            taskdef = t.task_definition_arn.split('/').last
-            debug("Containers for task #{task} #{taskdef}")
+            task = t.task_arn.split('/').last
+            debug("Containers for task #{task}")
             print_table t.containers.map { |c|
               [
                 c.name,
                 c.container_arn.split('/').last,
                 color(c.last_status, COLORS),
                 c.network_interfaces.map(&:private_ipv_4_address).join(','),
-                taskdef,
+                t.task_definition_arn.split('/').last,
                 c.exit_code,
                 c.reason,
               ]
