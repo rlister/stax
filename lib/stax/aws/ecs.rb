@@ -24,18 +24,18 @@ module Stax
           client.describe_task_definition(task_definition: name).task_definition
         end
 
-        def list_tasks(cluster, status = :RUNNING)
+        def list_tasks(opt)
           paginate(:task_arns) do |token|
-            client.list_tasks(cluster: cluster, next_token: token, desired_status: status)
+            client.list_tasks(opt.merge(next_token: token))
           end
         end
 
-        def tasks(cluster, status = :RUNNING)
-          tasks = list_tasks(cluster, status)
+        def tasks(opt = {})
+          tasks = list_tasks(opt)
           if tasks.empty?
             []
           else
-            client.describe_tasks(cluster: cluster, tasks: tasks).tasks
+            client.describe_tasks(tasks: tasks).tasks
           end
         end
 

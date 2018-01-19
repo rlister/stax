@@ -112,36 +112,43 @@ module Stax
       desc 'tasks', 'ECS tasks for stack'
       method_option :status, aliases: '-s', type: :string, default: 'RUNNING', desc: 'status to list'
       def tasks
-        print_table Aws::Ecs.tasks(my.ecs_cluster_name, options[:status].upcase).map { |t|
-          [
-            t.task_arn.split('/').last,
-            t.task_definition_arn.split('/').last,
-            t.container_instance_arn&.split('/')&.last || '--',
-            color(t.last_status, COLORS),
-            "(#{t.desired_status})",
-            t.started_by,
-          ]
-        }
+        my.ecs_services.each do |s|
+          name = s.physical_resource_id.split('/').last
+          debug("Tasks for service #{name}")
+          print_table Aws::Ecs.tasks(service_name: s.physical_resource_id, desired_status: options[:status].upcase).map { |t|
+            [
+              t.task_arn.split('/').last,
+              t.task_definition_arn.split('/').last,
+              t.container_instance_arn&.split('/')&.last || '--',
+              color(t.last_status, COLORS),
+              "(#{t.desired_status})",
+              t.started_by,
+            ]
+          }
+        end
       end
 
       desc 'containers', 'containers for running tasks'
       method_option :status, aliases: '-s', type: :string, default: 'RUNNING', desc: 'status to list'
       def containers
-        debug("Containers for cluster #{my.ecs_cluster_name}")
-        print_table Aws::Ecs.tasks(my.ecs_cluster_name, options[:status].upcase).map { |task|
-          task_defn = task.task_definition_arn.split('/').last
-          task.containers.map { |c|
-            [
-              c.container_arn.split('/').last,
-              c.name,
-              color(c.last_status, COLORS),
-              c.network_interfaces.map(&:private_ipv_4_address).join(','),
-              task_defn,
-              c.exit_code,
-              c.reason,
-            ]
-          }
-        }.flatten(1)
+        my.ecs_services.each do |s|
+          Aws::Ecs.tasks(service_name: s.physical_resource_id, desired_status: options[:status].upcase).each do |t|
+            task    = t.task_arn.split('/').last
+            taskdef = t.task_definition_arn.split('/').last
+            debug("Containers for task #{task} #{taskdef}")
+            print_table t.containers.map { |c|
+              [
+                c.name,
+                c.container_arn.split('/').last,
+                color(c.last_status, COLORS),
+                c.network_interfaces.map(&:private_ipv_4_address).join(','),
+                taskdef,
+                c.exit_code,
+                c.reason,
+              ]
+            }
+          end
+        end
       end
 
       desc 'instances', 'ECS instances'
