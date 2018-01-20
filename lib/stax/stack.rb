@@ -1,9 +1,6 @@
 module Stax
   class Stack < Base
 
-    class_option :resources, type: :array,   default: nil,   desc: 'resources IDs to allow updates'
-    class_option :all,       type: :boolean, default: false, desc: 'DANGER: allow updates to all resources'
-
     no_commands do
       def class_name
         @_class_name ||= self.class.to_s.split('::').last.downcase

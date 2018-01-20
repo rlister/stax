@@ -1,10 +1,8 @@
 module Stax
   class Stack < Base
 
-    class_option :resources, type: :array,   default: nil,   desc: 'resources IDs to allow updates'
-    class_option :all,       type: :boolean, default: false, desc: 'DANGER: allow updates to all resources'
-
     no_commands do
+
       ## policy to lock the stack to all updates
       def stack_policy
         {
@@ -17,23 +15,16 @@ module Stax
         }
       end
 
-      ## temporary policy during updates
+      ## temporary policy during updates; modify this to restrict resources
       def stack_policy_during_update
         {
           Statement: [
             Effect:    'Allow',
             Action:    'Update:*',
             Principal: '*',
-            Resource:  stack_update_resources
+            Resource:  '*'
           ]
         }
-      end
-
-      ## resources to unlock during update
-      def stack_update_resources
-        (options[:all] ? ['*'] : options[:resources]).map do |r|
-          "LogicalResourceId/#{r}"
-        end
       end
 
       ## cleanup sometimes needs to wait
@@ -45,6 +36,7 @@ module Stax
           break unless exists?
         end
       end
+
     end
 
     desc 'create', 'create stack'
