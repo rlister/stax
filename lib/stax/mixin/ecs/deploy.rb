@@ -23,7 +23,10 @@ module Stax
 
     def update_service(service, taskdef)
       debug("Updating #{service.service_name} to new revision")
-      Aws::Ecs.update_service(service: service.service_name, task_definition: t.task_definition_arn).tap do |s|
+      Aws::Ecs.update_service(
+        service:         service.service_name,
+        task_definition: taskdef.task_definition_arn
+      ).tap do |s|
         puts s.deployments.first.id
       end
     end
