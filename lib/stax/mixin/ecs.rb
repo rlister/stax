@@ -1,4 +1,5 @@
 require 'stax/aws/ecs'
+require_relative 'ecs/deploy'
 
 module Stax
   module Ecs
@@ -23,7 +24,7 @@ module Stax
       Aws::Ecs.services(ecs_cluster_name, ecs_services.map(&:physical_resource_id))
     end
 
-    ## register a new revision of existing task definition
+    ## deprecated: register a new revision of existing task definition
     def ecs_update_taskdef(id)
       taskdef = Aws::Ecs.task_definition(resource(id))
       debug("Registering new revision of #{taskdef.family}")
@@ -33,7 +34,7 @@ module Stax
       end
     end
 
-    ## update service to use a new task definition
+    ## deprecated: update service to use a new task definition
     def ecs_update_service(id, taskdef)
       service_name = resource(id).split('/').last
       taskdef_name = taskdef.task_definition_arn.split('/').last
@@ -42,6 +43,7 @@ module Stax
         puts s.task_definition
       end
     end
+
   end
 
   module Cmd
