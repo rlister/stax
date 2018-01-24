@@ -62,12 +62,12 @@ module Stax
         end
       end
 
-      desc 'tail [STREAM]', 'tail latest/given log stream'
+      desc 'events [STREAM]', 'show events just from latest/given log stream'
       method_option :group,    aliases: '-g', type: :string,  default: nil,   desc: 'log group to tail'
       method_option :numlines, aliases: '-n', type: :numeric, default: 10,    desc: 'number of lines to show'
       method_option :follow,   aliases: '-f', type: :boolean, default: false, desc: 'follow log output'
       method_option :sleep,    aliases: '-s', type: :numeric, default: 1,     desc: 'seconds to sleep between poll for new data'
-      def tail(stream = nil)
+      def events(stream = nil)
         trap('SIGINT', 'EXIT')    # clean exit with ctrl-c
         group  = ((g = options[:group]) ? log_groups[g] : log_groups.values.first).log_group_name
         stream ||= latest_stream(group).log_stream_name
