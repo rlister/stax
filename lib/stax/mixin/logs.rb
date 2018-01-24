@@ -89,6 +89,45 @@ module Stax
         end
       end
 
+      desc 'tail', 'tail all events from log group'
+      method_option :group,   aliases: '-g', type: :string, default: nil, desc: 'log group to tail'
+      method_option :streams, aliases: '-s', type: :array,  default: nil, desc: 'limit to given streams'
+      def tail
+        trap('SIGINT', 'EXIT')    # clean exit with ctrl-c
+        group  = ((g = options[:group]) ? log_groups[g] : log_groups.values.first).log_group_name
+
+        debug("Log group #{group}")
+        token = nil
+        start_time = Time.now.to_i - 30 # start 30 sec ago
+
+        loop do
+          end_time = Time.now.to_i
+          resp = Aws::Logs.client.filter_log_events(
+            log_group_name: group,
+            log_stream_names: options[:streams],
+            start_time: start_time * 1000, # aws needs msec
+            end_time: end_time * 1000,
+            next_token: token,
+            interleaved: true,
+          )
+
+          ## pretty-print the events
+          resp.events.each do |e|
+            puts("#{set_color(human_time(e.timestamp).utc, :green)}  #{set_color(e.log_stream_name, :blue)}  #{e.message}")
+          end
+
+          ## token means more data available from this request, so loop and get it right away
+          token = resp.next_token
+
+          ## no token, so sleep and start next request from end time of this one
+          unless token
+            start_time = end_time
+            sleep 10
+          end
+        end
+      end
+
+
       ## lambdas create their own log groups, and when we delete stack they are left behind;
       ## this task looks up their names by stack prefix, and deletes them
       desc 'cleanup', 'cleanup lambda log groups named for stack'
