@@ -127,7 +127,6 @@ module Stax
         end
       end
 
-
       ## lambdas create their own log groups, and when we delete stack they are left behind;
       ## this task looks up their names by stack prefix, and deletes them
       desc 'cleanup', 'cleanup lambda log groups named for stack'
