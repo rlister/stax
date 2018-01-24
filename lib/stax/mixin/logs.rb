@@ -127,6 +127,39 @@ module Stax
         end
       end
 
+      desc 'filter', 'filter events from log group'
+      method_option :group,   aliases: '-g', type: :string, default: nil, desc: 'log group to filter'
+      method_option :streams, aliases: '-s', type: :array,  default: nil, desc: 'limit to given streams'
+      method_option :pattern, aliases: '-p', type: :string, default: nil, desc: 'pattern to filter logs'
+      method_option :start,   aliases: '-t', type: :string, default: nil, desc: 'start time'
+      method_option :end,     aliases: '-e', type: :string, default: nil, desc: 'end time'
+      def filter
+        trap('SIGINT', 'EXIT')    # clean exit with ctrl-c
+        group = ((g = options[:group]) ? log_groups[g] : log_groups.values.first).log_group_name
+        debug("Log group #{group}")
+
+        start_time = options[:start] ? Time.parse(options[:start]).to_i*1000 : nil
+        end_time   = options[:end]   ? Time.parse(options[:end]).to_i*1000   : nil
+        token = nil
+        loop do
+          resp = Aws::Logs.client.filter_log_events(
+            log_group_name: group,
+            log_stream_names: options[:streams],
+            next_token: token,
+            start_time: start_time,
+            end_time: end_time,
+            filter_pattern: options[:pattern],
+          )
+          resp.events.each do |e|
+            time   = set_color(human_time(e.timestamp).utc, :green)
+            stream = set_color(e.log_stream_name, :blue)
+            puts("#{time}  #{stream}  #{e.message}")
+          end
+          token = resp.next_token
+          break unless token
+        end
+      end
+
       ## lambdas create their own log groups, and when we delete stack they are left behind;
       ## this task looks up their names by stack prefix, and deletes them
       desc 'cleanup', 'cleanup lambda log groups named for stack'
