@@ -40,7 +40,9 @@ module Stax
       def tables
         print_table stack_tables.map { |r|
           t = Aws::DynamoDB.table(r.physical_resource_id)
-          [ t.table_name, color(t.table_status, COLORS), t.item_count, t.table_size_bytes, t.creation_date_time ]
+          g = Aws::DynamoDB.global_table(r.physical_resource_id)
+          regions = g.nil? ? '-' : g.replication_group.map(&:region_name).sort.join(',')
+          [ t.table_name, color(t.table_status, COLORS), t.item_count, t.table_size_bytes, t.creation_date_time, regions ]
         }
       end
 

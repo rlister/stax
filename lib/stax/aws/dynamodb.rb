@@ -14,6 +14,12 @@ module Stax
           client.describe_table(table_name: name).table
         end
 
+        def global_table(name)
+          client.describe_global_table(global_table_name: name)&.global_table_description
+        rescue ::Aws::DynamoDB::Errors::GlobalTableNotFoundException
+          nil
+        end
+
         def gsi(name)
           client.describe_table(table_name: name).table.global_secondary_indexes || []
         end
