@@ -87,6 +87,14 @@ module Stax
           outputs(name)[key]
         end
 
+        def create(opt)
+          client.create_stack(opt)&.stack_id
+        end
+
+        def update(opt)
+          client.update_stack(opt)&.stack_id
+        end
+
         def delete(name)
           client.delete_stack(stack_name: name)
         end

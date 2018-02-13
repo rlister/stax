@@ -12,7 +12,7 @@ module Stax
             Principal: '*',
             Resource:  '*'
           ]
-        }
+        }.to_json
       end
 
       ## temporary policy during updates; modify this to restrict resources
@@ -24,7 +24,7 @@ module Stax
             Principal: '*',
             Resource:  '*'
           ]
-        }
+        }.to_json
       end
 
       ## cleanup sometimes needs to wait
@@ -43,14 +43,33 @@ module Stax
     def create
       fail_task("Stack #{stack_name} already exists") if exists?
       debug("Creating stack #{stack_name}")
-      cfer_converge(stack_policy: stack_policy)
+      Aws::Cfn.create(
+        stack_name: stack_name,
+        template_body: cfer_generate_string,
+        parameters: stringify_keys(cfer_parameters).except(*options[:use_previous_value]),
+        stack_policy_body: stack_policy,
+        notification_arns: cfer_notification_arns,
+        enable_termination_protection: cfer_termination_protection,
+      )
+      cfer_tail
+    rescue ::Aws::CloudFormation::Errors::ValidationError => e
+      warn(e.message)
     end
 
     desc 'update', 'update stack'
     def update
       fail_task("Stack #{stack_name} does not exist") unless exists?
       debug("Updating stack #{stack_name}")
-      cfer_converge(stack_policy_during_update: stack_policy_during_update)
+      Aws::Cfn.update(
+        stack_name: stack_name,
+        template_body: cfer_generate_string,
+        parameters: stringify_keys(cfer_parameters).except(*options[:use_previous_value]),
+        stack_policy_during_update_body: stack_policy_during_update,
+        notification_arns: cfer_notification_arns,
+      )
+      cfer_tail
+    rescue ::Aws::CloudFormation::Errors::ValidationError => e
+      warn(e.message)
     end
 
     desc 'delete', 'delete stack'
