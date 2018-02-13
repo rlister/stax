@@ -75,7 +75,7 @@ module Stax
     desc 'delete', 'delete stack'
     def delete
       if yes? "Really delete stack #{stack_name}?", :yellow
-        Cfn.delete(stack_name)
+        Aws::Cfn.delete(stack_name)
       end
     rescue ::Aws::CloudFormation::Errors::ValidationError => e
       fail_task(e.message)
@@ -96,12 +96,12 @@ module Stax
     method_option :disable, aliases: '-d', type: :boolean, default: nil, desc: 'disable termination protection'
     def protection
       if options[:enable]
-        Cfn.protection(stack_name, true)
+        Aws::Cfn.protection(stack_name, true)
       elsif options[:disable]
-        Cfn.protection(stack_name, false)
+        Aws::Cfn.protection(stack_name, false)
       end
       debug("Termination protection for #{stack_name}")
-      puts Cfn.describe(stack_name)&.enable_termination_protection
+      puts Aws::Cfn.describe(stack_name)&.enable_termination_protection
     end
 
   end
