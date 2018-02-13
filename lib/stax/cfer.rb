@@ -30,18 +30,18 @@ module Stax
       end
 
       ## create/update the stack
-      def cfer_converge(args = {})
-        opts = {
-          parameters: stringify_keys(cfer_parameters).except(*options[:use_previous_value]),
-          template:   cfer_template,
-          follow:     true,
-          number:     1,
-          s3_path:    cfer_s3_path,
-          notification_arns: cfer_notification_arns,
-          enable_termination_protection: cfer_termination_protection,
-        }
-        Cfer.converge!(stack_name, opts.merge(args))
-      end
+      # def cfer_converge(args = {})
+      #   opts = {
+      #     parameters: stringify_keys(cfer_parameters).except(*options[:use_previous_value]),
+      #     template:   cfer_template.tap{ |t| puts t.bytesize },
+      #     follow:     true,
+      #     number:     1,
+      #     s3_path:    cfer_s3_path,
+      #     notification_arns: cfer_notification_arns,
+      #     enable_termination_protection: cfer_termination_protection,
+      #   }
+      #   Cfer.converge!(stack_name, opts.merge(args))
+      # end
 
       ## generate JSON for stack without sending to cloudformation
       def cfer_generate
