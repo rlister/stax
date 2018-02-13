@@ -56,12 +56,6 @@ module Stax
         end
       end
 
-      def cfer_tail
-        Cfer.tail!(stack_name, follow: true, number: 1)
-      rescue ::Aws::CloudFormation::Errors::ValidationError => e
-        puts e.message
-      end
-
       ## temporarily grab stdout to a string
       def capture_stdout
         stdout, $stdout = $stdout, StringIO.new
