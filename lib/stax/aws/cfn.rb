@@ -55,8 +55,6 @@ module Stax
           paginate(:stack_events) do |token|
             client.describe_stack_events(stack_name: name, next_token: token)
           end
-        rescue ::Aws::CloudFormation::Errors::ValidationError => e
-          puts e.message
         end
 
         def id(name, id)

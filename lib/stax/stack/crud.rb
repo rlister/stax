@@ -51,7 +51,7 @@ module Stax
         notification_arns: cfer_notification_arns,
         enable_termination_protection: cfer_termination_protection,
       )
-      cfer_tail
+      tail
     rescue ::Aws::CloudFormation::Errors::ValidationError => e
       warn(e.message)
     end
@@ -67,7 +67,7 @@ module Stax
         stack_policy_during_update_body: stack_policy_during_update,
         notification_arns: cfer_notification_arns,
       )
-      cfer_tail
+      tail
     rescue ::Aws::CloudFormation::Errors::ValidationError => e
       warn(e.message)
     end
@@ -76,14 +76,10 @@ module Stax
     def delete
       if yes? "Really delete stack #{stack_name}?", :yellow
         Aws::Cfn.delete(stack_name)
+        tail
       end
     rescue ::Aws::CloudFormation::Errors::ValidationError => e
       fail_task(e.message)
-    end
-
-    desc 'tail', 'tail stack events'
-    def tail
-      cfer_tail
     end
 
     desc 'generate', 'generate cloudformation template'
