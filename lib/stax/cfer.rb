@@ -10,9 +10,8 @@ module Stax
         {}
       end
 
-      ## location of cfer template file
-      def cfer_template
-        File.join('cf', "#{class_name}.rb")
+      def cfn_parameters
+        cfer_parameters
       end
 
       ## override with S3 bucket for upload of large templates as needed
@@ -43,10 +42,15 @@ module Stax
       #   Cfer.converge!(stack_name, opts.merge(args))
       # end
 
+      ## location of template file
+      def cfn_template_path
+        File.join('cf', "#{class_name}.rb")
+      end
+
       ## generate JSON for stack without sending to cloudformation
       def cfer_generate
-        opts = {parameters: stringify_keys(cfer_parameters)}
-        Cfer.generate!(cfer_template, opts)
+        opts = {parameters: stringify_keys(cfn_parameters)}
+        Cfer.generate!(cfn_template_path, opts)
       end
 
       ## generate method does puts, so steal stdout into a string
