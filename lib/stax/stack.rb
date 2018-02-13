@@ -11,15 +11,15 @@ module Stax
       end
 
       def exists?
-        Cfn.exists?(stack_name)
+        Aws::Cfn.exists?(stack_name)
       end
 
       def stack_status
-        Cfn.describe(stack_name).stack_status
+        Aws::Cfn.describe(stack_name).stack_status
       end
 
       def stack_notification_arns
-        Cfn.describe(stack_name).notification_arns
+        Aws::Cfn.describe(stack_name).notification_arns
       end
 
       def resource(id)

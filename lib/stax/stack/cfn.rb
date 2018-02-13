@@ -1,11 +1,10 @@
 module Stax
   class Stack < Base
-    include Aws
 
     desc 'template', 'get template of existing stack from cloudformation'
     method_option :pretty, type: :boolean, default: true, desc: 'format json output'
     def template
-      Cfn.template(stack_name).tap { |t|
+      Aws::Cfn.template(stack_name).tap { |t|
         puts options[:pretty] ? JSON.pretty_generate(JSON.parse(t)) : t
       }
     end
