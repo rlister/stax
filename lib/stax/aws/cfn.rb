@@ -85,6 +85,10 @@ module Stax
           outputs(name)[key]
         end
 
+        def validate(opt)
+          client.validate_template(opt)
+        end
+
         def create(opt)
           client.create_stack(opt)&.stack_id
         end

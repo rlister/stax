@@ -53,6 +53,18 @@ module Stax
         end
       end
 
+      ## validate template, and return list of require capabilities
+      def cfn_capabilities
+        validate.capabilities
+      end
+
+    end
+
+    desc 'validate', 'validate template'
+    def validate
+      Aws::Cfn.validate(template_body: cfer_generate_string)
+    rescue ::Aws::CloudFormation::Errors::ValidationError => e
+      fail_task(e.message)
     end
 
     desc 'create', 'create stack'
@@ -63,6 +75,7 @@ module Stax
         stack_name: stack_name,
         template_body: cfer_generate_string,
         parameters: cfn_parameters_create,
+        capabilities: cfn_capabilities,
         stack_policy_body: stack_policy,
         notification_arns: cfer_notification_arns,
         enable_termination_protection: cfer_termination_protection,
@@ -79,7 +92,8 @@ module Stax
       Aws::Cfn.update(
         stack_name: stack_name,
         template_body: cfer_generate_string,
-        parameters: cfn_parameters_update.tap(&method(:pp)),
+        parameters: cfn_parameters_update,
+        capabilities: cfn_capabilities,
         stack_policy_during_update_body: stack_policy_during_update,
         notification_arns: cfer_notification_arns,
       )
