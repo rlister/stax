@@ -37,6 +37,22 @@ module Stax
         end
       end
 
+      def cfn_parameters_create
+        cfn_parameters.map do |k,v|
+          { parameter_key: k, parameter_value: v }
+        end
+      end
+
+      def cfn_parameters_update
+        cfn_parameters.map do |k,v|
+          if options[:use_previous_value].include?(k.to_s)
+            { parameter_key: k, use_previous_value: true }
+          else
+            { parameter_key: k, parameter_value: v }
+          end
+        end
+      end
+
     end
 
     desc 'create', 'create stack'
@@ -46,7 +62,7 @@ module Stax
       Aws::Cfn.create(
         stack_name: stack_name,
         template_body: cfer_generate_string,
-        parameters: stringify_keys(cfer_parameters).except(*options[:use_previous_value]),
+        parameters: cfn_parameters_create,
         stack_policy_body: stack_policy,
         notification_arns: cfer_notification_arns,
         enable_termination_protection: cfer_termination_protection,
@@ -63,7 +79,7 @@ module Stax
       Aws::Cfn.update(
         stack_name: stack_name,
         template_body: cfer_generate_string,
-        parameters: stringify_keys(cfer_parameters).except(*options[:use_previous_value]),
+        parameters: cfn_parameters_update.tap(&method(:pp)),
         stack_policy_during_update_body: stack_policy_during_update,
         notification_arns: cfer_notification_arns,
       )
