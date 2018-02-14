@@ -3,7 +3,7 @@ module Stax
 
     no_commands do
       def stack_parameters
-        @_stack_parameters ||= Cfn.parameters(stack_name)
+        @_stack_parameters ||= Aws::Cfn.parameters(stack_name)
       end
 
       def stack_parameter(key)
