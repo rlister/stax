@@ -73,7 +73,7 @@ module Stax
       debug("Creating stack #{stack_name}")
       Aws::Cfn.create(
         stack_name: stack_name,
-        template_body: cfer_generate_string,
+        template_body: cfer_generate,
         parameters: cfn_parameters_create,
         capabilities: cfn_capabilities,
         stack_policy_body: stack_policy,
@@ -91,7 +91,7 @@ module Stax
       debug("Updating stack #{stack_name}")
       Aws::Cfn.update(
         stack_name: stack_name,
-        template_body: cfer_generate_string,
+        template_body: cfer_generate,
         parameters: cfn_parameters_update,
         capabilities: cfn_capabilities,
         stack_policy_during_update_body: stack_policy_during_update,
@@ -114,7 +114,7 @@ module Stax
 
     desc 'generate', 'generate cloudformation template'
     def generate
-      cfer_generate
+      puts cfer_generate
     end
 
     desc 'protection', 'show/set termination protection for stack'

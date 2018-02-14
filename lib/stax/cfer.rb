@@ -35,15 +35,9 @@ module Stax
 
       ## generate JSON for stack without sending to cloudformation
       def cfer_generate
-        opts = {parameters: stringify_keys(cfn_parameters)}
-        Cfer.generate!(cfn_template_path, opts)
-      end
-
-      ## generate method does puts, so steal stdout into a string
-      def cfer_generate_string
-        capture_stdout do
-          cfer_generate
-        end
+        Cfer::stack_from_file(cfn_template_path, parameters: stringify_keys(cfn_parameters)).to_json
+      rescue Cfer::Util::FileDoesNotExistError => e
+        fail_task(e.message)
       end
 
       ## temporarily grab stdout to a string
