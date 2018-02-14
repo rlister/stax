@@ -3,7 +3,7 @@ module Stax
 
     no_commands do
       def stack_outputs
-        @_stack_outputs ||= Cfn.outputs(stack_name)
+        @_stack_outputs ||= Aws::Cfn.outputs(stack_name)
       end
 
       def stack_output(key)
