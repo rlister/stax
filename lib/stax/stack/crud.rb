@@ -62,7 +62,7 @@ module Stax
 
     desc 'validate', 'validate template'
     def validate
-      Aws::Cfn.validate(template_body: cfer_generate_string)
+      Aws::Cfn.validate(template_body: cfer_generate)
     rescue ::Aws::CloudFormation::Errors::ValidationError => e
       fail_task(e.message)
     end

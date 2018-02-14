@@ -70,7 +70,7 @@ module Stax
         end
 
         def exists?(name)
-          Cfn.describe(name) && true
+          Aws::Cfn.describe(name) && true
         rescue ::Aws::CloudFormation::Errors::ValidationError
           false
         end
