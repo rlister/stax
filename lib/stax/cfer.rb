@@ -33,9 +33,13 @@ module Stax
         File.join('cf', "#{class_name}.rb")
       end
 
+      def cfer_client
+        @_cfer_client ||= Cfer::Cfn::Client.new({})
+      end
+
       ## generate JSON for stack without sending to cloudformation
       def cfer_generate
-        Cfer::stack_from_file(cfn_template_path, parameters: stringify_keys(cfn_parameters)).to_json
+        Cfer::stack_from_file(cfn_template_path, client: cfer_client, parameters: stringify_keys(cfn_parameters)).to_json
       rescue Cfer::Util::FileDoesNotExistError => e
         fail_task(e.message)
       end
