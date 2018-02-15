@@ -53,6 +53,41 @@ module Stax
         end
       end
 
+      ## memoized template
+      def cfn_template
+        @_cfn_template ||= cfer_generate
+      end
+
+      ## set this to always do an S3 upload of template
+      def cfn_force_s3?
+        false
+      end
+
+      ## decide if we are uploading template to S3
+      def cfn_use_s3?
+        cfn_force_s3? || (cfn_template.bytesize > 51200)
+      end
+
+      ## set this for template uploads as needed, e.g. s3://bucket-name/stax/#{stack_name}"
+      def cfn_s3_path
+        nil
+      end
+
+      ## template body, or nil if uploading to S3
+      def cfn_template_body
+        cfn_use_s3? ? nil : cfn_template
+      end
+
+      ## template S3 URL, or nil if not uploading to S3
+      def cfn_template_url
+        return nil unless cfn_use_s3?
+        fail_task('No S3 bucket set for template upload: please set cfn_s3_path') unless cfn_s3_path
+        uri = URI(cfn_s3_path)
+        obj = ::Aws::S3::Object.new(bucket_name: uri.host, key: uri.path.sub(/^\//, ''))
+        obj.put(body: cfn_template)
+        obj.public_url + ((v = obj.version_id) ? "?versionId=#{v}" : '')
+      end
+
       ## validate template, and return list of require capabilities
       def cfn_capabilities
         validate.capabilities
@@ -73,7 +108,8 @@ module Stax
       debug("Creating stack #{stack_name}")
       Aws::Cfn.create(
         stack_name: stack_name,
-        template_body: cfer_generate,
+        template_body: cfn_template_body,
+        template_url: cfn_template_url,
         parameters: cfn_parameters_create,
         capabilities: cfn_capabilities,
         stack_policy_body: stack_policy,
@@ -91,7 +127,8 @@ module Stax
       debug("Updating stack #{stack_name}")
       Aws::Cfn.update(
         stack_name: stack_name,
-        template_body: cfer_generate,
+        template_body: cfn_template_body,
+        template_url: cfn_template_url,
         parameters: cfn_parameters_update,
         capabilities: cfn_capabilities,
         stack_policy_during_update_body: stack_policy_during_update,
