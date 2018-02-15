@@ -73,19 +73,23 @@ module Stax
         nil
       end
 
-      ## template body, or nil if uploading to S3
-      def cfn_template_body
-        cfn_use_s3? ? nil : cfn_template
-      end
-
-      ## template S3 URL, or nil if not uploading to S3
-      def cfn_template_url
-        return nil unless cfn_use_s3?
+      ## upload template to S3 and return public url of new object
+      def cfn_s3_upload
         fail_task('No S3 bucket set for template upload: please set cfn_s3_path') unless cfn_s3_path
         uri = URI(cfn_s3_path)
         obj = ::Aws::S3::Object.new(bucket_name: uri.host, key: uri.path.sub(/^\//, ''))
         obj.put(body: cfn_template)
         obj.public_url + ((v = obj.version_id) ? "?versionId=#{v}" : '')
+      end
+
+      ## template body, or nil if uploading to S3
+      def cfn_template_body
+        @_cfn_template_body ||= cfn_use_s3? ? nil : cfn_template
+      end
+
+      ## template S3 URL, or nil if not uploading to S3
+      def cfn_template_url
+        @_cfn_template_url ||= cfn_use_s3? ? cfn_s3_upload : nil
       end
 
       ## validate template, and return list of require capabilities
