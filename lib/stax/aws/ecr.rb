@@ -24,6 +24,11 @@ module Stax
           !client.batch_get_image(repository_name: repo, image_ids: [{image_tag: tag}]).images.empty?
         end
 
+        def login(*registry_ids)
+          ids = registry_ids.empty? ? nil : Array(registry_ids)
+          client.get_authorization_token(registry_ids: ids).authorization_data
+        end
+
       end
 
     end
