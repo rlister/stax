@@ -111,7 +111,6 @@ module Stax
 
     desc 'create', 'create stack'
     def create
-      fail_task("Stack #{stack_name} already exists") if exists?
       debug("Creating stack #{stack_name}")
       Aws::Cfn.create(
         stack_name: stack_name,
@@ -124,13 +123,14 @@ module Stax
         enable_termination_protection: cfer_termination_protection,
       )
       tail
+    rescue ::Aws::CloudFormation::Errors::AlreadyExistsException => e
+      fail_task(e.message)
     rescue ::Aws::CloudFormation::Errors::ValidationError => e
       warn(e.message)
     end
 
     desc 'update', 'update stack'
     def update
-      fail_task("Stack #{stack_name} does not exist") unless exists?
       debug("Updating stack #{stack_name}")
       Aws::Cfn.update(
         stack_name: stack_name,
@@ -143,7 +143,7 @@ module Stax
       )
       tail
     rescue ::Aws::CloudFormation::Errors::ValidationError => e
-      warn(e.message)
+      fail_task(e.message)
     end
 
     desc 'delete', 'delete stack'
