@@ -131,6 +131,7 @@ module Stax
 
     desc 'update', 'update stack'
     def update
+      return change if stack_force_changeset
       debug("Updating stack #{stack_name}")
       Aws::Cfn.update(
         stack_name: stack_name,
