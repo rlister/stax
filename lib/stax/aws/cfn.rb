@@ -13,6 +13,7 @@ module Stax
       ]
 
       COLORS = {
+        ## stack status
         CREATE_COMPLETE:      :green,
         DELETE_COMPLETE:      :green,
         UPDATE_COMPLETE:      :green,
@@ -21,6 +22,10 @@ module Stax
         UPDATE_FAILED:        :red,
         ROLLBACK_IN_PROGRESS: :red,
         ROLLBACK_COMPLETE:    :red,
+        ## resource action
+        Add:    :green,
+        Modify: :yellow,
+        Remove: :red,
       }
 
       class << self
@@ -103,6 +108,26 @@ module Stax
 
         def protection(name, enable)
           client.update_termination_protection(stack_name: name, enable_termination_protection: enable)
+        end
+
+        def list_change_sets(name)
+          paginate(:summaries) do |next_token|
+            client.list_change_sets(stack_name: name, next_token: next_token)
+          end
+        end
+
+        def changes(opt)
+          paginate(:changes) do |next_token|
+            client.describe_change_set(opt.merge(next_token: next_token))
+          end
+        end
+
+        def changeset(opt)
+          client.create_change_set(opt)
+        end
+
+        def execute(opt)
+          client.execute_change_set(opt)
         end
 
       end
