@@ -110,6 +110,14 @@ module Stax
           client.update_termination_protection(stack_name: name, enable_termination_protection: enable)
         end
 
+        def get_policy(opt)
+          client.get_stack_policy(opt).stack_policy_body
+        end
+
+        def set_policy(opt)
+          client.set_stack_policy(opt)
+        end
+
         def list_change_sets(name)
           paginate(:summaries) do |next_token|
             client.list_change_sets(stack_name: name, next_token: next_token)

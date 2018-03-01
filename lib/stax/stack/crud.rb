@@ -175,5 +175,14 @@ module Stax
       puts Aws::Cfn.describe(stack_name)&.enable_termination_protection
     end
 
+    desc 'policy [JSON]', 'get/set stack policy'
+    def policy(json = nil)
+      if json
+        Aws::Cfn.set_policy(stack_name: stack_name, stack_policy_body: json)
+      else
+        puts Aws::Cfn.get_policy(stack_name: stack_name)
+      end
+    end
+
   end
 end
