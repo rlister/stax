@@ -63,6 +63,14 @@ module Stax
           Aws::Cfn.execute(stack_name: stack_name, change_set_name: id)
         end
       end
+
+      def change_set_unlock
+        Aws::Cfn.set_policy(stack_name: stack_name, stack_policy_body: stack_policy_during_update)
+      end
+
+      def change_set_lock
+        Aws::Cfn.set_policy(stack_name: stack_name, stack_policy_body: stack_policy)
+      end
     end
 
     desc 'change', 'create and execute a changeset'
@@ -70,7 +78,10 @@ module Stax
       id = change_set_update
       change_set_complete?(id) || fail_task('No changes')
       change_set_changes(id)
+      change_set_unlock
       change_set_execute(id) && tail
+    ensure
+      change_set_lock
     end
 
   end
