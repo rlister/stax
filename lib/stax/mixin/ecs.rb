@@ -117,7 +117,11 @@ module Stax
         my.ecs_services.each do |s|
           name = s.physical_resource_id.split('/').last
           debug("Tasks for service #{name}")
-          print_table Aws::Ecs.tasks(service_name: s.physical_resource_id, desired_status: options[:status].upcase).map { |t|
+          Aws::Ecs.tasks(
+            cluster: my.ecs_cluster_name,
+            service_name: s.physical_resource_id,
+            desired_status: options[:status].upcase,
+          ).map { |t|
             [
               t.task_arn.split('/').last,
               t.task_definition_arn.split('/').last,
@@ -126,7 +130,7 @@ module Stax
               "(#{t.desired_status})",
               t.started_by,
             ]
-          }
+          }.tap(&method(:print_table))
         end
       end
 
@@ -186,8 +190,9 @@ module Stax
       method_option :desired, aliases: '-d', type: :numeric, default: nil, desc: 'desired container count'
       def scale
         my.ecs_services.each do |s|
-          debug("Scaling service #{s.logical_resource_id}")
+          debug("Scaling service #{s.physical_resource_id.split('/').last}")
           Aws::Ecs.update_service(
+            cluster: my.ecs_cluster_name,
             service: s.physical_resource_id,
             desired_count: options[:desired],
           ).tap do |s|
