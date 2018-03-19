@@ -138,7 +138,11 @@ module Stax
       method_option :status, aliases: '-s', type: :string, default: 'RUNNING', desc: 'status to list'
       def containers
         my.ecs_services.each do |s|
-          Aws::Ecs.tasks(service_name: s.physical_resource_id, desired_status: options[:status].upcase).each do |t|
+          Aws::Ecs.tasks(
+            cluster: my.ecs_cluster_name,
+            service_name: s.physical_resource_id,
+            desired_status: options[:status].upcase,
+          ).each do |t|
             task = t.task_arn.split('/').last
             debug("Containers for task #{task}")
             print_table t.containers.map { |c|
