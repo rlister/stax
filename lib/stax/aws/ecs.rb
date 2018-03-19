@@ -35,7 +35,7 @@ module Stax
           if tasks.empty?
             []
           else
-            client.describe_tasks(tasks: tasks).tasks
+            client.describe_tasks(cluster: opt[:cluster], tasks: tasks).tasks
           end
         end
 
