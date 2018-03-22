@@ -5,16 +5,22 @@ module Stax
     @@_stack_list
   end
 
+  def self.auto_require(path)
+    stack_list.each do |stack|
+      f = path.join('lib', 'stack', "#{stack}.rb")
+      require(f) if File.exist?(f)
+    end
+  end
+
   ## search up the dir tree for nearest Staxfile
   def self.load_staxfile
-    file = nil
     Pathname.pwd.ascend do |path|
-      if File.exist?(f = File.join(path, 'Staxfile'))
-        file = f
+      if File.exist?(file = path.join('Staxfile'))
+        auto_require(path)
+        load(file) if file
         break
       end
     end
-    load(file) if file
   end
 
   ## add a stack by name, creates class as needed
