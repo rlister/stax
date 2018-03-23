@@ -1,10 +1,12 @@
 module Stax
   @@_stack_list = []
 
+  ## list of stacks defined in Staxfile
   def self.stack_list
     @@_stack_list
   end
 
+  ## try to require file from lib/stack/ for each stack
   def self.auto_require(path)
     stack_list.each do |stack|
       f = path.join('lib', 'stack', "#{stack}.rb")
@@ -16,8 +18,8 @@ module Stax
   def self.load_staxfile
     Pathname.pwd.ascend do |path|
       if File.exist?(file = path.join('Staxfile'))
-        auto_require(path)
         load(file) if file
+        auto_require(path)
         break
       end
     end
