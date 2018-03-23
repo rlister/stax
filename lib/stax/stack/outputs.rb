@@ -16,7 +16,9 @@ module Stax
       if key
         puts stack_output(key)
       else
-        print_table stack_outputs
+        print_table Aws::Cfn.describe(stack_name).outputs.map { |o|
+          [o.output_key, o.output_value, o.description, o.export_name]
+        }
       end
     end
 
