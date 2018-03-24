@@ -1,5 +1,32 @@
 require 'cfer'
 
+## TODO: remove these hacks once merged and released in upstream cfer
+## see cfer PRs: #52, #54
+module Cfer::Core::Functions
+  def get_azs(region = '')
+    {"Fn::GetAZs" => region}
+  end
+
+  def cidr(ip_block, count, size_mask)
+    {"Fn::Cidr" => [ip_block, count, size_mask]}
+  end
+
+  def import_value(value)
+    {"Fn::ImportValue" => value}
+  end
+end
+
+## see cfer PR: #56
+module Cfer::Core
+  class Stack < Cfer::Block
+    def output(name, value, options = {})
+      opt = options.each_with_object({}) { |(k,v),h| h[k.to_s.capitalize] = v } # capitalize all keys
+      export = opt.has_key?('Export') ? {'Name' => opt['Export']} : nil
+      self[:Outputs][name] = opt.merge('Value' => value, 'Export' => export).compact
+    end
+  end
+end
+
 module Stax
   class Stack < Base
     class_option :use_previous_value, aliases: '-u', type: :array, default: [], desc: 'params to use previous value'
