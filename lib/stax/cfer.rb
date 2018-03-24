@@ -14,6 +14,10 @@ module Cfer::Core::Functions
   def import_value(value)
     {"Fn::ImportValue" => value}
   end
+
+  def split(*args)
+    {"Fn::Split" => [ *args ].flatten }
+  end
 end
 
 ## see cfer PR: #56
