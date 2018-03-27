@@ -8,6 +8,10 @@ module Stax
       thor.subcommand(:ecr, Cmd::Ecr)
     end
 
+    def ecr_registry
+      @_ecr_registry ||= "#{aws_account_id}.dkr.ecr.#{aws_region}.amazonaws.com"
+    end
+
     def ecr_repositories
       @_ecr_repositories ||= Aws::Cfn.resources_by_type(stack_name, 'AWS::ECR::Repository')
     end
@@ -24,6 +28,11 @@ module Stax
 
   module Cmd
     class Ecr < SubCommand
+
+      desc 'registry', 'show ECR registry'
+      def registry
+        puts my.ecr_registry
+      end
 
       ## TODO: reimplement using --password-stdin
       desc 'login', 'login to ECR registry'
