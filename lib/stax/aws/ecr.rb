@@ -29,6 +29,12 @@ module Stax
           client.get_authorization_token(registry_ids: ids).authorization_data
         end
 
+        def images(opt = {})
+          paginate(:image_details) do |next_token|
+            client.describe_images(opt.merge(next_token: next_token))
+          end
+        end
+
       end
 
     end
