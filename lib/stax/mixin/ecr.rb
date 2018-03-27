@@ -1,3 +1,4 @@
+require 'base64'
 require 'stax/aws/ecr'
 
 module Stax
@@ -23,6 +24,16 @@ module Stax
 
   module Cmd
     class Ecr < SubCommand
+
+      ## TODO: reimplement using --password-stdin
+      desc 'login', 'login to ECR registry'
+      def login
+        Aws::Ecr.auth.each do |auth|
+          debug("Login to ECR registry #{auth.proxy_endpoint}")
+          user, pass = Base64.decode64(auth.authorization_token).split(':')
+          system "docker login -u #{user} -p #{pass} #{auth.proxy_endpoint}"
+        end
+      end
 
       desc 'repositories', 'list ECR repositories'
       def repositories
