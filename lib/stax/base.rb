@@ -1,3 +1,5 @@
+require 'stax/aws/sts'
+
 module Stax
   class Base < Thor
 
@@ -12,6 +14,14 @@ module Stax
 
       def stack_prefix
         @_stack_prefix ||= [app_name, branch_name].compact.join('-') + '-'
+      end
+
+      def aws_account_id
+        @_aws_account_id ||= Aws::Sts.id.account
+      end
+
+      def aws_region
+        @_aws_region ||= ENV['AWS_REGION']
       end
 
       ## find or create a stack object
