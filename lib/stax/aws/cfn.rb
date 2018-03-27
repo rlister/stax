@@ -106,6 +106,10 @@ module Stax
           client.delete_stack(stack_name: name)
         end
 
+        def cancel(name)
+          client.cancel_update_stack(stack_name: name)
+        end
+
         def protection(name, enable)
           client.update_termination_protection(stack_name: name, enable_termination_protection: enable)
         end

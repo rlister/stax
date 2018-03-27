@@ -157,6 +157,15 @@ module Stax
       fail_task(e.message)
     end
 
+    desc 'cancel', 'cancel update_in_progress'
+    def cancel
+      debug("Cancelling update for #{stack_name}")
+      Aws::Cfn.cancel(stack_name)
+      tail
+    rescue ::Aws::CloudFormation::Errors::ValidationError => e
+      fail_task(e.message)
+    end
+
     desc 'generate', 'generate cloudformation template'
     def generate
       puts cfer_generate
