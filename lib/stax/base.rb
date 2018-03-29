@@ -114,6 +114,14 @@ module Stax
         timestamp.nil? ? '-' : Time.at(timestamp.to_i/1000)
       end
 
+      ## convert a diff in seconds to d h m s
+      def human_time_diff(t)
+        mm, ss = t.divmod(60)
+        hh, mm = mm.divmod(60)
+        dd, hh = hh.divmod(24)
+        {d: dd, h: hh, m: mm, s: ss}.reject{ |_,v| v == 0 }.map{ |k,v| "#{v.round}#{k}" }.join
+      end
+
       ## convert bytes to nearest unit
       def human_bytes(bytes, precision = 0)
         return 0.to_s if bytes < 1
