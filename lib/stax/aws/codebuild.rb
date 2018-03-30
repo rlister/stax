@@ -26,9 +26,12 @@ module Stax
           builds.first(num)
         end
 
-        ## return details of num most recent builds
-        def builds(name, num = 100)
-          client.batch_get_builds(ids: builds_for_project(name, num)).builds
+        def builds(ids)
+          client.batch_get_builds(ids: ids).builds
+        end
+
+        def start(opt)
+          client.start_build(opt).build
         end
 
       end
