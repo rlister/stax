@@ -8,8 +8,12 @@ module Stax
       thor.subcommand(:ecs, Cmd::Ecs)
     end
 
+    def ecs_clusters
+      @_ecs_clusters ||= Aws::Cfn.resources_by_type(stack_name, 'AWS::ECS::Cluster')
+    end
+
     def ecs_cluster_name
-      'default'
+      @_ecs_cluster_name ||= (ecs_clusters&.first&.physical_resource_id || 'default')
     end
 
     def ecs_services
