@@ -115,11 +115,11 @@ module Stax
       end
 
       ## convert a diff in seconds to d h m s
-      def human_time_diff(t)
+      def human_time_diff(t, n = 5)
         mm, ss = t.divmod(60)
         hh, mm = mm.divmod(60)
         dd, hh = hh.divmod(24)
-        {d: dd, h: hh, m: mm, s: ss}.reject{ |_,v| v == 0 }.map{ |k,v| "#{v.round}#{k}" }.join
+        {d: dd, h: hh, m: mm, s: ss}.reject{ |_,v| v == 0 }.map{ |k,v| "#{v.round}#{k}" }.first(n).join
       end
 
       ## convert bytes to nearest unit
