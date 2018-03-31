@@ -24,8 +24,12 @@ module Stax
       @_ecs_task_definitions ||= Aws::Cfn.resources_by_type(stack_name, 'AWS::ECS::TaskDefinition')
     end
 
+    def ecs_service_names
+      @_ecs_service_names ||= ecs_services.map(&:physical_resource_id)
+    end
+
     def ecs_service_objects
-      Aws::Ecs.services(ecs_cluster_name, ecs_services.map(&:physical_resource_id))
+      Aws::Ecs.services(ecs_cluster_name, ecs_service_names)
     end
 
     ## deprecated: register a new revision of existing task definition
@@ -63,6 +67,10 @@ module Stax
         def ecs_task_definition(id)
           Aws::Cfn.id(my.stack_name, id)
         end
+
+        def print_event(e)
+          puts "#{set_color(e.created_at, :green)}  #{e.message}"
+        end
       end
 
       desc 'clusters', 'ECS cluster for stack'
@@ -90,9 +98,26 @@ module Stax
       def events
         my.ecs_service_objects.each do |s|
           debug("Events for #{s.service_name}")
-          print_table s.events.first(options[:number]).map { |e|
-            [set_color(e.created_at, :green), e.message]
-          }.reverse
+          s.events.first(options[:number]).reverse.map(&method(:print_event))
+        end
+      end
+
+      desc 'tail [SERVICE]', 'tail ECS events'
+      def tail(service = nil)
+        trap('SIGINT', 'EXIT')    # clean exit with ctrl-c
+        service ||= my.ecs_service_names.first
+        latest_event = Aws::Ecs.services(my.ecs_cluster_name, [service]).first.events.first
+        print_event(latest_event)
+        last_seen = latest_event.id
+        loop do
+          sleep 5
+          unseen = []
+          Aws::Ecs.services(my.ecs_cluster_name, [service]).first.events.each do |e|
+            break if e.id == last_seen
+            unseen.unshift(e)
+          end
+          unseen.each(&method(:print_event))
+          last_seen = unseen.last.id unless unseen.empty?
         end
       end
 
