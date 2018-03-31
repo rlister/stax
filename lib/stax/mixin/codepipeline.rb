@@ -48,6 +48,51 @@ module Stax
         end
       end
 
+      desc 'state', 'pipeline state'
+      def state
+        require 'pp'
+        my.stack_pipeline_names.each do |name|
+          state = Aws::Codepipeline.state(name)
+          debug("State for #{name} at #{state.updated}")
+          print_table state.stage_states.map { |s|
+            s.action_states.map { |a|
+              l = a.latest_execution
+              percent = (l.percent_complete || 100).to_s + '%'
+              sha = a.current_revision&.revision_id&.slice(0,7)
+              ago = human_time_diff(Time.now - l.last_status_change, 1)
+              [s.stage_name, a.action_name, color(l.status, COLORS), percent, "#{ago} ago", sha, l.error_details&.message]
+            }
+          }.flatten(1)
+        end
+      end
+
+      desc 'start [NAME]', 'start execution for pipeline'
+      def start(name = nil)
+        name ||= my.stack_pipeline_names.first
+        debug("Starting execution for #{name}")
+        puts Aws::Codepipeline.start(name)
+        tail name
+      end
+
+      desc 'tail [NAME]', 'tail pipeline state changes'
+      def tail(name = nil)
+        trap('SIGINT', 'EXIT')    # clean exit with ctrl-c
+        name ||= my.stack_pipeline_names.first
+        last_seen = nil
+        loop do
+          state = Aws::Codepipeline.state(name)
+          now = Time.now
+          stages = state.stage_states.map do |s|
+            last_change = s.action_states.map { |a| a&.latest_execution&.last_status_change }.compact.max
+            revisions = s.action_states.map { |a| a.current_revision&.revision_id&.slice(0,7) }.join(' ')
+            ago = human_time_diff(now - last_change, 1)
+            [s.stage_name, color(s.latest_execution.status, COLORS), "#{ago} ago", revisions].join(' ')
+          end
+          puts [set_color(now, :blue), stages].flatten.join('  ')
+          sleep 5
+        end
+      end
+
     end
   end
 end

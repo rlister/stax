@@ -29,6 +29,14 @@ module Stax
           client.get_pipeline_execution(pipeline_name: name, pipeline_execution_id: id).pipeline_execution
         end
 
+        def state(name)
+          client.get_pipeline_state(name: name)
+        end
+
+        def start(name)
+          client.start_pipeline_execution(name: name).pipeline_execution_id
+        end
+
       end
 
     end
