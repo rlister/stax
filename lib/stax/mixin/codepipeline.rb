@@ -85,8 +85,8 @@ module Stax
           stages = state.stage_states.map do |s|
             last_change = s.action_states.map { |a| a&.latest_execution&.last_status_change }.compact.max
             revisions = s.action_states.map { |a| a.current_revision&.revision_id&.slice(0,7) }.join(' ')
-            ago = human_time_diff(now - last_change, 1)
-            [s.stage_name, color(s.latest_execution.status, COLORS), "#{ago} ago", revisions].join(' ')
+            ago = last_change ? human_time_diff(now - last_change, 1) : '?'
+            [s.stage_name, color(s&.latest_execution&.status || '', COLORS), "#{ago} ago", revisions].join(' ')
           end
           puts [set_color(now, :blue), stages].flatten.join('  ')
           sleep 5
