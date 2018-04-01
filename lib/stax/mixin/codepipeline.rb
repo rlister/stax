@@ -50,17 +50,16 @@ module Stax
 
       desc 'state', 'pipeline state'
       def state
-        require 'pp'
         my.stack_pipeline_names.each do |name|
           state = Aws::Codepipeline.state(name)
           debug("State for #{name} at #{state.updated}")
           print_table state.stage_states.map { |s|
             s.action_states.map { |a|
               l = a.latest_execution
-              percent = (l.percent_complete || 100).to_s + '%'
+              percent = (l&.percent_complete || 100).to_s + '%'
               sha = a.current_revision&.revision_id&.slice(0,7)
-              ago = human_time_diff(Time.now - l.last_status_change, 1)
-              [s.stage_name, a.action_name, color(l.status, COLORS), percent, "#{ago} ago", sha, l.error_details&.message]
+              ago = (t = l&.last_status_change) ? human_time_diff(Time.now - t, 1) : '?'
+              [s.stage_name, a.action_name, color(l&.status || '', COLORS), percent, "#{ago} ago", sha, l&.error_details&.message]
             }
           }.flatten(1)
         end
