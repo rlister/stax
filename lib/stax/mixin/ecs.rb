@@ -24,6 +24,13 @@ module Stax
       @_ecs_task_definitions ||= Aws::Cfn.resources_by_type(stack_name, 'AWS::ECS::TaskDefinition')
     end
 
+    ## mangle taskdef arn into family name
+    def ecs_task_families
+      ecs_task_definitions.map do |r|
+        r.physical_resource_id.split(':')[-2].split('/').last
+      end
+    end
+
     def ecs_service_names
       @_ecs_service_names ||= ecs_services.map(&:physical_resource_id)
     end
@@ -138,6 +145,18 @@ module Stax
           t = Aws::Ecs.task_definition(r.physical_resource_id)
           [r.logical_resource_id, t.family, t.revision, color(t.status, COLORS)]
         }
+      end
+
+      desc 'env', 'env vars for latest rev of task families'
+      def env
+        my.ecs_task_families.each do |family|
+          Aws::Ecs.task_definition(family).container_definitions.each do |c|
+            debug("Environment for #{family} #{c.name}")
+            print_table c.environment.map { |e|
+              [e.name, e.value]
+            }
+          end
+        end
       end
 
       desc 'tasks', 'ECS tasks for stack'
