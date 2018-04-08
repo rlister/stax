@@ -59,9 +59,37 @@ module Stax
               percent = (l&.percent_complete || 100).to_s + '%'
               sha = a.current_revision&.revision_id&.slice(0,7)
               ago = (t = l&.last_status_change) ? human_time_diff(Time.now - t, 1) : '?'
-              [s.stage_name, a.action_name, color(l&.status || '', COLORS), percent, "#{ago} ago", sha, l&.error_details&.message]
+              [s.stage_name, a.action_name, color(l&.status || '', COLORS), percent, "#{ago} ago", (sha || l&.token), l&.error_details&.message]
             }
           }.flatten(1)
+        end
+      end
+
+      desc 'approvals', 'approve or reject pending approvals'
+      method_option :approved, type: :boolean, default: false, desc: 'approve the request'
+      method_option :rejected, type: :boolean, default: false, desc: 'reject the request'
+      def approvals
+        my.stack_pipeline_names.each do |name|
+          debug("Pending approvals for #{name}")
+          Aws::Codepipeline.state(name).stage_states.each do |s|
+            s.action_states.each do |a|
+              next unless (a.latest_execution&.token && a.latest_execution&.status == 'InProgress')
+              l = a.latest_execution
+              ago = (t = l&.last_status_change) ? human_time_diff(Time.now - t, 1) : '?'
+              puts "#{a.action_name} #{l&.token} #{ago} ago"
+              resp = (options[:approved] && :approved) || (options[:rejected] && :rejected) || ask('approved,rejected,[skip]?', :yellow)
+              status = resp.to_s.capitalize
+              if (status == 'Rejected') || (status == 'Approved')
+                Aws::Codepipeline.client.put_approval_result(
+                  pipeline_name: name,
+                  stage_name: s.stage_name,
+                  action_name: a.action_name,
+                  token: l.token,
+                  result: {status: status, summary: "#{status} by #{ENV['USER']}"},
+                ).tap { |r| puts "#{status} at #{r&.approved_at}" }
+              end
+            end
+          end
         end
       end
 
