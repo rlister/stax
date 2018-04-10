@@ -18,7 +18,7 @@ module Stax
       else
         print_table Aws::Cfn.describe(stack_name).outputs.map { |o|
           [o.output_key, o.output_value, o.description, o.export_name]
-        }
+        }.sort
       end
     end
 
