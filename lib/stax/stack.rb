@@ -10,6 +10,11 @@ module Stax
         @_stack_name ||= stack_prefix + class_name
       end
 
+      ## list of other stacks we need to reference
+      def stack_imports
+        self.class.instance_variable_get(:@imports)
+      end
+
       def exists?
         Aws::Cfn.exists?(stack_name)
       end

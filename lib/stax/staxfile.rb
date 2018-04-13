@@ -43,6 +43,8 @@ module Stax
       opt.fetch(:include, []).each do |i|
         klass.include(self.const_get(i))
       end
+
+      klass.instance_variable_set(:@imports, Array(opt.fetch(:import, [])))
     end
   end
 

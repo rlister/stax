@@ -37,12 +37,9 @@ module Stax
 
     no_commands do
 
+      ## backward-compatibility
       def cfer_parameters
-        {}
-      end
-
-      def cfn_parameters
-        cfer_parameters
+        cfn_parameters
       end
 
       ## override with S3 bucket for upload of large templates as needed

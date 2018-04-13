@@ -3,6 +3,14 @@ module Stax
 
     no_commands do
 
+      ## by default we pass names of imported stacks;
+      ## you are encouraged to override or extend this method
+      def cfn_parameters
+        stack_imports.each_with_object({}) do |i, h|
+          h[i.to_sym] = stack(i).stack_name
+        end
+      end
+
       ## policy to lock the stack to all updates
       def stack_policy
         {
@@ -112,6 +120,11 @@ module Stax
     desc 'create', 'create stack'
     def create
       debug("Creating stack #{stack_name}")
+
+      ## ensure stacks we import exist
+      ensure_stack(*stack_imports)
+
+      ## create the stack
       Aws::Cfn.create(
         stack_name: stack_name,
         template_body: cfn_template_body,
@@ -122,6 +135,8 @@ module Stax
         notification_arns: cfer_notification_arns,
         enable_termination_protection: cfer_termination_protection,
       )
+
+      ## show stack events
       tail
     rescue ::Aws::CloudFormation::Errors::AlreadyExistsException => e
       fail_task(e.message)
