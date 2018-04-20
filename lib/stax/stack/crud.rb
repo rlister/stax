@@ -158,6 +158,7 @@ module Stax
         notification_arns: cfer_notification_arns,
       )
       tail
+      warn_imports
     rescue ::Aws::CloudFormation::Errors::ValidationError => e
       fail_task(e.message)
     end

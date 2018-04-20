@@ -17,6 +17,7 @@ require 'stax/stack/crud'
 require 'stax/stack/changeset'
 require 'stax/stack/parameters'
 require 'stax/stack/outputs'
+require 'stax/stack/imports'
 require 'stax/stack/resources'
 
 require 'stax/mixin/ec2'

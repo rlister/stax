@@ -90,6 +90,12 @@ module Stax
           outputs(name)[key]
         end
 
+        ## list of this stack output exports
+        def exports(name)
+          describe(name).outputs.select(&:export_name)
+        end
+
+        ## list of stacks that import from this one
         def imports(name)
           paginate(:imports) do |next_token|
             client.list_imports(export_name: name, next_token: next_token)

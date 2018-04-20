@@ -79,7 +79,7 @@ module Stax
       change_set_complete?(id) || fail_task('No changes')
       change_set_changes(id)
       change_set_unlock
-      change_set_execute(id) && tail
+      change_set_execute(id) && tail && warn_imports
     ensure
       change_set_lock
     end

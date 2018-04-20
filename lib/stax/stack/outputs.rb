@@ -22,14 +22,5 @@ module Stax
       end
     end
 
-    desc 'imports', 'list imports from this stack'
-    def imports
-      debug("Stacks that import from #{stack_name}")
-      print_table Aws::Cfn.describe(stack_name).outputs.select(&:export_name).map { |o|
-        imports = (i = Aws::Cfn.imports(o.export_name)).empty? ? '-' : i.join(',')
-        [o.output_key, imports]
-      }
-    end
-
   end
 end
