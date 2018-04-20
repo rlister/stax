@@ -2,13 +2,21 @@ module Stax
   class Stack < Base
 
     no_commands do
-      def warn_imports
-        imports = Aws::Cfn.exports(stack_name).map do |e|
+      def import_stacks
+        @_import_stacks ||= Aws::Cfn.exports(stack_name).map do |e|
           Aws::Cfn.imports(e.export_name)
         end.flatten.uniq
+      end
 
-        unless imports.empty?
-          warn("You may also need to update stacks that import from this one: #{imports.join(',')}")
+      def update_warn_imports
+        unless import_stacks.empty?
+          warn("You may also need to update stacks that import from this one: #{import_stacks.join(',')}")
+        end
+      end
+
+      def delete_warn_imports
+        unless import_stacks.empty?
+          warn("The following stacks import from this one: #{import_stacks.join(',')}")
         end
       end
     end

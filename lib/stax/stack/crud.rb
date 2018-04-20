@@ -158,13 +158,14 @@ module Stax
         notification_arns: cfer_notification_arns,
       )
       tail
-      warn_imports
+      update_warn_imports
     rescue ::Aws::CloudFormation::Errors::ValidationError => e
       fail_task(e.message)
     end
 
     desc 'delete', 'delete stack'
     def delete
+      delete_warn_imports
       if yes? "Really delete stack #{stack_name}?", :yellow
         Aws::Cfn.delete(stack_name)
         tail
