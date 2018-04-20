@@ -90,6 +90,14 @@ module Stax
           outputs(name)[key]
         end
 
+        def imports(name)
+          paginate(:imports) do |next_token|
+            client.list_imports(export_name: name, next_token: next_token)
+          end
+        rescue ::Aws::CloudFormation::Errors::ValidationError
+          []
+        end
+
         def validate(opt)
           client.validate_template(opt)
         end
