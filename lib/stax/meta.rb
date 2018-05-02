@@ -24,6 +24,24 @@ module Stax
       end
     end
 
+    desc 'update', 'meta update task'
+    def update
+      stack_objects.each do |s|
+        if s.exists? && y_or_n?("Update #{s.stack_name}?", :yellow)
+          s.update
+        end
+      end
+    end
+
+    desc 'change', 'meta change task'
+    def change
+      stack_objects.each do |s|
+        if s.exists?
+          s.change
+        end
+      end
+    end
+
     desc 'delete', 'meta delete task'
     def delete
       stack_objects.reverse.each do |s|
