@@ -160,7 +160,7 @@ module Stax
       tail
       update_warn_imports
     rescue ::Aws::CloudFormation::Errors::ValidationError => e
-      fail_task(e.message)
+      warn(e.message)
     end
 
     desc 'delete', 'delete stack'
