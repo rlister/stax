@@ -96,6 +96,20 @@ module Stax
         )
       end
 
+      desc 'put ID', 'put items from stdin to table'
+      method_option :verbose, aliases: '-v', type: :boolean, default: false, desc: 'show progress'
+      def put(id)
+        table = my.resource(id)
+        count = 0
+        $stdin.each do |line|
+          Aws::DynamoDB.put(table_name: table, item: JSON.parse(line))
+          print '.' if options[:verbose]
+          count += 1
+        end
+        print "\n" if options[:verbose]
+        puts "put #{count} items to #{table}"
+      end
+
     end
   end
 end

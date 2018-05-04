@@ -77,6 +77,10 @@ module Stax
           end
         end
 
+        def put(opt)
+          client.put_item(opt)
+        end
+
         def list_backups(opt = {})
           last_arn = nil
           backups = []
