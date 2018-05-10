@@ -102,7 +102,7 @@ module Stax
       method_option :min_size,         aliases: '-m', type: :numeric, default: nil, desc: 'set minimum capacity'
       method_option :max_size,         aliases: '-M', type: :numeric, default: nil, desc: 'set maximum capacity'
       def scale
-        opt = options.slice(:desired_capacity, :min_size, :max_size)
+        opt = options.slice(*%w[desired_capacity min_size max_size])
         fail_task('No change requested') if opt.empty?
         stack_asgs.each do |a|
           debug("Scaling to #{opt} for #{a.logical_resource_id} #{a.physical_resource_id}")
