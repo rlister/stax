@@ -16,6 +16,7 @@ module Stax
 
         def instances(names)
           ids = describe(names).map(&:instances).flatten.map(&:instance_id)
+          return [] if ids.empty? # below call will return all instances in a/c if this empty
           paginate(:auto_scaling_instances) do |token|
             client.describe_auto_scaling_instances(instance_ids: ids, next_token: token)
           end
