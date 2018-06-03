@@ -6,10 +6,9 @@ stacks along with all the crappy glue code you need around them.
 Stax is built as a set of ruby classes, with configuration based
 around sub-classing and monkey-patching.
 
-For now, Stax reads template files written using the
-[cfer](https://github.com/seanedwards/cfer) ruby wrapper. It should be
-straightforward to change to raw json/yaml, or a different wrapper by
-re-implementing the methods in `lib/stax/stack/crud.rb`.
+Stax can read template files written in `yaml`, `json` or the
+[cfer](https://github.com/seanedwards/cfer) ruby wrapper. It will
+choose which to use based on file extensions found.
 
 ## Concepts
 
