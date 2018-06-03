@@ -47,15 +47,6 @@ module Stax
         nil
       end
 
-      ## override with SNS ARNs as needed
-      def cfer_notification_arns
-        []
-      end
-
-      def cfer_termination_protection
-        false
-      end
-
       ## location of template file
       def cfn_template_path
         File.join('cf', "#{class_name}.rb")

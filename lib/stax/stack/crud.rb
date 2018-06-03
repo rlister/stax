@@ -90,6 +90,26 @@ module Stax
         obj.public_url + ((v = obj.version_id) ? "?versionId=#{v}" : '')
       end
 
+      ## override with SNS ARNs as needed
+      def cfn_notification_arns
+        if self.class.method_defined?(:cfer_notification_arns)
+          warn('Method cfer_notification_arns deprecated, please use cfn_notification_arns')
+          cfer_notification_arns
+        else
+          []
+        end
+      end
+
+      ## set true to protect stack
+      def cfn_termination_protection
+        if self.class.method_defined?(:cfer_termination_protection)
+          warn('Method cfer_termination_protection deprecated, please use cfn_termination_protection')
+          cfer_termination_protection
+        else
+          false
+        end
+      end
+
       ## template body, or nil if uploading to S3
       def cfn_template_body
         @_cfn_template_body ||= cfn_use_s3? ? nil : cfn_template
@@ -132,8 +152,8 @@ module Stax
         parameters: cfn_parameters_create,
         capabilities: cfn_capabilities,
         stack_policy_body: stack_policy,
-        notification_arns: cfer_notification_arns,
-        enable_termination_protection: cfer_termination_protection,
+        notification_arns: cfn_notification_arns,
+        enable_termination_protection: cfn_termination_protection,
       )
 
       ## show stack events
@@ -155,7 +175,7 @@ module Stax
         parameters: cfn_parameters_update,
         capabilities: cfn_capabilities,
         stack_policy_during_update_body: stack_policy_during_update,
-        notification_arns: cfer_notification_arns,
+        notification_arns: cfn_notification_arns,
       )
       tail
       update_warn_imports

@@ -21,7 +21,7 @@ module Stax
           template_url: cfn_template_url,
           parameters: cfn_parameters_update,
           capabilities: cfn_capabilities,
-          notification_arns: cfer_notification_arns,
+          notification_arns: cfn_notification_arns,
           change_set_name: change_set_name,
           change_set_type: :UPDATE,
         ).id
