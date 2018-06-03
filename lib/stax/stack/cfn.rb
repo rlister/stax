@@ -18,9 +18,15 @@ module Stax
     desc 'template', 'get template of existing stack from cloudformation'
     method_option :pretty, type: :boolean, default: true, desc: 'format json output'
     def template
-      Aws::Cfn.template(stack_name).tap { |t|
-        puts options[:pretty] ? JSON.pretty_generate(JSON.parse(t)) : t
-      }
+      body = Aws::Cfn.template(stack_name)
+      if options[:pretty]
+        begin
+          body = JSON.pretty_generate(JSON.parse(body))
+        rescue JSON::ParserError
+          ## not valid json, may be yaml
+        end
+      end
+      puts body
     end
 
     desc 'events', 'show all events for stack'
