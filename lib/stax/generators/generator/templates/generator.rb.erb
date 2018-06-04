@@ -1,0 +1,26 @@
+module Stax
+  module Generators
+    class <%= class_name %> < Base
+      desc '<%= generator_name %> generator.'
+
+      source_root File.expand_path('templates', __dir__)
+
+      # see https://www.rubydoc.info/github/wycats/thor/Thor/Actions for methods
+
+      # def create_file
+      #   create_file(filename) do
+      #     content
+      #   end
+      # end
+
+      # def create_template
+      #   template(src, dest)
+      # end
+
+      # def create_dir
+      #   empty_directory(path)
+      # end
+
+    end
+  end
+end
