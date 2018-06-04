@@ -21,7 +21,6 @@ require 'stax/stack/imports'
 require 'stax/stack/resources'
 
 require 'stax/generators'
-require 'stax/generators/stack_generator'
 require 'stax/generate'
 require 'stax/mixin/ec2'
 require 'stax/mixin/alb'

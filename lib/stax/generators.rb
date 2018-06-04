@@ -1,4 +1,5 @@
 require 'stax/generators/base'
+require 'stax/generators/stack/stack_generator'
 module Stax
   module Generators
 
