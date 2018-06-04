@@ -3,7 +3,7 @@ module Stax
 
     desc 'generate NAME [ARGS]', 'run code generators'
     def generate(generator, *args)
-      Stax::const_get(generator.capitalize + 'Generator').start(args)
+      Stax::Generators.invoke(generator, *args)
     rescue NameError => e
       fail_task(e.message)
     end
