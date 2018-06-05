@@ -32,7 +32,7 @@ module Stax
       end
 
       def generator_path
-        @_generator_path ||= File.join('lib', 'generators', args.first.underscore)
+        @_generator_path ||= File.join([Stax.root_path, 'lib', 'generators', args.first.underscore].compact)
       end
 
     end
