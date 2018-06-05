@@ -6,7 +6,7 @@ module Stax
       source_root File.expand_path('templates', __dir__)
 
       def check_args
-        abort('Give name of generator, e.g. FooBar or foo_bar') if args.size != 1
+        usage! if args.size != 1
       end
 
       def create_generator_file
@@ -18,6 +18,10 @@ module Stax
       end
 
       private
+
+      def self.banner(*args)
+        "#{basename} generate #{command_name} NAME"
+      end
 
       def generator_name
         @_generator_name ||= args.first.underscore
