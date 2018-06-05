@@ -6,8 +6,11 @@ Dir[File.join(__dir__, 'generators', '**', '*_generator.rb')].map(&method(:requi
 module Stax
   module Generators
 
-    def self.invoke(name, *args)
-      const_get(name.capitalize + 'Generator').start(args)
+    ## find subclass that matches command name
+    def self.find(name)
+      Base.subclasses.find do |g|
+        g.command_name == name
+      end
     end
 
   end

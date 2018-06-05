@@ -10,10 +10,10 @@ module Stax
           say_status(g.command_name, g.desc, :bold)
         end
       else
-        Stax::Generators.invoke(name, *args)
+        klass = Stax::Generators.find(name)
+        fail_task("Unknown generator #{name}") unless klass
+        klass.start(args)
       end
-    rescue NameError => e
-      fail_task(e.message)
     end
 
   end
