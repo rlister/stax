@@ -1,3 +1,5 @@
+require 'thor/group'
+
 module Stax
   module Generators
     class Base < Thor::Group
