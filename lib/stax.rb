@@ -20,7 +20,6 @@ require 'stax/stack/outputs'
 require 'stax/stack/imports'
 require 'stax/stack/resources'
 
-require 'stax/generators'
 require 'stax/generate'
 require 'stax/mixin/ec2'
 require 'stax/mixin/alb'

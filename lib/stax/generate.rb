@@ -1,3 +1,5 @@
+require 'stax/generators'
+
 module Stax
   class Cli < Base
 
