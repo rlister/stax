@@ -7,6 +7,12 @@ module Stax
 
       protected
 
+      ## show usage and exit
+      def usage!
+        self.class.help(self)
+        exit
+      end
+
       def self.subclasses
         ObjectSpace.each_object(singleton_class).map do |klass|
           klass == self ? nil : klass

@@ -12,7 +12,7 @@ module Stax
       class_option :yaml, type: :boolean, default: false, desc: 'create yaml templates'
 
       def check_args
-        abort('List one or more stacks to create') if args.empty?
+        usage! if args.empty?
       end
 
       def create_staxfile
