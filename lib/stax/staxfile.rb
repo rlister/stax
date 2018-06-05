@@ -1,27 +1,37 @@
 module Stax
+  @@_root_path = nil
   @@_stack_list = []
+
+  ## the stax root is defined as location of Staxfile
+  def self.root_path
+    @@_root_path
+  end
 
   ## list of stacks defined in Staxfile
   def self.stack_list
     @@_stack_list
   end
 
-  ## try to require file from lib/stack/ for each stack
-  def self.auto_require(path)
-    stack_list.each do |stack|
-      f = path.join('lib', 'stack', "#{stack}.rb")
-      require(f) if File.exist?(f)
+  ## search up the dir tree for nearest Staxfile
+  def self.find_staxfile
+    Pathname.pwd.ascend do |path|
+      return path if File.exist?(file = path.join('Staxfile'))
     end
   end
 
-  ## search up the dir tree for nearest Staxfile
   def self.load_staxfile
-    Pathname.pwd.ascend do |path|
-      if File.exist?(file = path.join('Staxfile'))
-        load(file) if file
-        auto_require(path)
-        break
-      end
+    @@_root_path = find_staxfile
+    if root_path
+      load(root_path.join('Staxfile'))
+      require_stacks
+    end
+  end
+
+  ## auto-require any stack lib files
+  def self.require_stacks
+    stack_list.each do |stack|
+      f = root_path.join('lib', 'stack', "#{stack}.rb")
+      require(f) if File.exist?(f)
     end
   end
 
