@@ -18,9 +18,6 @@ module Stax
         self.to_s.split('::').last.delete_suffix('Generator').downcase
       end
 
-      def self.invoke(name, args = ARGV)
-      end
-
       ## override help banner to make sense for generators
       def self.banner(*args)
         "#{basename} generate #{command_name} ARGS"
