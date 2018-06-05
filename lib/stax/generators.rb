@@ -1,6 +1,7 @@
 require 'stax/generators/base'
-require 'stax/generators/stack/stack_generator'
-require 'stax/generators/generator/generator_generator'
+
+## require builtin generators
+Dir[File.join(__dir__, 'generators', '**', '*_generator.rb')].map(&method(:require))
 
 module Stax
   module Generators
