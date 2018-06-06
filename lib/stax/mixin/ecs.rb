@@ -4,7 +4,7 @@ require_relative 'ecs/deploy'
 module Stax
   module Ecs
     def self.included(thor)
-      thor.desc(:ecs, 'ECS subcommands')
+      thor.desc('ecs COMMAND', 'ECS subcommands')
       thor.subcommand(:ecs, Cmd::Ecs)
     end
 

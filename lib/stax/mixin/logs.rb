@@ -4,7 +4,7 @@ module Stax
   module Logs
 
     def self.included(thor)
-      thor.desc(:logs, 'Logs subcommands')
+      thor.desc('logs COMMAND', 'Logs subcommands')
       thor.subcommand(:logs, Cmd::Logs)
     end
 
