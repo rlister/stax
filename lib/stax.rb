@@ -1,5 +1,3 @@
-require 'thor'
-
 require 'stax/aws/sdk'
 require 'stax/aws/cfn'
 
@@ -8,11 +6,8 @@ require 'stax/staxfile'
 require 'stax/base'
 require 'stax/git'
 require 'stax/cli'
-require 'stax/meta'
 require 'stax/subcommand'
 require 'stax/cfer'
-require 'stax/generate'
-require 'stax/new'
 
 require 'stax/stack'
 require 'stax/stack/cfn'

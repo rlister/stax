@@ -1,3 +1,4 @@
+require 'thor'
 require 'stax/aws/sts'
 
 module Stax
