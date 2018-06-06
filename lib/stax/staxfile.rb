@@ -46,7 +46,7 @@ module Stax
     else
       self.const_set(c, Class.new(Stack))
     end.tap do |klass|
-      Cli.desc(name, "#{name} stack")
+      Cli.desc("#{name} COMMAND", "#{name} stack commands")
       Cli.subcommand(name, klass)
 
       ## has syntax to include mixins
