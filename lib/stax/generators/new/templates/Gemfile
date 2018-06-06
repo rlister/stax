@@ -4,7 +4,7 @@ gem 'stax'
 gem 'stax-nag'
 # gem 'stax-nag', git: 'https://github.com/rlister/stax-nag'
 
-## this is a hack until big fixed
+## this is a hack until this fixed: https://github.com/seanedwards/cfer/issues/50
 gem 'docile', '~> 1.2.0'
 
 ## for ruby template wrappers
