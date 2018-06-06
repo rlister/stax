@@ -13,6 +13,7 @@ module Stax
 
   module Cmd
     class DynamoDB < SubCommand
+      stax_info :tables
 
       COLORS = {
         CREATING:  :yellow,
@@ -38,6 +39,7 @@ module Stax
 
       desc 'tables', 'list tables for stack'
       def tables
+        debug("Dynamo tables for stack #{my.stack_name}")
         print_table stack_tables.map { |r|
           t = Aws::DynamoDB.table(r.physical_resource_id)
           g = Aws::DynamoDB.global_table(r.physical_resource_id)

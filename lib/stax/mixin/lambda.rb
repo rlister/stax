@@ -13,6 +13,7 @@ module Stax
 
   module Cmd
     class Lambda < SubCommand
+      stax_info :ls
 
       no_commands do
         def stack_lambdas
@@ -37,6 +38,7 @@ module Stax
 
       desc 'ls', 'list lambdas for stack'
       def ls
+        debug("Lambda functions for stack #{my.stack_name}")
         names = stack_lambdas.map(&:physical_resource_id)
         print_table Aws::Lambda.list.select { |l|
           names.include?(l.function_name)
@@ -99,5 +101,4 @@ module Stax
 
     end
   end
-
 end

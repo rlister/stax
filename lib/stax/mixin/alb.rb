@@ -10,6 +10,7 @@ module Stax
 
   module Cmd
     class Alb < SubCommand
+      stax_info :status
 
       COLORS = {
         healthy:     :green,

@@ -10,6 +10,7 @@ module Stax
 
   module Cmd
     class Apigw < SubCommand
+      stax_info :endpoints, :resources
 
       no_commands do
         def stack_apis

@@ -63,6 +63,8 @@ module Stax
 
   module Cmd
     class Ecs < SubCommand
+      stax_info :tasks
+
       COLORS = {
         ACTIVE:   :green,
         INACTIVE: :red,
