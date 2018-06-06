@@ -48,6 +48,18 @@ module Stax
         end
       end
 
+      desc 'endpoints', 'guess endpoint URIs'
+      def endpoints
+        stack_apis.each do |r|
+          api = Aws::APIGateway.api(r.physical_resource_id)
+          debug("Endpoints for API #{api.name} #{api.id}")
+          print_table Aws::APIGateway.stages(api.id).map { |s|
+            url = "https://#{api.id}.execute-api.#{aws_region}.amazonaws.com/#{s.stage_name}/"
+            [s.stage_name, url]
+          }.sort
+        end
+      end
+
     end
   end
 end
