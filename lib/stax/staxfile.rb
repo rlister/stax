@@ -49,8 +49,8 @@ module Stax
       Cli.desc("#{name} COMMAND", "#{name} stack commands")
       Cli.subcommand(name, klass)
 
-      ## has syntax to include mixins
-      opt.fetch(:include, []).each do |i|
+      ## syntax to include mixins, reverse to give predictable include order
+      opt.fetch(:include, []).reverse.each do |i|
         klass.include(self.const_get(i))
       end
 
