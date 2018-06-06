@@ -36,6 +36,18 @@ module Stax
         end
       end
 
+      desc 'resources', 'list resources'
+      def resources
+        stack_apis.each do |r|
+          api = Aws::APIGateway.api(r.physical_resource_id)
+          debug("Resources for API #{api.name} #{api.id}")
+          print_table Aws::APIGateway.resources(api.id).map { |r|
+            methods = r.resource_methods&.keys&.join(',')
+            [r.path, r.id, methods]
+          }.sort
+        end
+      end
+
     end
   end
 end
