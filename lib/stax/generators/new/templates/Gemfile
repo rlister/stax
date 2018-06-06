@@ -4,6 +4,9 @@ gem 'stax'
 gem 'stax-nag'
 # gem 'stax-nag', git: 'https://github.com/rlister/stax-nag'
 
+gem 'stax-examples'
+# gem 'stax-examples', git: 'https://github.com/rlister/stax-examples'
+
 ## this is a hack until this fixed: https://github.com/seanedwards/cfer/issues/50
 gem 'docile', '~> 1.2.0'
 
