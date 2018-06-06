@@ -10,6 +10,54 @@ Stax can read template files written in `yaml`, `json` or the
 [cfer](https://github.com/seanedwards/cfer) ruby wrapper. It will
 choose which to use based on file extensions found.
 
+## Getting Started
+
+Install `stax`:
+
+```sh
+# gem install stax
+```
+
+Create a new `stax` application. You can choose to do this in an
+ops-specific subdirectory of your application code (thus delivering
+infrastructure to run an app with the app itself), or create an
+infrastructure-specific repo. It's up to you.
+
+```sh
+$ stax new ops
+```
+
+Change to your stax directory and install bundle:
+
+```sh
+$ cd ops
+$ bundle install
+```
+
+Create an example stack, and add a resource:
+
+```sh
+$ stax g stack example
+$ cat >> cf/example.rb
+resource :s3, 'AWS::S3::Bucket'
+^D
+$ stax example create
+```
+
+Your new stack should create, and you should now be able to list it,
+inspect resource, etc:
+
+```sh
+$ stax ls
+$ stax example resources
+```
+
+Delete your example stack:
+
+```sh
+$ stax example delete
+```
+
 ## Concepts
 
 ### Application
