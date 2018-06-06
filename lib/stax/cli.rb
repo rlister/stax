@@ -7,7 +7,7 @@ module Stax
 
     desc 'version', 'show version'
     def version
-      puts VERSION
+      puts Stax::VERSION
     end
 
     desc 'ls', 'list stacks for this branch'
