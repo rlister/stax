@@ -10,30 +10,27 @@ module Stax
       end
 
       def create_stax_dir
-        empty_directory(stax_dir)
+        empty_directory(args.first)
+        self.destination_root = args.first
       end
 
       def create_staxfile
-        create_file(stax_dir.join('Staxfile'))
+        create_file('Staxfile')
       end
 
       def create_gemfile
-        template('Gemfile', stax_dir.join('Gemfile'))
+        template('Gemfile')
       end
 
       def create_dirs
-        empty_directory(stax_dir.join('lib', 'stack'))
-        empty_directory(stax_dir.join('cf'))
+        empty_directory(File.join('lib', 'stack'))
+        empty_directory('cf')
       end
 
       private
 
       def self.banner(*args)
         "#{basename} generate #{command_name} DIR"
-      end
-
-      def stax_dir
-        @_stax_dir ||= Pathname.new(args.first)
       end
 
     end
