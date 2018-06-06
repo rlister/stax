@@ -1,0 +1,5 @@
+require 'stax/examples'
+
+## add stacks here
+# stack :foo
+# stack :bar, import: :foo

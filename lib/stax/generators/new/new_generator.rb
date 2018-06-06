@@ -15,7 +15,7 @@ module Stax
       end
 
       def create_staxfile
-        create_file('Staxfile')
+        template('Staxfile')
       end
 
       def create_gemfile
