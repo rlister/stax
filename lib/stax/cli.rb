@@ -1,3 +1,4 @@
+require 'stax/version'
 require 'stax/aws/cfn'
 
 module Stax
