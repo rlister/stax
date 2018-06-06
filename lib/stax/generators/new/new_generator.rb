@@ -27,6 +27,10 @@ module Stax
         empty_directory('cf')
       end
 
+      def create_lib_stack
+        template(File.join('lib', 'stack.rb'))
+      end
+
       private
 
       def self.banner(*args)
