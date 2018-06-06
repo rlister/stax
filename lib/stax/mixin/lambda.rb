@@ -6,7 +6,7 @@ require 'stax/aws/lambda'
 module Stax
   module Lambda
     def self.included(thor)
-      thor.desc(:lambda, 'Lambda subcommands')
+      thor.desc('lambda COMMAND', 'Lambda subcommands')
       thor.subcommand(:lambda, Cmd::Lambda)
     end
   end

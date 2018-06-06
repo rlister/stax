@@ -6,7 +6,7 @@ require_relative 'dynamodb/backup'
 module Stax
   module DynamoDB
     def self.included(thor)
-      thor.desc(:dynamodb, 'Dynamo subcommands')
+      thor.desc('dynamodb COMMAND', 'Dynamo subcommands')
       thor.subcommand(:dynamodb, Cmd::DynamoDB)
     end
   end

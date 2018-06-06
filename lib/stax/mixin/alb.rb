@@ -3,7 +3,7 @@ require 'stax/aws/alb'
 module Stax
   module Alb
     def self.included(thor)
-      thor.desc(:alb, 'ALB subcommands')
+      thor.desc('alb COMMAND', 'ALB subcommands')
       thor.subcommand(:alb, Cmd::Alb)
     end
   end
