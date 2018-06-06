@@ -1,0 +1,11 @@
+gem 'stax'
+# gem 'stax', git: 'https://github.com/rlister/stax'
+
+gem 'stax-nag'
+# gem 'stax-nag', git: 'https://github.com/rlister/stax-nag'
+
+## this is a hack until big fixed
+gem 'docile', '~> 1.2.0'
+
+## for ruby template wrappers
+gem 'cfer', '>= 0.6.0'
