@@ -3,6 +3,7 @@ require 'stax/cli/ls'
 require 'stax/cli/new'
 require 'stax/cli/generate'
 require 'stax/cli/crud'
+require 'stax/cli/info'
 
 module Stax
   class Cli < Base
