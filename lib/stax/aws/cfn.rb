@@ -72,6 +72,8 @@ module Stax
 
         def describe(name)
           client.describe_stacks(stack_name: name).stacks.first
+        rescue ::Aws::CloudFormation::Errors::ValidationError
+          nil
         end
 
         def exists?(name)
