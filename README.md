@@ -15,7 +15,7 @@ choose which to use based on file extensions found.
 Install `stax`:
 
 ```sh
-# gem install stax
+gem install stax
 ```
 
 Create a new `stax` application. You can choose to do this in an
@@ -24,38 +24,38 @@ infrastructure to run an app with the app itself), or create an
 infrastructure-specific repo. It's up to you.
 
 ```sh
-$ stax new ops
+stax new ops
 ```
 
 Change to your stax directory and install bundle:
 
 ```sh
-$ cd ops
-$ bundle install
+cd ops
+bundle install
 ```
 
 Create an example stack, and add a resource:
 
 ```sh
-$ stax g stack example
-$ cat >> cf/example.rb
+stax g stack example
+cat >> cf/example.rb
 resource :s3, 'AWS::S3::Bucket'
 ^D
-$ stax example create
+stax example create
 ```
 
 Your new stack should create, and you should now be able to list it,
 inspect resource, etc:
 
 ```sh
-$ stax ls
-$ stax example resources
+stax ls
+stax example resources
 ```
 
 Delete your example stack:
 
 ```sh
-$ stax example delete
+stax example delete
 ```
 
 ## Concepts
@@ -121,9 +121,9 @@ gem 'stax'
 And then execute:
 
 ```
-$ cd ops
-$ bundle
-$ bundle exec stax version
+cd ops
+bundle
+bundle exec stax version
 ```
 
 ## Usage
@@ -139,7 +139,7 @@ stack :app
 Run stax to see it has created subcommands for each of your stacks:
 
 ```
-$ bundle exec stax
+bundle exec stax
 Commands:
   stax app             # app stack
   stax create          # meta create task
@@ -155,7 +155,7 @@ Commands:
 with the standard create/update/delete tasks for each:
 
 ```
-$ bundle exec stax vpc
+bundle exec stax vpc
 Commands:
   stax vpc create           # create stack
   stax vpc delete           # delete stack
@@ -181,10 +181,10 @@ See `examples` for a typical setup.
 
 Simply control stacks using the relevant subcommands:
 
-```
-$ stax vpc create
-$ stax vpc update
-$ stax vpc delete
+```sh
+stax vpc create
+stax vpc update
+stax vpc delete
 ```
 
 By default Stax will name stacks as `$app-$branch-$stack`. For our
