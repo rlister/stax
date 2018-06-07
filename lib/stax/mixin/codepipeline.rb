@@ -18,6 +18,8 @@ module Stax
 
   module Cmd
     class Codepipeline < SubCommand
+      stax_info :state
+
       COLORS = {
         Succeeded: :green,
         Failed:    :red,

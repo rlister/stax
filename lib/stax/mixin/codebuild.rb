@@ -18,6 +18,8 @@ module Stax
 
   module Cmd
     class Codebuild < SubCommand
+      stax_info :builds
+
       COLORS = {
         SUCCEEDED:    :green,
         FAILED:       :red,

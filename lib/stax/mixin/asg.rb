@@ -10,6 +10,8 @@ module Stax
 
   module Cmd
     class Asg < SubCommand
+      stax_info :status
+
       COLORS = {
         ## lifecycle states
         Pending: :yellow, InService: :green, Terminating: :red,

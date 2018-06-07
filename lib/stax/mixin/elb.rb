@@ -10,6 +10,7 @@ module Stax
 
   module Cmd
     class Elb < SubCommand
+      stax_info :status
 
       COLORS = {
         InService:    :green,
