@@ -27,8 +27,10 @@ module Stax
     desc 'update', 'meta update task'
     def update
       stack_objects.each do |s|
-        if s.exists? && y_or_n?("Update #{s.stack_name}?", :yellow)
-          s.update
+        if s.exists?
+          y_or_n?("Update #{s.stack_name}?", :yellow) && s.update
+        else
+          say("#{s.stack_name} does not exist")
         end
       end
     end
