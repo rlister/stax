@@ -2,6 +2,7 @@ require 'yaml'
 require 'stax/aws/dynamodb'
 require_relative 'dynamodb/throughput'
 require_relative 'dynamodb/backup'
+require_relative 'dynamodb/local'
 
 module Stax
   module DynamoDB
