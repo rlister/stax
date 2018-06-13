@@ -29,6 +29,13 @@ module Stax
           end
         end
 
+        ## monkey-patch this method to apply any app-specific changes to payload
+        ## args: logical_id, payload hash
+        ## returns: new payload
+        def dynamo_payload_hacks(id, payload)
+          payload
+        end
+
         ## convert property names to ruby SDK form
         def dynamo_ruby_payload(payload)
           payload&.deep_transform_keys do |key|
@@ -55,6 +62,7 @@ module Stax
 
         tables.each do |id, value|
           payload = dynamo_payload_from_template(id, value)
+          payload = dynamo_payload_hacks(id, payload) # apply user-supplied hacks
           if options[:payload]
             puts JSON.pretty_generate(payload)
           else
