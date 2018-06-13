@@ -176,7 +176,7 @@ Commands:
 ## Cloudformation templates
 
 Stax will load template files from the path relative to its `Staxfile`
-as `cf/$stack.rb`, e.g. `cf/vpc.rb`. Modify this using the method `Stax::Stack::cfer_template`.
+as `cf/$stack.rb`, e.g. `cf/vpc.rb`. Modify this using the method `Stax::Stack::cfn_template_dir`.
 See `examples` for a typical setup.
 
 Simply control stacks using the relevant subcommands:
