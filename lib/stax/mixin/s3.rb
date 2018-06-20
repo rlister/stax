@@ -16,7 +16,7 @@ module Stax
         end
 
         def stack_s3_bucket_names
-          stack_s3_buckets.map(&:physical_resource_id)
+          stack_s3_buckets.map(&:physical_resource_id).compact
         end
 
         def stack_tagged_buckets
