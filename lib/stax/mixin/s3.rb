@@ -36,6 +36,7 @@ module Stax
 
       desc 'tagged', 'S3 buckets that were tagged by this stack'
       def tagged
+        debug("Buckets tagged by stack #{my.stack_name}")
         print_table stack_tagged_buckets.map { |b|
           [b.name, b.creation_date]
         }
