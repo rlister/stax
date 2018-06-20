@@ -14,6 +14,10 @@ module Stax
 
         def bucket_tags(bucket)
           client.get_bucket_tagging(bucket: bucket).tag_set
+        rescue ::Aws::Errors::NoSuchEndpointError
+          warn("socket error for #{bucket}, retrying")
+          sleep 1
+          retry
         rescue ::Aws::S3::Errors::NoSuchTagSet
           []
         end
