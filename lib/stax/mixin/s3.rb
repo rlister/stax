@@ -15,6 +15,10 @@ module Stax
           Aws::Cfn.resources_by_type(my.stack_name, 'AWS::S3::Bucket')
         end
 
+        def stack_s3_bucket_names
+          stack_s3_buckets.map(&:physical_resource_id)
+        end
+
         def stack_tagged_buckets
           Aws::S3.list_buckets.select do |bucket|
             region = Aws::S3.bucket_region(bucket.name)
@@ -27,7 +31,7 @@ module Stax
 
       desc 'buckets', 'S3 buckets for this stack'
       def buckets
-        puts stack_s3_buckets.map(&:physical_resource_id)
+        puts stack_s3_bucket_names
       end
 
       desc 'tagged', 'S3 buckets that were tagged by this stack'
@@ -67,6 +71,28 @@ module Stax
                 }
               ]
             )
+          end
+        end
+      end
+
+      desc 'clear', 'clear objects from buckets'
+      method_option :names, aliases: '-n', type: :array, default: nil, desc: 'names of buckets to clear'
+      def clear
+        debug("Clearing buckets for #{my.stack_name}")
+        (options[:names] || stack_s3_bucket_names).each do |b|
+          if yes?("Clear contents of bucket #{b}?", :yellow)
+            ::Aws::S3::Bucket.new(b).clear!
+          end
+        end
+      end
+
+      desc 'delete', 'delete buckets and objects'
+      method_option :names, aliases: '-n', type: :array, default: nil, desc: 'names of buckets to delete'
+      def delete
+        debug("Deleting buckets for #{my.stack_name}")
+        (options[:names] || stack_s3_bucket_names).each do |b|
+          if yes?("Delete bucket and contents #{b}?", :yellow)
+            ::Aws::S3::Bucket.new(b).delete!
           end
         end
       end
