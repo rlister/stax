@@ -42,6 +42,16 @@ module Stax
         }
       end
 
+      desc 'reap', 'delete buckets tagged by this stack'
+      def reap
+        debug("Deleting buckets tagged by #{my.stack_name}")
+        stack_tagged_buckets.each do |b|
+          if yes?("Delete bucket and contents #{b.name}?", :yellow)
+            ::Aws::S3::Bucket.new(b.name).delete!
+          end
+        end
+      end
+
       desc 'lifecycle', 'show/set lifecycle for tagged buckets'
       def lifecycle
         debug("Lifecycle for buckets tagged by #{my.stack_name}")
