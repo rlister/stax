@@ -57,10 +57,10 @@ module Stax
         end
       end
 
-      desc 'local', 'create local tables from template'
+      desc 'local-create', 'create local tables from template'
       method_option :tables,  aliases: '-t', type: :array,   default: nil,   desc: 'filter table ids'
       method_option :payload, aliases: '-p', type: :boolean, default: false, desc: 'just output payload'
-      def local
+      def local_create
         tables = dynamo_local_tables
         tables.slice!(*options[:tables]) if options[:tables]
 
@@ -73,6 +73,18 @@ module Stax
             puts "create table #{id}"
             dynamo_local_create(payload)
           end
+        end
+      end
+
+      desc 'local-delete', 'delete local tables from template'
+      method_option :tables,  aliases: '-t', type: :array, default: nil, desc: 'filter table ids'
+      def local_delete
+        tables = dynamo_local_tables
+        tables.slice!(*options[:tables]) if options[:tables]
+
+        tables.each do |id,_value|
+          puts "deleting table #{id}"
+          client.delete_table(table_name: id)
         end
       end
 
