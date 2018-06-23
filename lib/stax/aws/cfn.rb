@@ -102,6 +102,10 @@ module Stax
           client.list_imports(export_name: name).map(&:imports)
         rescue ::Aws::CloudFormation::Errors::ValidationError
           []
+        rescue ::Aws::CloudFormation::Errors::Throttling => e # this call rate-limits aggressively
+          warn(e.message)
+          sleep 1
+          retry
         end
 
         def validate(opt)
