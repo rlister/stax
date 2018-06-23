@@ -99,9 +99,7 @@ module Stax
 
         ## list of stacks that import from this one
         def imports(name)
-          paginate(:imports) do |next_token|
-            client.list_imports(export_name: name, next_token: next_token)
-          end
+          client.list_imports(export_name: name).map(&:imports)
         rescue ::Aws::CloudFormation::Errors::ValidationError
           []
         end
