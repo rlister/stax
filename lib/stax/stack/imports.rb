@@ -27,7 +27,7 @@ module Stax
       print_table Aws::Cfn.exports(stack_name).map { |e|
         imports = (i = Aws::Cfn.imports(e.export_name)).empty? ? '-' : i.join(',')
         [e.output_key, imports]
-      }
+      }.sort
     end
 
   end
