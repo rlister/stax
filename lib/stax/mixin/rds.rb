@@ -14,6 +14,8 @@ module Stax
 
       COLORS = {
         available: :green,
+        Complete:  :green,
+        Active:    :green,
       }
 
       no_commands do
@@ -24,6 +26,10 @@ module Stax
         def stack_rds_instances
           filter = { name: 'db-instance-id', values: stack_db_instances.map(&:physical_resource_id) }
           Aws::Rds.instances(filters: [filter])
+        end
+
+        def stack_db_subnet_groups
+          Aws::Cfn.resources_by_type(my.stack_name, 'AWS::RDS::DBSubnetGroup')
         end
       end
 
@@ -43,6 +49,17 @@ module Stax
         }
       end
 
+      desc 'subnets', 'list db subnet groups'
+      def subnets
+        stack_db_subnet_groups.map do |r|
+          Aws::Rds.subnet_groups(db_subnet_group_name: r.physical_resource_id)
+        end.flatten.each do |g|
+          debug("Subnets for group #{g.db_subnet_group_name}")
+          print_table g.subnets.map { |s|
+            [s&.subnet_availability_zone&.name, s&.subnet_identifier, color(s&.subnet_status, COLORS)]
+          }
+        end
+      end
 
     end
   end
