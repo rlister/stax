@@ -27,7 +27,7 @@ module Stax
         debug("RDS DB instances for #{my.stack_name}")
         filter = { name: 'db-instance-id', values: stack_db_instances.map(&:physical_resource_id) }
         print_table Aws::Rds.instances(filters: [filter]).map { |i|
-          [i.db_instance_identifier, i.engine, i.engine_version, color(i.db_instance_status, COLORS), i.db_instance_class, i.db_subnet_group&.vpc_id]
+          [i.db_instance_identifier, i.engine, i.engine_version, color(i.db_instance_status, COLORS), i.db_instance_class, i.db_subnet_group&.vpc_id, "ha:#{i.multi_az.to_s}"]
         }
       end
 
