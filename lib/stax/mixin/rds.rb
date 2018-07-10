@@ -71,7 +71,15 @@ module Stax
 
       desc 'endpoints', 'list db instance endpoints'
       def endpoints
-        debug("RDS DB endpoints for #{my.stack_name}")
+        stack_rds_clusters.each do |c|
+          debug("RDS DB endpoints for cluster #{c.db_cluster_identifier}")
+          print_table [
+            ['writer', c.endpoint,        c.port, c.hosted_zone_id],
+            ['reader', c.reader_endpoint, c.port, c.hosted_zone_id],
+          ]
+        end
+
+        debug("RDS DB instance endpoints for #{my.stack_name}")
         print_table stack_rds_instances.map { |i|
           [i.db_instance_identifier, i.endpoint&.address, i.endpoint&.port, i.endpoint&.hosted_zone_id]
         }
