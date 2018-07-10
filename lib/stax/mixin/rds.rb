@@ -65,7 +65,7 @@ module Stax
       def instances
         debug("RDS DB instances for #{my.stack_name}")
         print_table stack_rds_instances.map { |i|
-          [i.db_instance_identifier, i.engine, i.engine_version, color(i.db_instance_status, COLORS), i.db_instance_class, i.db_subnet_group&.vpc_id, "ha:#{i.multi_az.to_s}"]
+          [i.db_instance_identifier, i.engine, i.engine_version, color(i.db_instance_status, COLORS), i.db_instance_class, i.db_subnet_group&.vpc_id, i.availability_zone]
         }
       end
 
