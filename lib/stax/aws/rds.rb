@@ -8,6 +8,10 @@ module Stax
           @_client ||= ::Aws::RDS::Client.new
         end
 
+        def clusters(opt)
+          client.describe_db_clusters(opt)&.db_clusters
+        end
+
         def instances(opt)
           client.describe_db_instances(opt).map(&:db_instances).flatten
         end

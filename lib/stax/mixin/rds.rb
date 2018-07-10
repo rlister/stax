@@ -19,8 +19,17 @@ module Stax
       }
 
       no_commands do
+        def stack_db_clusters
+          Aws::Cfn.resources_by_type(my.stack_name, 'AWS::RDS::DBCluster')
+        end
+
         def stack_db_instances
           Aws::Cfn.resources_by_type(my.stack_name, 'AWS::RDS::DBInstance')
+        end
+
+        def stack_rds_clusters
+          filter = { name: 'db-cluster-id', values: stack_db_clusters.map(&:physical_resource_id) }
+          Aws::Rds.clusters(filters: [filter])
         end
 
         def stack_rds_instances
@@ -30,6 +39,25 @@ module Stax
 
         def stack_db_subnet_groups
           Aws::Cfn.resources_by_type(my.stack_name, 'AWS::RDS::DBSubnetGroup')
+        end
+      end
+
+      desc 'clusters', 'list db clusters for stack'
+      def clusters
+        debug("RDS DB clusters for #{my.stack_name}")
+        print_table stack_rds_clusters.map { |c|
+          [c.db_cluster_identifier, c.engine, c.engine_version, color(c.status, COLORS), c.cluster_create_time]
+        }
+      end
+
+      desc 'members', 'list db cluster members for stack'
+      def members
+        stack_rds_clusters.each do |c|
+          debug("RDS DB members for cluster #{c.db_cluster_identifier}")
+          print_table c.db_cluster_members.map { |m|
+            role = m.is_cluster_writer ? 'writer' : 'reader'
+            [m.db_instance_identifier, role, m.db_cluster_parameter_group_status]
+          }
         end
       end
 
