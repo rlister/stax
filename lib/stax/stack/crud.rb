@@ -57,20 +57,20 @@ module Stax
 
       ## get array of params for stack create
       def cfn_parameters_create
-        cfn_parameters.map do |k,v|
+        @_cfn_parameters_create ||= cfn_parameters.map { |k,v|
           { parameter_key: k, parameter_value: v }
-        end
+        }
       end
 
       ## get array of params for stack update, use previous where requested
       def cfn_parameters_update
-        cfn_parameters.map do |k,v|
+        @_cfn_parameters_update ||= cfn_parameters.map { |k,v|
           if _use_previous_value.include?(k.to_s)
             { parameter_key: k, use_previous_value: true }
           else
             { parameter_key: k, parameter_value: v }
           end
-        end
+        }
       end
 
       ## location of templates relative to Staxfile
