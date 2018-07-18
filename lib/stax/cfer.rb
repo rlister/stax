@@ -33,7 +33,7 @@ end
 
 module Stax
   class Stack < Base
-    class_option :use_previous_value, aliases: '-u', type: :array, default: [], desc: 'params to use previous value'
+    class_option :use_previous_value, aliases: '-u', type: :array, default: nil, desc: 'params to use previous value'
 
     no_commands do
 

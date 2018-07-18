@@ -45,15 +45,27 @@ module Stax
         end
       end
 
+      ## stack should monkey-patch with list of params to keep on update
+      def use_previous_value
+        []
+      end
+
+      ## return option or method
+      def _use_previous_value
+        @_use_previous_value ||= (options[:use_previous_value] || use_previous_value.map(&:to_s))
+      end
+
+      ## get array of params for stack create
       def cfn_parameters_create
         cfn_parameters.map do |k,v|
           { parameter_key: k, parameter_value: v }
         end
       end
 
+      ## get array of params for stack update, use previous where requested
       def cfn_parameters_update
         cfn_parameters.map do |k,v|
-          if options[:use_previous_value].include?(k.to_s)
+          if _use_previous_value.include?(k.to_s)
             { parameter_key: k, use_previous_value: true }
           else
             { parameter_key: k, parameter_value: v }
