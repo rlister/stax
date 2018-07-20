@@ -16,7 +16,7 @@ module Stax
 
       ## IP address to ssh
       def ssh_instances
-        Aws::Ec2.instances(stack_name).map(&:public_ip_address)
+        Aws::Ec2.instances(stack_name).map(&:public_ip_address).reject(&:nil?)
       end
 
       def ssh_options_format(opt)
