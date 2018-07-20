@@ -10,7 +10,7 @@ module Stax
 
   module Cmd
     class Rds < SubCommand
-      stax_info :clusters, :instances
+      stax_info :clusters, :instances, :endpoints
 
       COLORS = {
         available: :green,
