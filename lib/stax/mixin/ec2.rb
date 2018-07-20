@@ -10,6 +10,8 @@ module Stax
 
   module Cmd
     class Ec2 < SubCommand
+      stax_info :ls
+
       COLORS = {
         ## instances
         running:    :green,
