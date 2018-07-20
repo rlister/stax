@@ -25,6 +25,7 @@ module Stax
 
       desc 'ls', 'list instances for stack'
       def ls
+        debug("EC2 instances for #{stack_name}")
         print_table Aws::Ec2.instances(my.stack_name).map { |i|
           name = i.tags.find { |t| t.key == 'Name' }&.value
           [
