@@ -106,6 +106,23 @@ module Stax
         }
       end
 
+      desc 'start', 'start replication task'
+      method_option :tasks,  type: :array,   default: nil,   description: 'task arns to start'
+      method_option :resume, type: :boolean, default: false, description: 'resume processing'
+      method_option :reload, type: :boolean, default: false, description: 'reload target'
+      def start(*tasks)
+        type = (options[:resume] && 'resume-processing') || (options[:reload] && 'reload-target') || 'start-replication'
+        options.fetch(:tasks, dms_task_arns).each do |task|
+          Aws::Dms.start(replication_task_arn: task, start_replication_task_type: type).tap do |r|
+            puts [r.replication_task_identifier, r.status, r.replication_task_start_date].join('  ')
+          end
+        end
+      rescue ::Aws::DatabaseMigrationService::Errors::InvalidParameterCombinationException => e
+        fail_task(e.message)
+      rescue ::Aws::DatabaseMigrationService::Errors::InvalidResourceStateFault => e
+        fail_task(e.message)
+      end
+
     end
   end
 end

@@ -28,6 +28,10 @@ module Stax
           client.describe_connections(opt).map(&:connections).flatten
         end
 
+        def start(opt)
+          client.start_replication_task(opt).replication_task
+        end
+
       end
 
     end
