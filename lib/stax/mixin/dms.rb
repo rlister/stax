@@ -74,7 +74,7 @@ module Stax
           [
             t.replication_task_identifier, color(t.status, COLORS), t.migration_type,
             "#{t.replication_task_stats.full_load_progress_percent}%", "#{(t.replication_task_stats.elapsed_time_millis/1000).to_i}s",
-            "#{t.replication_task_stats.tables_loaded} loaded", "#{t.replication_task_stats.tables_loaded} errors",
+            "#{t.replication_task_stats.tables_loaded} loaded", "#{t.replication_task_stats.tables_errored} errors",
           ]
         }
       end
