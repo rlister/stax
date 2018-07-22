@@ -30,6 +30,7 @@ module Stax
         successful: :green,
         failed:     :red,
         stopped:    :red,
+        ready:      :green,
       }
 
       no_commands do
