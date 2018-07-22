@@ -73,8 +73,8 @@ module Stax
         print_table Aws::Dms.tasks(filters: [{name: 'replication-task-arn', values: dms_task_arns}]).map { |t|
           [
             t.replication_task_identifier, color(t.status, COLORS), t.migration_type,
-            "#{t.replication_task_stats.full_load_progress_percent}%", "#{(t.replication_task_stats.elapsed_time_millis/1000).to_i}s",
-            "#{t.replication_task_stats.tables_loaded} loaded", "#{t.replication_task_stats.tables_errored} errors",
+            "#{t.replication_task_stats&.full_load_progress_percent}%", "#{(t.replication_task_stats&.elapsed_time_millis/1000).to_i}s",
+            "#{t.replication_task_stats&.tables_loaded} loaded", "#{t.replication_task_stats&.tables_errored} errors",
           ]
         }
       end
