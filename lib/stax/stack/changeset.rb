@@ -57,6 +57,11 @@ module Stax
         }
       end
 
+      ## get status reason, used for a failure message
+      def change_set_reason(id)
+        Aws::Cfn.client.describe_change_set(stack_name: stack_name, change_set_name: id).status_reason
+      end
+
       ## confirm and execute the change set
       def change_set_execute(id)
         if yes?("Apply these changes to stack #{stack_name}?", :yellow)
@@ -76,7 +81,7 @@ module Stax
     desc 'change', 'create and execute a changeset'
     def change
       id = change_set_update
-      change_set_complete?(id) || fail_task('No changes')
+      change_set_complete?(id) || fail_task(change_set_reason(id))
       change_set_changes(id)
       change_set_unlock
       change_set_execute(id) && tail && update_warn_imports
