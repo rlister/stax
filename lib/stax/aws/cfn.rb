@@ -160,6 +160,18 @@ module Stax
           client.execute_change_set(opt)
         end
 
+        def detect_drift(opt)
+          client.detect_stack_drift(opt).stack_drift_detection_id
+        end
+
+        def drift_status(id)
+          client.describe_stack_drift_detection_status(stack_drift_detection_id: id)
+        end
+
+        def drifts(opt)
+          client.describe_stack_resource_drifts(opt).map(&:stack_resource_drifts).flatten
+        end
+
       end
 
     end

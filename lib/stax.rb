@@ -17,6 +17,7 @@ require 'stax/stack/parameters'
 require 'stax/stack/outputs'
 require 'stax/stack/imports'
 require 'stax/stack/resources'
+require 'stax/stack/drift'
 
 require 'stax/mixin/ec2'
 require 'stax/mixin/alb'
