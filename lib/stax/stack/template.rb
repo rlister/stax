@@ -33,9 +33,14 @@ module Stax
         end
       end
 
+      ## by default look for cdk templates in same dir as Staxfile
+      def cfn_cdk_dir
+        Stax.root_path
+      end
+
       ## transcompile and load a cdk template
       def cfn_template_cdk
-        Dir.chdir('cdk') do
+        Dir.chdir(cfn_cdk_dir) do
           %x[npm run build]
           %x[cdk synth]
         end
