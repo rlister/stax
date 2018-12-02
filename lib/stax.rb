@@ -11,6 +11,7 @@ require 'stax/cfer'
 
 require 'stax/stack'
 require 'stax/stack/cfn'
+require 'stax/stack/template'
 require 'stax/stack/crud'
 require 'stax/stack/changeset'
 require 'stax/stack/parameters'

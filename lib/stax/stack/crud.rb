@@ -73,26 +73,6 @@ module Stax
         }
       end
 
-      ## location of templates relative to Staxfile
-      def cfn_template_dir
-        'cf'
-      end
-
-      ## get cfn template from file depending on the format
-      def cfn_template
-        @_cfn_template ||= \
-        begin
-          stub = File.join(cfn_template_dir, "#{class_name}")
-          if File.exists?(f = "#{stub}.rb")
-            cfer_generate(f)
-          elsif File.exists?(f = "#{stub}.yaml")
-            File.read(f)
-          elsif File.exists?(f = "#{stub}.json")
-            File.read(f)
-          end
-        end
-      end
-
       ## set this to always do an S3 upload of template
       def cfn_force_s3?
         false
