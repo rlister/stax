@@ -15,6 +15,10 @@ module Stax
         self.class.instance_variable_get(:@imports)
       end
 
+      def stack_type
+        self.class.instance_variable_get(:@type)
+      end
+
       def exists?
         Aws::Cfn.exists?(stack_name)
       end
