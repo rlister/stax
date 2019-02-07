@@ -24,6 +24,17 @@ module Stax
       @_ecs_task_definitions ||= Aws::Cfn.resources_by_type(stack_name, 'AWS::ECS::TaskDefinition')
     end
 
+    ## get services with a list of logical ids
+    def ecs_services_with_ids(*ids)
+      if ids.empty?
+        ecs_services
+      else
+        ecs_services.select do |s|
+          ids.include?(s.logical_resource_id)
+        end
+      end
+    end
+
     ## mangle taskdef arn into family name
     def ecs_task_families
       ecs_task_definitions.map do |r|
@@ -240,10 +251,10 @@ module Stax
         end
       end
 
-      desc 'scale', 'scale containers for service'
+      desc 'scale [IDs]', 'scale containers for service'
       method_option :desired, aliases: '-d', type: :numeric, default: nil, desc: 'desired container count'
-      def scale
-        my.ecs_services.each do |s|
+      def scale(*ids)
+        my.ecs_services_with_ids(*ids).each do |s|
           debug("Scaling service #{s.physical_resource_id.split('/').last}")
           Aws::Ecs.update_service(
             cluster: my.ecs_cluster_name,
