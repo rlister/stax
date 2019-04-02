@@ -38,7 +38,9 @@ module Stax
   ## add a stack by name, creates class as needed
   def self.add_stack(name, opt = {})
     @@_stack_list << name
-    c = name.capitalize
+
+    ## camelize the stack name into class name
+    c = name.to_s.split(/[_-]/).map(&:capitalize).join
 
     ## create the class if it does not exist yet
     if self.const_defined?(c)
