@@ -56,6 +56,7 @@ module Stax
         klass.include(self.const_get(i))
       end
 
+      klass.instance_variable_set(:@name, name)
       klass.instance_variable_set(:@imports, Array(opt.fetch(:import, [])))
       klass.instance_variable_set(:@type, opt.fetch(:type, nil))
     end

@@ -2,12 +2,15 @@ module Stax
   class Stack < Base
 
     no_commands do
+
+      ## get name of stack in Staxfile, or infer it from class
       def class_name
-        @_class_name ||= self.class.to_s.split('::').last.downcase
+        @_class_name ||= self.class.instance_variable_get(:@name) || self.class.to_s.split('::').last.underscore
       end
 
+      ## build valid name for the stack
       def stack_name
-        @_stack_name ||= stack_prefix + class_name
+        @_stack_name ||= stack_prefix + cfn_safe(class_name)
       end
 
       ## list of other stacks we need to reference
