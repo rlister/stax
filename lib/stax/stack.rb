@@ -5,7 +5,7 @@ module Stax
 
       ## get name of stack in Staxfile, or infer it from class
       def class_name
-        @_class_name ||= self.class.instance_variable_get(:@name) || self.class.to_s.split('::').last.underscore
+        @_class_name ||= self.class.instance_variable_get(:@name).to_s || self.class.to_s.split('::').last.underscore
       end
 
       ## build valid name for the stack
