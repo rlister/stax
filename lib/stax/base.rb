@@ -27,7 +27,8 @@ module Stax
 
       ## find or create a stack object
       def stack(id)
-        object = Stax.const_get(id.to_s.capitalize)
+        c = id.to_s.split(/[_-]/).map(&:capitalize).join # convert symbol to class string
+        object = Stax.const_get(c)
         ObjectSpace.each_object(object).first || object.new([], options)
       end
 
