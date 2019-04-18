@@ -3,4 +3,8 @@ require 'bundler/setup'
 require 'stax'
 
 Stax.load_staxfile
-Stax::Cli.start(ARGV)
+begin
+  Stax::Cli.start(ARGV)
+rescue Aws::CloudFormation::Errors::ExpiredToken => e
+  abort(e.message)
+end
