@@ -61,7 +61,9 @@ module Stax
           last_seen = events.first.event_id
         end
 
-        break if Aws::Cfn.describe(stack_name).stack_status.end_with?('COMPLETE', 'FAILED')
+        ## get stack status and break if stack gone, or delete complete/failed
+        s = Aws::Cfn.describe(stack_name)
+        break if s.nil? || s.stack_status.end_with?('COMPLETE', 'FAILED')
       end
     rescue ::Aws::CloudFormation::Errors::ValidationError => e
       puts e.message
