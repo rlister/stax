@@ -215,6 +215,18 @@ module Stax
       puts cfn_template
     end
 
+    desc 'continue', 'continue failed rollback'
+    method_option :skip, type: :array, default: nil, description: 'resources to skip'
+    def continue
+      Aws::Cfn.client.continue_update_rollback(
+        stack_name: stack_name,
+        resources_to_skip: options[:skip],
+      )
+      tail
+    rescue ::Aws::CloudFormation::Errors::ValidationError => e
+      fail_task(e.message)
+    end
+
     desc 'protection', 'show/set termination protection for stack'
     method_option :enable,  aliases: '-e', type: :boolean, default: nil, desc: 'enable termination protection'
     method_option :disable, aliases: '-d', type: :boolean, default: nil, desc: 'disable termination protection'
