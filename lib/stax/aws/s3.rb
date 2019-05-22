@@ -26,6 +26,12 @@ module Stax
           client.get_bucket_location(bucket: bucket).location_constraint
         end
 
+        ## get region, return us-east-1 if empty
+        def location(bucket)
+          l = client.get_bucket_location(bucket: bucket).location_constraint
+          l.empty? ? 'us-east-1' : l
+        end
+
         def put(opt)
           client.put_object(opt)
         end

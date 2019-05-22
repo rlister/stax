@@ -10,6 +10,8 @@ module Stax
 
   module Cmd
     class S3 < SubCommand
+      stax_info :ls
+
       no_commands do
         def stack_s3_buckets
           Aws::Cfn.resources_by_type(my.stack_name, 'AWS::S3::Bucket')
@@ -29,9 +31,31 @@ module Stax
         end
       end
 
-      desc 'buckets', 'S3 buckets for this stack'
+      desc 'ls', 'list buckets and regions'
+      def ls
+        debug("Buckets for #{my.stack_name}")
+        print_table stack_s3_bucket_names.map { |b|
+          [ b, Aws::S3.location(b) ]
+        }
+      end
+
+      desc 'buckets', 'S3 bucket names for this stack'
       def buckets
         puts stack_s3_bucket_names
+      end
+
+      desc 'website', 'guess website endpoint for buckets'
+      def website
+        stack_s3_bucket_names.each do |b|
+          debug("Website endpoint for #{b}")
+          begin
+            Aws::S3.client.get_bucket_website(bucket: b)
+            region = Aws::S3.location(b)
+            puts "#{b}.s3-website-#{region}.amazonaws.com"
+          rescue ::Aws::S3::Errors::NoSuchWebsiteConfiguration => e
+            puts e.message      # handle no website config
+          end
+        end
       end
 
       desc 'tagged', 'S3 buckets that were tagged by this stack'
