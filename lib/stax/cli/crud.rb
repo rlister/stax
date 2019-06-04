@@ -14,8 +14,19 @@ module Stax
     end
 
     desc 'create', 'meta create task'
+    method_option :all, type: :boolean, default: false, desc: 'create all groups'
+    method_option :groups, aliases: '-g', type: :array, default: %w[default], desc: 'limit to stack groups'
     def create
-      stack_objects.each do |s|
+      stacks = stack_objects
+
+      ## filter by stack groups
+      unless options[:all]
+        stacks.reject! do |s|
+          (s.stack_groups.map(&:to_s) & options[:groups]).empty? # test intersection
+        end
+      end
+
+      stacks.each do |s|
         if s.exists?
           say("Skipping: #{s.stack_name} exists", :yellow)
         elsif y_or_n?("Create #{s.stack_name}?", :yellow)
