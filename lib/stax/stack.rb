@@ -22,6 +22,10 @@ module Stax
         self.class.instance_variable_get(:@type)
       end
 
+      def stack_groups
+        self.class.instance_variable_get(:@groups) || [:default]
+      end
+
       def exists?
         Aws::Cfn.exists?(stack_name)
       end
