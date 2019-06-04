@@ -179,6 +179,8 @@ Stax will load template files from the path relative to its `Staxfile`
 as `cf/$stack.rb`, e.g. `cf/vpc.rb`. Modify this using the method `Stax::Stack::cfn_template_dir`.
 See `examples` for a typical setup.
 
+## Create/update/delete stacks
+
 Simply control stacks using the relevant subcommands:
 
 ```
@@ -193,6 +195,40 @@ etc.
 
 To change this scheme modify the methods `Stax::Base::stack_prefix`
 and/or `Stax::Stack::stack_name`.
+
+## Operating on multiple stacks
+
+The following will create/update/delete all stacks in the order they
+are declared in the `Staxfile` (reversed for delete):
+
+```
+$ stax create
+$ stax update
+$ stax delete
+```
+
+It is possible to group stacks in the `Staxfile`, for example to skip
+optional stacks during creation:
+
+```
+stack :vpc
+stack :db
+stack :app
+
+group :production do
+  stack :monitor
+  stack :metrics
+end
+```
+
+Stacks defined outside a `group` block belong to group `:default`, and
+only these are created by default during `stax create`. This behavior
+can be modified using `--groups` or `--all` options:
+
+```
+$ stax create --groups production
+$ stax create --all
+```
 
 ## Stack parameters
 
