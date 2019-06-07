@@ -33,7 +33,10 @@ module Stax
             my.stack_resources_by_type('AWS::Lambda::Function').each do |r|
               h[r.logical_resource_id] = Aws::Logs.groups("/aws/lambda/#{r.physical_resource_id}")&.first
             end
-          end.compact # lambda groups may be nil if not invoked yet
+            my.stack_resources_by_type('AWS::CodeBuild::Project').each do |r|
+              h[r.logical_resource_id] = Aws::Logs.groups("/aws/codebuild/#{r.physical_resource_id}")&.first
+            end
+          end.compact # lambda and codebuild groups may be nil if not invoked yet
         end
       end
 
