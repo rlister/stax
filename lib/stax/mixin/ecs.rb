@@ -172,6 +172,18 @@ module Stax
         end
       end
 
+      desc 'secrets', 'secrets for latest rev of task families'
+      def secrets
+        my.ecs_task_families.each do |family|
+          Aws::Ecs.task_definition(family).container_definitions.each do |c|
+            debug("Secrets for #{family} #{c.name}")
+            print_table c.secrets.map { |e|
+              [e.name, e.value_from]
+            }.sort
+          end
+        end
+      end
+
       desc 'tasks', 'ECS tasks for stack'
       method_option :status, aliases: '-s', type: :string, default: 'RUNNING', desc: 'status to list'
       def tasks
