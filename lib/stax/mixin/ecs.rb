@@ -167,7 +167,7 @@ module Stax
             debug("Environment for #{family} #{c.name}")
             print_table c.environment.map { |e|
               [e.name, e.value]
-            }
+            }.sort
           end
         end
       end
