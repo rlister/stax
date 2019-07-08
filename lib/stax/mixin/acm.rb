@@ -76,6 +76,15 @@ module Stax
         end
       end
 
+      desc 'usage', 'resources associated with certs'
+      def usage
+        stack_acm_certs.each do |r|
+          c = Aws::Acm.describe(r.physical_resource_id)
+          debug("Resources associated with #{c.certificate_arn}")
+          puts c.in_use_by
+        end
+      end
+
     end
   end
 end
