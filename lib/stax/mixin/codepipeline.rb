@@ -23,6 +23,8 @@ module Stax
       COLORS = {
         Succeeded: :green,
         Failed:    :red,
+        enabled:   :green,
+        disabled:  :red,
       }
 
       desc 'stages', 'list pipeline stages'
@@ -119,6 +121,37 @@ module Stax
           end
           puts [set_color(now, :blue), stages].flatten.join('  ')
           sleep 5
+        end
+      end
+
+      desc 'transitions', 'control pipeline stage transitions'
+      method_option :enable,  aliases: '-e', type: :string, default: nil, desc: 'enable stage transition'
+      method_option :disable, aliases: '-d', type: :string, default: nil, desc: 'disable stage transition'
+      def transitions
+        my.stack_pipeline_names.each do |name|
+          if options[:enable]
+            debug("Enable stage transition for #{name} #{options[:enable]}")
+            Aws::Codepipeline.client.enable_stage_transition(
+              pipeline_name: name,
+              stage_name: options[:enable],
+              transition_type: :Inbound,
+            )
+          elsif options[:disable]
+            debug("Disable stage transition for #{name} #{options[:disable]}")
+            Aws::Codepipeline.client.disable_stage_transition(
+              pipeline_name: name,
+              stage_name: options[:disable],
+              transition_type: :Inbound,
+              reason: ask('reason for disable?')
+            )
+          else
+            debug("Stage transitions for #{name}")
+            state = Aws::Codepipeline.state(name)
+            print_table state.stage_states.map { |s|
+              t = s.inbound_transition_state
+              [ s.stage_name, color(t.enabled ? :enabled : :disabled, COLORS), t.disabled_reason, t.last_changed_at ]
+            }
+          end
         end
       end
 
