@@ -35,9 +35,7 @@ module Stax
         end
 
         def stacks
-          paginate(:stack_summaries) do |token|
-            client.list_stacks(stack_status_filter: STATUSES, next_token: token)
-          end
+          client.list_stacks(stack_status_filter: STATUSES).map(&:stack_summaries).flatten
         end
 
         def template(name)
@@ -45,9 +43,7 @@ module Stax
         end
 
         def resources(name)
-          paginate(:stack_resource_summaries) do |token|
-            client.list_stack_resources(stack_name: name, next_token: token)
-          end
+          client.list_stack_resources(stack_name: name).map(&:stack_resource_summaries).flatten
         end
 
         def resources_by_type(name, type)
@@ -57,9 +53,7 @@ module Stax
         end
 
         def events(name)
-          paginate(:stack_events) do |token|
-            client.describe_stack_events(stack_name: name, next_token: token)
-          end
+          client.describe_stack_events(stack_name: name).map(&:stack_events).flatten
         end
 
         def id(name, id)
