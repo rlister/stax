@@ -3,10 +3,11 @@ module Stax
 
     no_commands do
       def ls_staxfile_stacks
+        stacks = Aws::Cfn.stacks.each_with_object({}) { |s, h| h[s.stack_name] = s }
         print_table Stax.stack_list.map { |id|
           name = stack(id).stack_name
-          if (s = Aws::Cfn.describe(name))
-            [s.stack_name, s.creation_time, color(s.stack_status, Aws::Cfn::COLORS), s.description]
+          if (s = stacks[name])
+            [s.stack_name, s.creation_time, color(s.stack_status, Aws::Cfn::COLORS), s.template_description]
           else
             options[:existing] ? nil : [name, '-']
           end
