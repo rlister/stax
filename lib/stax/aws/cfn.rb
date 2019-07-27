@@ -31,7 +31,7 @@ module Stax
       class << self
 
         def client
-          @_client ||= ::Aws::CloudFormation::Client.new
+          @_client ||= ::Aws::CloudFormation::Client.new(retry_limit: Stax::Aws::Sdk::RETRY_LIMIT)
         end
 
         def stacks
