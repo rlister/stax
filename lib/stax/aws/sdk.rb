@@ -2,6 +2,8 @@ module Stax
   module Aws
     class Sdk
 
+      RETRY_LIMIT = ENV['AWS_RETRY_LIMIT'] || 100
+
       ## universal paginator for aws-sdk calls
       def self.paginate(thing)
         token = nil
