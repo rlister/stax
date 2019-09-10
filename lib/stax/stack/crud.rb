@@ -174,6 +174,7 @@ module Stax
         stack_policy_body: stack_policy,
         notification_arns: cfn_notification_arns,
         enable_termination_protection: cfn_termination_protection,
+        tags: cfn_tags_array,
       )
 
       ## show stack events
@@ -196,6 +197,7 @@ module Stax
         capabilities: cfn_capabilities,
         stack_policy_during_update_body: stack_policy_during_update,
         notification_arns: cfn_notification_arns,
+        tags: cfn_tags_array,
       )
       tail
       update_warn_imports
