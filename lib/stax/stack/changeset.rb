@@ -24,6 +24,7 @@ module Stax
           notification_arns: cfn_notification_arns,
           change_set_name: change_set_name,
           change_set_type: :UPDATE,
+          tags: cfn_tags_array,
         ).id
       rescue ::Aws::CloudFormation::Errors::ValidationError => e
         fail_task(e.message)
