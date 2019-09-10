@@ -11,6 +11,19 @@ module Stax
         end
       end
 
+      ## stack tags applied to stack and propagated to all supported resources;
+      ## you should override this with a hash of tag keys and values
+      def cfn_tags
+        nil
+      end
+
+      ## convert hash to form needed by cfn sdk
+      def cfn_tags_array
+        @_cfn_tags_array ||= cfn_tags&.map { |k, v|
+          { key: k, value: v }
+        }
+      end
+
       ## policy to lock the stack to all updates
       def stack_policy
         {
