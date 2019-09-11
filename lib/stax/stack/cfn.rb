@@ -69,5 +69,11 @@ module Stax
       puts e.message
     end
 
+    desc 'tags', 'stack tags'
+    def tags
+      print_table Aws::Cfn.describe(stack_name).tags.map { |t|
+        [ t.key, t.value ]
+      }
+    end
   end
 end
