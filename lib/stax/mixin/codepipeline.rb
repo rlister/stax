@@ -155,6 +155,19 @@ module Stax
         end
       end
 
+      desc 'webhooks', 'list webhooks for pipelines'
+      def webhooks
+        webhooks = Aws::Codepipeline.client.list_webhooks.map(&:webhooks).flatten
+        my.stack_pipeline_names.each do |pipeline|
+          debug("Webhooks for pipeline #{pipeline}")
+          print_table webhooks.select { |w|
+            w.definition.target_pipeline == pipeline
+          }.map { |w|
+            [ w.definition.name, w.definition.target_pipeline, w.error_message, w.last_triggered ]
+          }
+        end
+      end
+
     end
   end
 end
