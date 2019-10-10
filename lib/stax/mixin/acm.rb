@@ -64,7 +64,9 @@ module Stax
       def validation
         stack_acm_certs.each do |r|
           c = Aws::Acm.describe(r.physical_resource_id)
-          c.domain_validation_options.each do |d|
+          c.domain_validation_options.uniq do |d|
+            d.resource_record
+          end.each do |d|
             next if d.validation_status == 'SUCCESS'
             debug("Pending validation for #{d.domain_name}")
             if options[:cli]
