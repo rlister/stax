@@ -83,7 +83,7 @@ module Stax
 
       desc 'test ID', 'run lambda with ID'
       method_option :type,    type: :string,  default: nil,   desc: 'invocation type: RequestResponse, Event'
-      method_option :tail,    type: :boolean, default: false, desc: 'tail log for RequestResponse'
+      method_option :tail,    type: :boolean, default: nil,   desc: 'tail log for RequestResponse'
       method_option :payload, type: :string,  default: nil,   desc: 'json input to function'
       method_option :file,    type: :string,  default: nil,   desc: 'get json payload from file'
       def test(id)
