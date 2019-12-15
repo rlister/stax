@@ -30,6 +30,15 @@ module Stax
           client.batch_get_builds(ids: ids).builds
         end
 
+        def reports(arns)
+          client.batch_get_reports(report_arns: arns).reports
+        end
+
+        ## TODO: this fails attempt to page as enumerable, check back with sdk v3
+        def tests(arn)
+          client.describe_test_cases(report_arn: arn).test_cases
+        end
+
         def start(opt)
           client.start_build(opt).build
         end

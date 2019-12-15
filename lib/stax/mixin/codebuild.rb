@@ -63,6 +63,29 @@ module Stax
         Aws::Codebuild.builds([id]).first.phases.each(&method(:print_phase))
       end
 
+      desc 'reports [ID]', 'show reports for given or most recent build'
+      def reports(id = nil)
+        id ||= Aws::Codebuild.builds_for_project(my.stack_project_names.first, 1).first
+        debug("Reports for build #{id}")
+        report_arns = Aws::Codebuild.builds([id]).first.report_arns
+        print_table Aws::Codebuild.reports(report_arns).map { |r|
+          duration = (r.test_summary.duration_in_nano_seconds/1_000_000_000.0).to_s + 's'
+          [ r.name, color(r.status, COLORS), duration, r.created ]
+        }
+      end
+
+      desc 'tests [ID]', 'show test results for given or most recent build'
+      def tests(id = nil)
+        id ||= Aws::Codebuild.builds_for_project(my.stack_project_names.first, 1).first
+        Aws::Codebuild.builds([id]).first.report_arns.each do |report_arn|
+          debug("Tests for report #{report_arn}")
+          print_table Aws::Codebuild.tests(report_arn).map { |t|
+            duration = (t.duration_in_nano_seconds/1_000_000).to_s + 'ms'
+            [ t.name, color(t.status, COLORS), t.prefix, t.message, duration ]
+          }
+        end
+      end
+
       desc 'tail [ID]', 'tail build phases for build'
       def tail(id = nil)
         trap('SIGINT', 'EXIT')    # clean exit with ctrl-c
