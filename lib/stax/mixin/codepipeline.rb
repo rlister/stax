@@ -23,6 +23,8 @@ module Stax
       COLORS = {
         Succeeded: :green,
         Failed:    :red,
+        Stopped:   :red,
+        Abandoned: :red,
         enabled:   :green,
         disabled:  :red,
       }
