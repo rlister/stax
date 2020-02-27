@@ -105,6 +105,23 @@ module Stax
         tail name
       end
 
+      desc 'stop [NAME]', 'stop execution for pipeline'
+      method_option :abandon, aliases: '-a', type: :boolean, default: false, desc: 'do not finish in-progress actions'
+      method_option :reason,  aliases: '-r', type: :string,  default: nil,   desc: 'comment on reason for stop'
+      def stop(name = nil)
+        name ||= my.stack_pipeline_names.first
+        id = Aws::Codepipeline.state(name).stage_states.first.latest_execution.pipeline_execution_id
+        debug("Stopping #{name} #{id}")
+        puts Aws::Codepipeline.client.stop_pipeline_execution(
+          pipeline_name: name,
+          pipeline_execution_id: id,
+          abandon: options[:abandon],
+          reason: options[:reason],
+        ).pipeline_execution_id
+      rescue ::Aws::CodePipeline::Errors::ServiceError => e
+        fail_task(e.message)
+      end
+
       desc 'tail [NAME]', 'tail pipeline state changes'
       def tail(name = nil)
         trap('SIGINT', 'EXIT')    # clean exit with ctrl-c
