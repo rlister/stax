@@ -1,3 +1,5 @@
+require 'aws-sdk-databasemigrationservice'
+
 module Stax
   module Aws
     class Dms < Sdk

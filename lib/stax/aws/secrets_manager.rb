@@ -1,3 +1,5 @@
+require 'aws-sdk-secretsmanager'
+
 module Stax
   module Aws
     class SecretsManager < Sdk

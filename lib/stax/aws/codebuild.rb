@@ -1,3 +1,5 @@
+require 'aws-sdk-codebuild'
+
 module Stax
   module Aws
     class Codebuild < Sdk

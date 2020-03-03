@@ -1,3 +1,5 @@
+require 'aws-sdk-s3'
+
 module Stax
   module Aws
     class S3 < Sdk

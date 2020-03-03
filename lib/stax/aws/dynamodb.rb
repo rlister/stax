@@ -1,3 +1,4 @@
+require 'aws-sdk-dynamodb'
 require 'json'
 
 module Stax

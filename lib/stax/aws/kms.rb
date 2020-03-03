@@ -1,3 +1,5 @@
+require 'aws-sdk-kms'
+
 module Stax
   module Aws
     class Kms < Sdk

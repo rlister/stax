@@ -1,3 +1,5 @@
+require 'aws-sdk-elasticloadbalancingv2'
+
 module Stax
   module Aws
     class Alb < Sdk

@@ -1,3 +1,5 @@
+require 'aws-sdk-core'
+
 module Stax
   module Aws
     class Sts < Sdk

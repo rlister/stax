@@ -1,3 +1,5 @@
+require 'aws-sdk-iam'
+
 module Stax
   module Aws
     class Iam < Sdk

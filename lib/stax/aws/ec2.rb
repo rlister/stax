@@ -1,3 +1,5 @@
+require 'aws-sdk-ec2'
+
 module Stax
   module Aws
     class Ec2 < Sdk

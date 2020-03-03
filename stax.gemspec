@@ -26,9 +26,36 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "docile", "1.2.0"
   spec.add_development_dependency "stax-examples"
 
-  spec.add_dependency('aws-sdk', '~> 2')
+  spec.add_dependency('aws-sdk-cloudformation')
   spec.add_dependency('thor')
-  spec.add_dependency('cfer')
+  spec.add_dependency('cfer', '>= 0.8.0')
   spec.add_dependency('octokit')
   spec.add_dependency('git_clone_url')
+
+  ## service mixins
+  spec.add_dependency('aws-sdk-acm')
+  spec.add_dependency('aws-sdk-apigateway')
+  spec.add_dependency('aws-sdk-autoscaling')
+  spec.add_dependency('aws-sdk-cloudfront')
+  spec.add_dependency('aws-sdk-cloudwatchlogs')
+  spec.add_dependency('aws-sdk-codebuild')
+  spec.add_dependency('aws-sdk-codepipeline')
+  spec.add_dependency('aws-sdk-databasemigrationservice')
+  spec.add_dependency('aws-sdk-dynamodb')
+  spec.add_dependency('aws-sdk-ec2')
+  spec.add_dependency('aws-sdk-ecr')
+  spec.add_dependency('aws-sdk-elasticloadbalancing')
+  spec.add_dependency('aws-sdk-elasticloadbalancingv2')
+  spec.add_dependency('aws-sdk-ecs')
+  spec.add_dependency('aws-sdk-emr')
+  spec.add_dependency('aws-sdk-firehose')
+  spec.add_dependency('aws-sdk-iam')
+  spec.add_dependency('aws-sdk-kms')
+  spec.add_dependency('aws-sdk-lambda')
+  spec.add_dependency('aws-sdk-rds')
+  spec.add_dependency('aws-sdk-route53')
+  spec.add_dependency('aws-sdk-s3')
+  spec.add_dependency('aws-sdk-secretsmanager')
+  spec.add_dependency('aws-sdk-sqs')
+  spec.add_dependency('aws-sdk-ssm')
 end

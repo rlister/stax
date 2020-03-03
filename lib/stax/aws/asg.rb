@@ -1,3 +1,5 @@
+require 'aws-sdk-autoscaling'
+
 module Stax
   module Aws
     class Asg < Sdk

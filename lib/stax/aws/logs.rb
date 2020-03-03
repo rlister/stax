@@ -1,3 +1,5 @@
+require 'aws-sdk-cloudwatchlogs'
+
 module Stax
   module Aws
     class Logs < Sdk

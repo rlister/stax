@@ -1,3 +1,4 @@
+require 'aws-sdk-apigateway'
 
 module Stax
   module Aws

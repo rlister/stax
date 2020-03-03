@@ -1,3 +1,5 @@
+require 'aws-sdk-emr'
+
 module Stax
   module Aws
     class Emr < Sdk

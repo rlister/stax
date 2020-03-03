@@ -1,3 +1,5 @@
+require 'aws-sdk-route53'
+
 module Stax
   module Aws
     class Route53 < Sdk

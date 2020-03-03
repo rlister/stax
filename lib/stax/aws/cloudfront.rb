@@ -1,3 +1,5 @@
+require 'aws-sdk-cloudfront'
+
 module Stax
   module Aws
     class Cloudfront < Sdk

@@ -1,3 +1,5 @@
+require 'aws-sdk-sqs'
+
 module Stax
   module Aws
     class Sqs < Sdk

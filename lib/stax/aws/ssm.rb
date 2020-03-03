@@ -1,3 +1,5 @@
+require 'aws-sdk-ssm'
+
 module Stax
   module Aws
     class Ssm < Sdk

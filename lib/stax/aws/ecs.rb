@@ -1,3 +1,5 @@
+require 'aws-sdk-ecs'
+
 module Stax
   module Aws
     class Ecs < Sdk

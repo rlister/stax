@@ -1,3 +1,5 @@
+require 'aws-sdk-acm'
+
 module Stax
   module Aws
     class Acm < Sdk

@@ -1,3 +1,5 @@
+require 'aws-sdk-codepipeline'
+
 module Stax
   module Aws
     class Codepipeline < Sdk

@@ -1,3 +1,5 @@
+require 'aws-sdk-firehose'
+
 module Stax
   module Aws
     class Firehose < Sdk

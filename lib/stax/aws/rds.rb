@@ -1,3 +1,5 @@
+require 'aws-sdk-rds'
+
 module Stax
   module Aws
     class Rds < Sdk

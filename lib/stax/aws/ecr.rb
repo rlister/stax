@@ -1,3 +1,4 @@
+require 'aws-sdk-ecr'
 require 'base64'
 
 module Stax

@@ -1,3 +1,5 @@
+require 'aws-sdk-lambda'
+
 module Stax
   module Aws
     class Lambda < Sdk
