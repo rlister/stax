@@ -264,5 +264,23 @@ module Stax
       end
     end
 
+    desc 'skeleton', 'create json skeleton for cli'
+    method_option :pretty, type: :boolean, default: false, desc: 'pretty generate json'
+    def skeleton
+      skel = {
+        StackName: stack_name,
+        TemplateBody: cfn_template_body,
+        TemplateURL: cfn_template_url,
+        Parameters: cfn_parameters_create,
+        Capabilities: cfn_capabilities,
+        StackPolicyBody: stack_policy,
+        NotificationARNs: cfn_notification_arns,
+        EnableTerminationProtection: cfn_termination_protection,
+        Tags: cfn_tags_array,
+      }.compact
+      method = options[:pretty] ? :pretty_generate : :generate
+      puts JSON.send(method, skel)
+    end
+
   end
 end
