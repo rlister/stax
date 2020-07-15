@@ -282,5 +282,18 @@ module Stax
       puts JSON.send(method, skel)
     end
 
+    ## install https://github.com/aws-cloudformation/cfn-python-lint
+    desc 'lint', 'run cfn-lint on template'
+    def lint
+      require 'open3'
+      Open3.popen3('cfn-lint -') do |stdin, stdout|
+        stdin.write(cfn_template)
+        stdin.close
+        puts stdout.read
+      end
+    rescue Errno::ENOENT => e
+      fail_task(e.message)
+    end
+
   end
 end
