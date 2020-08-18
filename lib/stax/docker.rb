@@ -1,4 +1,3 @@
-require 'stax/aws/sts'
 require 'stax/aws/ecr'
 
 module Stax
@@ -7,7 +6,7 @@ module Stax
     no_commands do
       ## default to ECR registry for this account
       def docker_registry
-        @_docker_registry ||= "#{Aws::Sts.id.account}.dkr.ecr.#{ENV['AWS_REGION']}.amazonaws.com"
+        @_docker_registry ||= "#{aws_account_id}.dkr.ecr.#{aws_region}.amazonaws.com"
       end
 
       ## name the docker repo after the git repo
