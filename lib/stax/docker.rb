@@ -20,7 +20,7 @@ module Stax
       end
 
       ## build a docker image locally
-      def docker_local_build
+      def docker_build
         debug("Docker build #{docker_image}")
         system "docker build -t #{docker_image} #{Git.toplevel}"
       end
@@ -72,8 +72,7 @@ module Stax
     ## override this method with the desired builder
     desc 'build', 'build docker image'
     def build
-      docker_local_build
-      # docker_argus_build
+      docker_build
     end
 
     desc 'login', 'login to registry'
