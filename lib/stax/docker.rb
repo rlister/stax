@@ -30,28 +30,6 @@ module Stax
         debug("Docker push #{docker_image}")
         system "docker push #{docker_image}"
       end
-
-      ## override this for your argus setup
-      def docker_argus_queue
-        @_docker_argus_queue ||= Aws::Sqs.queue_url('argus.fifo')
-      end
-
-      def docker_argus_build
-        debug("Sending to argus #{Git.branch}:#{Git.sha}")
-        org, repo = Git.repo.split('/')
-        Aws::Sqs.send(
-          queue_url: docker_argus_queue,
-          message_group_id: repo,
-          message_body: {
-            org:    org,
-            repo:   repo,
-            branch: Git.branch,
-            sha:    Git.sha,
-          }.to_json
-        ).tap do |r|
-          puts r&.message_id
-        end
-      end
     end
 
     desc 'registry', 'show registry name'
