@@ -64,7 +64,10 @@ module Stax
   end
 
   ## add a non-stack command at top level
-  def self.add_command(name, klass)
+  def self.add_command(name, klass = nil)
+    ## class defaults to eg Stax::Name::Cmd
+    klass ||= self.const_get(name.to_s.split(/[_-]/).map(&:capitalize).join + '::Cmd')
+
     Cli.desc(name, "#{name} commands")
     Cli.subcommand(name, klass)
   end
