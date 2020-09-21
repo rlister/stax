@@ -1,6 +1,7 @@
 module Stax
   @@_root_path = nil
   @@_stack_list = []
+  @@_command_list = []
 
   ## the stax root is defined as location of Staxfile
   def self.root_path
@@ -10,6 +11,11 @@ module Stax
   ## list of stacks defined in Staxfile
   def self.stack_list
     @@_stack_list
+  end
+
+  ## list of commands defined in Staxfile
+  def self.command_list
+    @@_command_list
   end
 
   ## search up the dir tree for nearest Staxfile
@@ -24,6 +30,7 @@ module Stax
     if root_path
       load(root_path.join('Staxfile'))
       require_stacks
+      require_commands
     end
   end
 
@@ -31,6 +38,14 @@ module Stax
   def self.require_stacks
     stack_list.each do |stack|
       f = root_path.join('lib', 'stack', "#{stack}.rb")
+      require(f) if File.exist?(f)
+    end
+  end
+
+  ## auto-require any command lib files
+  def self.require_commands
+    command_list.each do |command|
+      f = root_path.join('lib', "#{command}.rb")
       require(f) if File.exist?(f)
     end
   end
@@ -65,6 +80,8 @@ module Stax
 
   ## add a non-stack command at top level
   def self.add_command(name, klass = nil)
+    @@_command_list << name
+
     ## class defaults to eg Stax::Name::Cmd
     klass ||= self.const_get(name.to_s.split(/[_-]/).map(&:capitalize).join + '::Cmd')
 
