@@ -14,6 +14,12 @@ module Stax
     def stack_pipeline_names
       @_stack_pipeline_names ||= stack_pipelines.map(&:physical_resource_id)
     end
+
+    ## get status string for n-th pipeline
+    def stack_pipeline_status(n = 0)
+      name = stack_pipeline_names[n]
+      Aws::Codepipeline.executions(name, 1)&.first&.status
+    end
   end
 
   module Cmd
@@ -58,6 +64,14 @@ module Stax
             [e.pipeline_execution_id, color(e.status, COLORS), "#{age} ago", duration, r&.revision_id&.slice(0,7) + ':' + r&.revision_summary]
           }
         end
+      end
+
+      ## print status as one of InProgress, Stopped, Stopping, Succeeded, Superseded, Failed
+      desc 'status', 'pipeline execution status'
+      def status
+        s = my.stack_pipeline_status
+        puts(s)
+        exit(1) if s == 'Failed'
       end
 
       desc 'state', 'pipeline state'
