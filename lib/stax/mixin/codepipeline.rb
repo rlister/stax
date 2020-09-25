@@ -29,6 +29,12 @@ module Stax
         disabled:  :red,
       }
 
+      no_commands do
+        def pipeline_link(name)
+          "https://console.aws.amazon.com/codesuite/codepipeline/pipelines/#{name}/view?region=#{aws_region}"
+        end
+      end
+
       desc 'stages', 'list pipeline stages'
       def stages
         my.stack_pipeline_names.each do |name|
@@ -184,6 +190,20 @@ module Stax
           }.map { |w|
             [ w.definition.name, w.definition.target_pipeline, w.error_message, w.last_triggered ]
           }
+        end
+      end
+
+      desc 'link', 'link to pipelines in aws console'
+      def link
+        my.stack_pipeline_names.each do |name|
+          puts pipeline_link(name)
+        end
+      end
+
+      desc 'open', 'open pipelines in aws console'
+      def open
+        my.stack_pipeline_names.each do |name|
+          os_open(pipeline_link(name))
         end
       end
 

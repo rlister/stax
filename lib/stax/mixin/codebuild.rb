@@ -14,6 +14,7 @@ module Stax
     def stack_project_names
       @_stack_project_names ||= stack_projects.map(&:physical_resource_id)
     end
+
   end
 
   module Cmd
@@ -33,6 +34,17 @@ module Stax
           duration = (d = p.duration_in_seconds) ? "#{d}s" : ''
           status = p.phase_status || (p.phase_type == 'COMPLETED' ? '' : 'in progress')
           puts "%-16s  %-12s  %4s  %s" % [p.phase_type, color(status, COLORS), duration, p.end_time]
+        end
+
+        ## latest run id for a build project
+        def latest_run(name)
+          Aws::Codebuild.builds_for_project(name, 1).first
+        end
+
+        ## aws console link to latest project run
+        def latest_run_link(name)
+          id = latest_run(name)
+          "https://console.aws.amazon.com/codesuite/codebuild/#{aws_account_id}/projects/#{name}/build/#{id}/?region=#{aws_region}"
         end
       end
 
@@ -116,6 +128,20 @@ module Stax
         )
         puts build.id
         tail build.id
+      end
+
+      desc 'link', 'link to latest run for builds'
+      def link
+        my.stack_project_names.map do |name|
+          puts latest_run_link(name)
+        end
+      end
+
+      desc 'open', 'open latest run in aws console'
+      def open
+        my.stack_project_names.map do |name|
+          os_open(latest_run_link(name))
+        end
       end
 
     end
