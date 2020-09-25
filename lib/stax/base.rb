@@ -132,6 +132,12 @@ module Stax
         end
       end
 
+      ## run desktop open command
+      def os_open(*args)
+        cmd = RUBY_PLATFORM.end_with?('linux') ? 'xdg-open' : 'open'
+        system(cmd, *args)
+      end
+
     end
   end
 end
