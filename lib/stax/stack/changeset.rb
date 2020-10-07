@@ -71,11 +71,15 @@ module Stax
       end
 
       def change_set_unlock
-        Aws::Cfn.set_policy(stack_name: stack_name, stack_policy_body: stack_policy_during_update)
+        unless stack_policy_during_update.nil?
+          Aws::Cfn.set_policy(stack_name: stack_name, stack_policy_body: stack_policy_during_update)
+        end
       end
 
       def change_set_lock
-        Aws::Cfn.set_policy(stack_name: stack_name, stack_policy_body: stack_policy)
+        unless stack_policy.nil?
+          Aws::Cfn.set_policy(stack_name: stack_name, stack_policy_body: stack_policy)
+        end
       end
     end
 

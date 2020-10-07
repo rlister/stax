@@ -24,28 +24,31 @@ module Stax
         }
       end
 
-      ## policy to lock the stack to all updates
+      ## policy to lock the stack to all updates, for example:
+      ## {
+      ##   Statement: [
+      ##     Effect:    'Deny',
+      ##     Action:    'Update:*',
+      ##     Principal: '*',
+      ##     Resource:  '*'
+      ##   ]
+      ## }.to_json
       def stack_policy
-        {
-          Statement: [
-            Effect:    'Deny',
-            Action:    'Update:*',
-            Principal: '*',
-            Resource:  '*'
-          ]
-        }.to_json
+        nil
       end
 
-      ## temporary policy during updates; modify this to restrict resources
+      ## tmp policy during updates, in case a deny was set in stack_policy()
+      ## for example:
+      ## {
+      ##   Statement: [
+      ##     Effect:    'Allow',
+      ##     Action:    'Update:*',
+      ##     Principal: '*',
+      ##     Resource:  '*'
+      ##   ]
+      ## }.to_json
       def stack_policy_during_update
-        {
-          Statement: [
-            Effect:    'Allow',
-            Action:    'Update:*',
-            Principal: '*',
-            Resource:  '*'
-          ]
-        }.to_json
+        nil
       end
 
       ## cleanup sometimes needs to wait
