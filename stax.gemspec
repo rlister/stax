@@ -23,7 +23,6 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "docile", "1.2.0"
   spec.add_development_dependency "stax-examples"
 
   spec.add_dependency('aws-sdk-cloudformation')
