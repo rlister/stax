@@ -209,11 +209,12 @@ module Stax
     end
 
     desc 'delete', 'delete stack'
+    method_option :notail, aliases: '-n', type: :boolean, default: false, description: 'do not tail stack events'
     def delete
       delete_warn_imports
       if yes? "Really delete stack #{stack_name}?", :yellow
         Aws::Cfn.delete(stack_name)
-        tail
+        tail unless options[:notail]
       end
     rescue ::Aws::CloudFormation::Errors::ValidationError => e
       fail_task(e.message)

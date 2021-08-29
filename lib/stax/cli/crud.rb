@@ -56,10 +56,11 @@ module Stax
     end
 
     desc 'delete', 'meta delete task'
+    method_option :notail, aliases: '-n', type: :boolean, default: false, description: 'do not tail stack events'
     def delete
       stack_objects.reverse.each do |s|
         if s.exists?
-          s.delete
+          s.invoke(:delete, [], options)
         else
           say("#{s.stack_name} does not exist", :green)
         end
