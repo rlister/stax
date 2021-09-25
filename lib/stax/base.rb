@@ -118,6 +118,7 @@ module Stax
 
       ## convert a diff in seconds to d h m s
       def human_time_diff(t, n = 5)
+        t = t.round # handle fractional seconds
         mm, ss = t.divmod(60)
         hh, mm = mm.divmod(60)
         dd, hh = hh.divmod(24)
