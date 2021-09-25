@@ -14,6 +14,7 @@ module Stax
 
       COLORS = {
         available: :green,
+        'in-sync': :green,
         Complete:  :green,
         Active:    :green,
       }
@@ -39,6 +40,22 @@ module Stax
 
         def stack_db_subnet_groups
           Aws::Cfn.resources_by_type(my.stack_name, 'AWS::RDS::DBSubnetGroup')
+        end
+      end
+
+      desc 'ls', 'list clusters with members'
+      def ls
+        debug("RDS databases for #{my.stack_name}")
+        stack_rds_clusters.map do |c|
+          cluster = [ c.db_cluster_identifier, 'cluster', color(c.status), c.engine ]
+          instances = c.db_cluster_members.map do |m|
+            role = m.is_cluster_writer ? 'writer' : 'reader'
+            i = Aws::Rds.instances(filters: [ { name: 'db-instance-id', values: [ m.db_instance_identifier ] } ]).first
+            [ '- ' + i.db_instance_identifier, role, color(i.db_instance_status), i.engine, i.availability_zone, i.db_instance_class ]
+          end
+          [ cluster ] + instances
+        end.flatten(1).tap do |list|
+          print_table list
         end
       end
 
