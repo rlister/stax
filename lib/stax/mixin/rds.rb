@@ -114,6 +114,17 @@ module Stax
         end
       end
 
+      desc 'failover', 'failover clusters'
+      method_option :target, type: :string, default: nil, description: 'id of instance to promote'
+      def failover
+        stack_rds_clusters.each do |c|
+          if yes?("Failover #{c.db_cluster_identifier}?", :yellow)
+            resp = Aws::Rds.client.failover_db_cluster(db_cluster_identifier: c.db_cluster_identifier, target_db_instance_identifier: options[:target])
+            puts "failing over #{resp.db_cluster.db_cluster_identifier}"
+          end
+        end
+      end
+
     end
   end
 end
