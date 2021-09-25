@@ -68,7 +68,9 @@ module Stax
         end
       end
 
-      def color(string, hash)
+      ## color a string according to current class COLORS hash
+      def color(string, hash = nil)
+        hash ||= self.class::COLORS
         set_color(string, hash.fetch(string.to_sym, :yellow))
       end
 
