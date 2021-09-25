@@ -63,7 +63,7 @@ module Stax
       def clusters
         debug("RDS DB clusters for #{my.stack_name}")
         print_table stack_rds_clusters.map { |c|
-          [c.db_cluster_identifier, c.engine, c.engine_version, color(c.status, COLORS), c.cluster_create_time]
+          [c.db_cluster_identifier, c.engine, c.engine_version, color(c.status), c.cluster_create_time]
         }
       end
 
@@ -82,7 +82,7 @@ module Stax
       def instances
         debug("RDS DB instances for #{my.stack_name}")
         print_table stack_rds_instances.map { |i|
-          [i.db_instance_identifier, i.engine, i.engine_version, color(i.db_instance_status, COLORS), i.db_instance_class, i.db_subnet_group&.vpc_id, i.availability_zone]
+          [i.db_instance_identifier, i.engine, i.engine_version, color(i.db_instance_status), i.db_instance_class, i.db_subnet_group&.vpc_id, i.availability_zone]
         }
       end
 
@@ -109,7 +109,7 @@ module Stax
         end.flatten.each do |g|
           debug("Subnets for group #{g.db_subnet_group_name}")
           print_table g.subnets.map { |s|
-            [s&.subnet_availability_zone&.name, s&.subnet_identifier, color(s&.subnet_status, COLORS)]
+            [s&.subnet_availability_zone&.name, s&.subnet_identifier, color(s&.subnet_status)]
           }
         end
       end
