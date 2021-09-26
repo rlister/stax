@@ -30,6 +30,23 @@ module Stax
         fail_task(e.message)
       end
 
+      ## create change set to import a resource
+      def change_set_import(resource)
+        Aws::Cfn.changeset(
+          change_set_type: :IMPORT,
+          resources_to_import: [ resource ],
+          stack_name: stack_name,
+          template_body: cfn_template_body,
+          template_url: cfn_template_url,
+          parameters: cfn_parameters_update,
+          capabilities: cfn_capabilities,
+          notification_arns: cfn_notification_arns,
+          change_set_name: change_set_name,
+        ).id
+      rescue ::Aws::CloudFormation::Errors::ValidationError => e
+        fail_task(e.message)
+      end
+
       ## wait and return true if changeset ready for execute
       def change_set_complete?(id)
         begin
@@ -92,6 +109,33 @@ module Stax
       change_set_execute(id) && tail && update_warn_imports
     ensure
       change_set_lock
+    end
+
+    desc 'import', 'create and execute changeset to import a resource'
+    option :type,  aliases: '-t', type: :string, default: nil, desc: 'cfn resource (e.g. AWS::DynamoDB::Table)'
+    option :id,    aliases: '-i', type: :string, default: nil, desc: 'logical id (e.g. OrdersTable)'
+    option :key,   aliases: '-k', type: :string, default: nil, desc: 'resource key (e.g. TableName)'
+    option :value, aliases: '-v', type: :string, default: nil, desc: 'resource value (e.g. orders)'
+    def import
+      ## prompt for missing options
+      %i[type id key value].each do |opt|
+        options[opt] ||= ask("Resource #{opt}?", :yellow)
+      end
+
+      ## create import changeset
+      debug("Creating import change set for #{stack_name}")
+      id = change_set_import(
+        resource_type: options[:type],
+        logical_resource_id: options[:id],
+        resource_identifier: {
+          options[:key] => options[:value]
+        }
+      )
+
+      ## wait for changeset, prompt for changes, and execute
+      change_set_complete?(id) || fail_task(change_set_reason(id))
+      change_set_changes(id)
+      change_set_execute(id) && tail && update_warn_imports
     end
 
   end
