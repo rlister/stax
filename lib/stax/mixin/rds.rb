@@ -41,6 +41,13 @@ module Stax
         def stack_db_subnet_groups
           Aws::Cfn.resources_by_type(my.stack_name, 'AWS::RDS::DBSubnetGroup')
         end
+
+        def print_rds_events(opt)
+          Aws::Rds.client.describe_events(opt).map(&:events).flatten.map do |e|
+            [ e.date, e.message ]
+          end.tap(&method(:print_table))
+        end
+
       end
 
       desc 'ls', 'list clusters with members'
@@ -115,7 +122,7 @@ module Stax
       end
 
       desc 'failover', 'failover clusters'
-      method_option :target, type: :string, default: nil, description: 'id of instance to promote'
+      method_option :target, type: :string, default: nil, desc: 'id of instance to promote'
       def failover
         stack_rds_clusters.each do |c|
           if yes?("Failover #{c.db_cluster_identifier}?", :yellow)
@@ -134,6 +141,20 @@ module Stax
           end.tap do |list|
             print_table list
           end
+        end
+      end
+
+      desc 'events', 'list rds events for this stack'
+      option :duration, aliases: '-d', type: :numeric, default: 60*24, desc: 'duration in mins to show'
+      def events
+        stack_db_clusters.map(&:physical_resource_id).each do |id|
+          debug("Events for cluster #{id}")
+          print_rds_events(duration: options[:duration], source_type: 'db-cluster', source_identifier: id)
+        end
+
+        stack_db_instances.map(&:physical_resource_id).each do |id|
+          debug("Events for instance #{id}")
+          print_rds_events(duration: options[:duration], source_type: 'db-instance', source_identifier: id)
         end
       end
 
