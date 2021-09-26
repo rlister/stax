@@ -125,6 +125,18 @@ module Stax
         end
       end
 
+      desc 'snapshots', 'list snapshots for stack clusters'
+      def snapshots
+        stack_db_clusters.map(&:physical_resource_id).each do |id|
+          debug("Snapshots for cluster #{id}")
+          Aws::Rds.client.describe_db_cluster_snapshots(db_cluster_identifier: id).map(&:db_cluster_snapshots).flatten.map do |s|
+            [ s.db_cluster_snapshot_identifier, s.snapshot_create_time, "#{s.allocated_storage}G", color(s.status), s.snapshot_type ]
+          end.tap do |list|
+            print_table list
+          end
+        end
+      end
+
     end
   end
 end
