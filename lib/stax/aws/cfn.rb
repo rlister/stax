@@ -17,6 +17,7 @@ module Stax
         CREATE_COMPLETE:      :green,
         DELETE_COMPLETE:      :green,
         UPDATE_COMPLETE:      :green,
+        IMPORT_COMPLETE:      :green,
         CREATE_FAILED:        :red,
         DELETE_FAILED:        :red,
         UPDATE_FAILED:        :red,
@@ -24,6 +25,7 @@ module Stax
         ROLLBACK_COMPLETE:    :red,
         ## resource action
         Add:    :green,
+        Import: :green,
         Modify: :yellow,
         Remove: :red,
       }
