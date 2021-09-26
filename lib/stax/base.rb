@@ -1,6 +1,9 @@
 require 'thor'
 require 'stax/aws/sts'
 
+## clean exit on ctrl-c for all methods
+trap('SIGINT', 'EXIT')
+
 module Stax
   class Base < Thor
 
