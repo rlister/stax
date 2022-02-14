@@ -5,6 +5,7 @@ require 'stax'
 Stax.load_staxfile
 begin
   Stax::Cli.start(ARGV)
-rescue Aws::CloudFormation::Errors::ExpiredToken => e
+rescue Aws::CloudFormation::Errors::ExpiredToken,
+       Aws::CloudFormation::Errors::ValidationError => e
   abort(e.message)
 end
