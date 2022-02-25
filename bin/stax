@@ -6,6 +6,7 @@ Stax.load_staxfile
 begin
   Stax::Cli.start(ARGV)
 rescue Aws::CloudFormation::Errors::ExpiredToken,
-       Aws::CloudFormation::Errors::ValidationError => e
+       Aws::CloudFormation::Errors::ValidationError,
+       Aws::Errors::MissingCredentialsError => e
   abort(e.message)
 end
