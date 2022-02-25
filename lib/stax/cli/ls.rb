@@ -7,6 +7,7 @@ module Stax
         [ s.stack_name, s.creation_time, color(s.stack_status, Aws::Cfn::COLORS) ]
       end
 
+      ## list stacks from Staxfile in given order
       def ls_staxfile_stacks
         stacks = Aws::Cfn.stacks.each_with_object({}) { |s, h| h[s.stack_name] = s }
         print_table Stax.stack_list.map { |id|
@@ -19,6 +20,7 @@ module Stax
         }.compact
       end
 
+      ## list all extant stacks we think match our prefix
       def ls_stacks_with_prefix(prefix)
         print_table Aws::Cfn.stacks.select { |s|
           s.stack_name.start_with?(prefix || stack_prefix)
@@ -27,6 +29,7 @@ module Stax
         }.sort
       end
 
+      ## list all stacks in account
       def ls_account_stacks
         print_table Aws::Cfn.stacks.map { |s|
           ls_stack_fields(s)
