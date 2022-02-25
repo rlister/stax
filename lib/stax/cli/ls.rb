@@ -2,12 +2,17 @@ module Stax
   class Cli < Base
 
     no_commands do
+      ## fields to show in output
+      def ls_stack_fields(s)
+        [ s.stack_name, s.creation_time, color(s.stack_status, Aws::Cfn::COLORS) ]
+      end
+
       def ls_staxfile_stacks
         stacks = Aws::Cfn.stacks.each_with_object({}) { |s, h| h[s.stack_name] = s }
         print_table Stax.stack_list.map { |id|
           name = stack(id).stack_name
           if (s = stacks[name])
-            [s.stack_name, s.creation_time, color(s.stack_status, Aws::Cfn::COLORS), s.template_description]
+            ls_stack_fields(s)
           else
             options[:existing] ? nil : [name, '-']
           end
@@ -18,13 +23,13 @@ module Stax
         print_table Aws::Cfn.stacks.select { |s|
           s.stack_name.start_with?(prefix || stack_prefix)
         }.map { |s|
-          [s.stack_name, s.creation_time, color(s.stack_status, Aws::Cfn::COLORS), s.template_description]
+          ls_stack_fields(s)
         }.sort
       end
 
       def ls_account_stacks
         print_table Aws::Cfn.stacks.map { |s|
-          [s.stack_name, s.creation_time, color(s.stack_status, Aws::Cfn::COLORS), s.template_description]
+          ls_stack_fields(s)
         }.sort
       end
     end
