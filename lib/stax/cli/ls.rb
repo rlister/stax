@@ -15,7 +15,6 @@ module Stax
           if (s = stacks[name])
             ls_stack_fields(s)
           else
-            options[:existing] ? nil : [name, '-']
           end
         }.compact
       end
@@ -38,9 +37,8 @@ module Stax
     end
 
     desc 'ls [PREFIX]', 'list stacks'
-    method_option :existing, aliases: '-e', type: :boolean, default: false, desc: 'list just existing stacks'
-    method_option :all,      aliases: '-a', type: :boolean, default: false, desc: 'list all running stacks with our prefix'
-    method_option :account,  aliases: '-A', type: :boolean, default: false, desc: 'list all running stacks in account'
+    method_option :all,     aliases: '-a', type: :boolean, default: false, desc: 'list all running stacks with our prefix'
+    method_option :account, aliases: '-A', type: :boolean, default: false, desc: 'list all running stacks in account'
     def ls(prefix = nil)
       if options[:account]
         ls_account_stacks
