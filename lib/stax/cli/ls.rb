@@ -9,14 +9,14 @@ module Stax
 
       ## list stacks from Staxfile in given order
       def ls_staxfile_stacks
-        stacks = Aws::Cfn.stacks.each_with_object({}) { |s, h| h[s.stack_name] = s }
         print_table Stax.stack_list.map { |id|
           name = stack(id).stack_name
-          if (s = stacks[name])
+          if (s = Aws::Cfn.describe(name))
             ls_stack_fields(s)
           else
+            [ name, '-' ]
           end
-        }.compact
+        }
       end
 
       ## list all extant stacks we think match our prefix
