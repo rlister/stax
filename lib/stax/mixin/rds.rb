@@ -158,6 +158,25 @@ module Stax
         end
       end
 
+      desc 'write-forwarding', 'control write-forwarding'
+      method_option :disable, aliases: '-d', type: :boolean, desc: 'disable write-forwarding'
+      method_option :enable,  aliases: '-e', type: :boolean, desc: 'enable write-forwarding'
+      def write_forwarding
+        stack_db_clusters.map(&:physical_resource_id).each do |cluster|
+          if options[:enable]
+            puts "#{cluster} enabling write-forwarding"
+            Aws::Rds.client.modify_db_cluster(db_cluster_identifier: cluster, enable_global_write_forwarding: true)
+          elsif options[:disable]
+            puts "#{cluster} disabling write-forwarding"
+            Aws::Rds.client.modify_db_cluster(db_cluster_identifier: cluster, enable_global_write_forwarding: false)
+          else
+            print_table Aws::Rds.client.describe_db_clusters(db_cluster_identifier: cluster).db_clusters.map { |c|
+              [ c.db_cluster_identifier, c.global_write_forwarding_status || '-' ]
+            }
+          end
+        end
+      end
+
     end
   end
 end
