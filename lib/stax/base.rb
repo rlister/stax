@@ -1,5 +1,6 @@
 require 'thor'
 require 'stax/aws/sts'
+require 'aws-sdk-ssm'
 
 ## clean exit on ctrl-c for all methods
 trap('SIGINT', 'EXIT')
@@ -26,6 +27,13 @@ module Stax
 
       def aws_region
         @_aws_region ||= ENV['AWS_REGION']
+      end
+
+      ## we commonly want to lookup SSM parameters to use as stack parameters
+      def aws_ssm_get(name, region: nil)
+        ::Aws::SSM::Client.new({region: region}.compact).get_parameter(name: name)&.parameter&.value
+      rescue ::Aws::SSM::Errors::ParameterNotFound
+        fail_task("#{name} not found in #{region||aws_region}")
       end
 
       ## find or create a stack object
