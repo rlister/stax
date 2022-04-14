@@ -62,6 +62,32 @@ module Stax
           }
         end
       end
+
+      ## https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/viewing-cloudfront-metrics.html#monitoring-console.distributions-additional
+      ## this is not supported by cfn, see:
+      ## https://github.com/aws-cloudformation/cloudformation-coverage-roadmap/issues/545
+      desc 'monitoring', 'control monitoring subscriptions'
+      method_option :enable,  aliases: '-e', type: :boolean, description: 'enable additional metrics'
+      method_option :disable, aliases: '-d', type: :boolean, description: 'disable additional metrics'
+      def monitoring
+        client = Aws::Cloudfront.client
+        stack_cloudfront_ids.each do |id|
+          debug("Cloudfront monitoring for distribution #{id}")
+          if options[:enable]
+            sub = { realtime_metrics_subscription_config: { realtime_metrics_subscription_status: :Enabled } }
+            resp = client.create_monitoring_subscription(distribution_id: id, monitoring_subscription: sub)
+            puts resp.monitoring_subscription.realtime_metrics_subscription_config&.realtime_metrics_subscription_status
+          elsif options[:disable]
+            puts 'deleting subscription'
+            client.delete_monitoring_subscription(distribution_id: id)
+          else
+            cfg = client.get_monitoring_subscription(distribution_id: id)&.monitoring_subscription&.realtime_metrics_subscription_config
+            puts "current status: #{cfg&.realtime_metrics_subscription_status}"
+          end
+        end
+      end
+
     end
+
   end
 end
