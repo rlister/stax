@@ -29,8 +29,17 @@ module Stax
     @@_root_path = find_staxfile
     if root_path
       load(root_path.join('Staxfile'))
+      require_libs
       require_stacks
       require_commands
+    end
+  end
+
+  ## auto-require class overrides
+  def self.require_libs
+    %w[ base stack ].each do |file|
+      f = root_path.join('lib', "#{file}.rb")
+      require(f) if File.exist?(f)
     end
   end
 
