@@ -14,21 +14,21 @@ module Stax
 
       ## load a yaml template
       def cfn_template_yaml
-        if File.exists?(f = "#{cfn_template_stub}.yaml")
+        if File.exist?(f = "#{cfn_template_stub}.yaml")
           File.read(f)
         end
       end
 
       ## load a json template
       def cfn_template_json
-        if File.exists?(f = "#{cfn_template_stub}.json")
+        if File.exist?(f = "#{cfn_template_stub}.json")
           File.read(f)
         end
       end
 
       ## load a ruby cfer template
       def cfn_template_cfer
-        if File.exists?(f = "#{cfn_template_stub}.rb")
+        if File.exist?(f = "#{cfn_template_stub}.rb")
           cfer_generate(f)
         end
       end
