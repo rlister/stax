@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency('aws-sdk-cloudformation')
   spec.add_dependency('thor')
-  spec.add_dependency('cfer', '>= 0.8.0')
+  spec.add_dependency('cfer', '>= 1.0.0')
   spec.add_dependency('octokit')
   spec.add_dependency('git_clone_url')
 
