@@ -225,9 +225,7 @@ module Stax
           # tail the blue/green deployment until it is deleted
           begin
             invoke(:tail_upgrade_candidate, [], id: deployment_identifier)
-          # TODO: figure out how to catch this specific exception
-          # rescue Aws::RDS::Errors::BlueGreenDeploymentNotFoundFault
-          rescue  
+          rescue ::Aws::RDS::Errors::BlueGreenDeploymentNotFoundFault
             say("Deleted blue/green deployment #{deployment_identifier}", :green)
           end
         end
