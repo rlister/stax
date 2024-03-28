@@ -150,6 +150,7 @@ module Stax
         name ||= my.stack_pipeline_names.first
         last_seen = nil
         loop do
+          sleep 5
           state = Aws::Codepipeline.state(name)
           now = Time.now
           stages = state.stage_states.map do |s|
@@ -159,7 +160,14 @@ module Stax
             [s.stage_name, color(s&.latest_execution&.status || '', COLORS), "#{ago} ago", revisions].join(' ')
           end
           puts [set_color(now, :blue), stages].flatten.join('  ')
-          sleep 5
+          if stages.none? { |stage| stage.match? /InProgress/ }
+            if stages.all? { |stage| stage.match? /Succeeded/ }
+              puts set_color("All stages succeeded!", :green)
+            else
+              puts set_color("Pipeline did not complete successfully.", :red)
+            end
+            break
+          end
         end
       end
 
